@@ -1,0 +1,2 @@
+C:\Users\barney.dennis\Android\BehaveMonitor\app\build\intermediates\classes\debug
+C:\Users\barney.dennis\Android\BehaveMonitor\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-736e48bbd0fffc3293d67df031749765662246b8.jar

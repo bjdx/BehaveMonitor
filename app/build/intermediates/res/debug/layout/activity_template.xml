@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent" >
+
+  <!-- Header aligned to top -->
+  <RelativeLayout
+    android:id="@+id/header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:gravity="center" >
+    
+	<TextView
+      android:id="@+id/template_header"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="5dp"
+      android:text="Edit Template"
+      android:textSize="20sp" />
+    <TextView
+      android:id="@+id/template_info"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="5dp"
+      android:text="Below are the behaviours in this template. Use the buttons to add behaviours, as well as save and discard changes to the template."
+      android:textSize="12sp"
+            android:layout_below="@+id/template_header"
+       />
+
+
+  </RelativeLayout>
+
+  <!-- Footer aligned to bottom -->
+  <RelativeLayout
+    android:id="@+id/footer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:gravity="center" >
+        
+      <ImageButton
+            android:id="@+id/new_behaviour"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_action_new" />
+
+        <ImageButton
+            android:id="@+id/save_template"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_action_save"
+            android:layout_toRightOf="@+id/new_behaviour" />
+        
+        <ImageButton
+            android:id="@+id/delete_template"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_action_discard"
+            android:layout_toRightOf="@+id/save_template" />
+
+ 
+  </RelativeLayout>
+
+  <!-- Scrollable Item below header and above footer -->
+  <ScrollView
+    android:id="@+id/scrollableContents"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_above="@id/footer"
+    android:layout_below="@id/header"
+    android:background="@drawable/back"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"  >
+
+    <LinearLayout
+    android:id="@+id/behaviour_layout"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_horizontal"
+      android:orientation="vertical"
+      android:layout_marginLeft="2dp"
+      android:layout_marginRight="2dp"
+      android:layout_marginTop="2dp"
+      android:layout_marginBottom="2dp">
+
+      
+
+    </LinearLayout>
+
+  </ScrollView>
+
+</RelativeLayout><!-- From: file:/C:/Users/barney.dennis/Android/BehaveMonitor/app/src/main/res/layout/activity_template.xml -->

@@ -1,12 +1,9 @@
 package com.example.BehaveMonitor;
 
-import java.io.File;
-
-import com.example.BehaveMonitor.R;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -16,6 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import java.io.File;
 
 public class MainActivity extends Activity {
 
@@ -73,17 +73,18 @@ public class MainActivity extends Activity {
             // on first time display view for first nav item
         	selectItem(0);
         } else {
+            Log.d("I AM BEING CALLED LOOK AT ME","OOOOOOOOOOOOOOOOOOOOO");
             String path = savedInstanceState.getString("activeFolderString");
             String tString = savedInstanceState.getString("activeTemplateString");
             String sName = savedInstanceState.getString("activeSessionName");
             String sLoc = savedInstanceState.getString("activeSessionLoc");
             if(path!=null) activeFolder = new File(path);
             if(tString!=null) activeTemplate = new Template(tString);
-            if(sName!=null && sLoc!=null) activeSession = new Session(sName,sLoc);
         }
 	}
-	
-	//Setup navigation drawer
+
+
+    //Setup navigation drawer
 	public void setupNavDrawer() {
 		mDrawerTitle = getTitle();
 		
@@ -235,6 +236,16 @@ public class MainActivity extends Activity {
 		activeSession = session;
 	}
 
+    public Session getActiveSession(){return activeSession;}
+
+    public String getActivePath() {return activeFolder.getAbsolutePath();}
+
+    public Session makeSession(String name, String loc) {
+        activeSession = new Session(name, loc, activeFolder.getAbsolutePath());
+        activeSession.template = activeTemplate;
+        return activeSession;
+    }
+
     public void selectItem(int position) {
     	
         // update the main content by replacing fragments
@@ -252,7 +263,7 @@ public class MainActivity extends Activity {
             fragment = new TemplateFragment();
             break;
         case 2:
-            fragment = new HelpFragment();
+            fragment = new SessionFragment();
             break;
  
         default:
@@ -279,5 +290,19 @@ public class MainActivity extends Activity {
     public void setTitle(CharSequence title) {
         mTitle = title;
         getActionBar().setTitle(mTitle);
+    }
+
+
+    public static final class SaveState {
+        public static Bundle savedInstanceState;
+    }
+
+    private void makeSomeToast(final String message) {
+        final Context context = getApplicationContext();
+        final CharSequence text = message;
+        final int duration = Toast.LENGTH_SHORT;
+
+        final Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 }

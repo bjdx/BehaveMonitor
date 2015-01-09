@@ -14,5 +14,6 @@
 
     <string name="drawer_open">Options</string>
     <string name="drawer_close">HELLO</string>
+    <string name="title_activity_session">SessionActivity</string>
 
 </resources>

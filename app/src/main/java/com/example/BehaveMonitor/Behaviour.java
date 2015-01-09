@@ -1,17 +1,16 @@
 package com.example.BehaveMonitor;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
-import javax.xml.datatype.Duration;
-
-import android.util.Log;
-import android.widget.EditText;
 
 /**
  * Created by BJD on 06/12/2014.
  */
-public class Behaviour {
+public class Behaviour implements Parcelable {
 	//Behaviour Name
 	String bName;
 	
@@ -20,10 +19,33 @@ public class Behaviour {
 	int type;
 	
 	//Holds the events for this behaviour.
-	ArrayList<Event> eventHistory;
+	ArrayList<Event> eventHistory = new ArrayList<Event>();
 	
 	//Holds the current state event before its ended and added to the history.
 	Event currentEvent;
+
+    Behaviour(){};
+
+    Behaviour(Parcel in) {
+        bName = in.readString();
+        type = in.readInt();
+        eventHistory = new ArrayList<Event>();
+        in.readTypedList(eventHistory,Event.CREATOR);
+        currentEvent = in.readParcelable(Event.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Behaviour> CREATOR = new Parcelable.Creator<Behaviour>() {
+
+        public Behaviour createFromParcel(Parcel in) {
+            return new Behaviour(in);
+        }
+
+        public Behaviour[] newArray(int size) {
+            return new Behaviour[size];
+        }
+    };
+
+
 	
 	public void newEvent(int eType) {
 		this.type = eType;
@@ -79,6 +101,23 @@ public class Behaviour {
 		out += startTimes;
 		return out;
 	}
-	
-	
+
+
+
+    //Stuff to make it parcelable.
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(bName);
+        dest.writeInt(type);
+        dest.writeTypedList(eventHistory);
+        dest.writeParcelable(currentEvent, flags);
+
+    }
 }

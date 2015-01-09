@@ -1,18 +1,10 @@
 package com.example.BehaveMonitor;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.Reader;
-
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +15,11 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 
-import com.example.BehaveMonitor.R;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.Reader;
 
 public class TemplateFragment extends Fragment {
 
@@ -37,15 +33,39 @@ public class TemplateFragment extends Fragment {
 
 		View rootView = inflater.inflate(R.layout.fragment_template, container, false);
 
-		
-		setSpinner(rootView);
+        Bundle b = getActivity().getIntent().getExtras();
+        if(b!=null) {
+            setSpinner(rootView);
+            String tmpName = b.getString("result");
+
+            if (tmpName != null) {
+                Spinner spinner = (Spinner) rootView.findViewById(R.id.template_spinner);
+
+                for (int i = 0; i < spinner.getAdapter().getCount(); i++) {
+                    if (spinner.getItemAtPosition(i).toString().equals(tmpName))
+                        spinner.setSelection(i, true);
+                }
+            }
+        } else {
+            setSpinner(rootView);
+        }
 		setNewButton(rootView);
 		setDeleteButton(rootView);
 		setSelectButton(rootView);
+
+
+
+
 		return rootView;
 	}
-	
-	public void setSelectButton(View rootView) {
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    public void setSelectButton(View rootView) {
 		Button button = (Button) rootView.findViewById(R.id.select_template);
 		button.setOnClickListener(new View.OnClickListener() {
 

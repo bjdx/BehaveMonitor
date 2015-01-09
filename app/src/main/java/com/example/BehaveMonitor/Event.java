@@ -1,19 +1,38 @@
 package com.example.BehaveMonitor;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
 /**
  * Created by BJD on 06/12/2014.
  */
-public class Event {
+public class Event implements Parcelable{
 
 	Date startTime;
-	String duration;
+	String duration = "";
 
 	
 	Event() {
 		startTime = new Date();
 	}
+
+    Event(Parcel in) {
+        startTime = new Date(in.readLong());
+        duration = in.readString();
+    }
+
+    public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
+
+        public Event createFromParcel(Parcel in) {
+            return new Event(in);
+        }
+
+        public Event[] newArray(int size) {
+            return new Event[size];
+        }
+    };
 	
 	
 	//Calculates the duration of a state event. Stores it in the format SS.sss
@@ -42,5 +61,20 @@ public class Event {
                 break;
         }
 	}
-	
+
+
+
+    //Stuff to make it parcelable.
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(startTime.getTime());
+        dest.writeString(duration);
+
+    }
 }

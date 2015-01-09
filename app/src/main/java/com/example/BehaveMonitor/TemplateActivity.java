@@ -1,15 +1,5 @@
 package com.example.BehaveMonitor;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -22,12 +12,20 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 //Templates are saved as .tmp files.
 //Templates are stored in the format "TemplateName;BehaviourName1,BehaviourType1:BehaviourName2,BehaviourType2... "
@@ -197,8 +195,7 @@ public class TemplateActivity extends Activity {
 	public void backToMain() {
         Intent intent = new Intent(TemplateActivity.this, MainActivity.class);
         intent.putExtra("result",newTemp.name);
-        setResult(RESULT_OK,intent);
-        finish();
+        startActivity(intent);
     }
 
 	//re-add behaviours to layout
@@ -380,6 +377,14 @@ public class TemplateActivity extends Activity {
 	
 		alert.show();
 	}
-	
+
+    private void makeSomeToast(final String message) {
+        final Context context = getApplicationContext();
+        final CharSequence text = message;
+        final int duration = Toast.LENGTH_SHORT;
+
+        final Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
 }
 	

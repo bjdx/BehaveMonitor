@@ -8,14 +8,23 @@
         android:minSdkVersion="16"
         android:targetSdkVersion="18" />
 
+    <android:uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
-            android:name="com.example.BehaveMonitor.MainActivity"
-            android:label="@string/app_name" >
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,12 +32,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.BehaveMonitor.TemplateActivity"
-            android:label="@string/app_name" 
-            android:parentActivityName="com.example.BehaveMonitor.MainActivity">
+            android:name=".TemplateActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="com.example.BehaveMonitor.MainActivity" />
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.BehaveMonitor.MainActivity" />
+        </activity>
+        <activity
+            android:name=".SessionActivity"
+            android:label="@string/title_activity_session"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.BehaveMonitor.MainActivity" />
         </activity>
     </application>
 

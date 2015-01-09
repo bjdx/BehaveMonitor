@@ -1,17 +1,27 @@
 package com.example.BehaveMonitor;
 
-import java.util.ArrayList;
-
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
+
+import java.util.ArrayList;
 
 /**
  * Created by BJD on 06/12/2014.
  */
-public class Template {
+public class Template implements Parcelable {
     String name;
     ArrayList<Behaviour> behaviours = new ArrayList<Behaviour>();
-    
-    Template(){}
+
+
+    Template(){};
+
+    Template(Parcel in) {
+        //BUILD FROM PARCEL
+        name = in.readString();
+        behaviours = new ArrayList<Behaviour>();
+        in.readTypedList(behaviours,Behaviour.CREATOR);
+    }
     
     Template(String string) {
     	String[] namePart = string.split(";");
@@ -53,4 +63,31 @@ public class Template {
     public boolean isEmpty() {
     	return behaviours.isEmpty();
     }
+
+
+
+    //Stuff to make it parcelable.
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeTypedList(behaviours);
+    }
+
+    public static final Parcelable.Creator<Template> CREATOR = new Parcelable.Creator<Template>() {
+
+        public Template createFromParcel(Parcel in) {
+            return new Template(in);
+        }
+
+        public Template[] newArray(int size) {
+            return new Template[size];
+        }
+    };
+
 }

@@ -1,8 +1,10 @@
 package com.example.BehaveMonitor;
 
-import java.util.ArrayList;
-import java.util.Calendar;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -49,23 +51,40 @@ Durations
 @sBehaviour1.d1,@sBehaviour1.d2,...
 
  */
-public class Session {
+
+public class Session implements Parcelable {
     //Name of the session
     String name;
     //Date and time the session was started
-    Calendar startTime;
+    Date startTime = new Date();
     //Date and time the session was started
-    Calendar endTime;
+    Date endTime = new Date();
     //The location of the session
     String location;
     //The behaviour template the session used
     Template template;
+    //The path to the folder the session will be saved to
+    String path;
 
 
     //Constructor initialising the name and location
-    Session(String name, String location) {
+    Session(String name, String location, String path) {
         this.name = name;
         this.location = location;
+        this.path = path;
+    }
+
+    public Session(Parcel in) {
+        this.name = in.readString();
+        Long tmpTime = in.readLong();
+        if (tmpTime != null) this.startTime = new Date(tmpTime);
+        tmpTime = in.readLong();
+        if (tmpTime != null) this.endTime = new Date(tmpTime);
+        this.location = in.readString();
+
+        // readParcelable need class loader
+        this.template = in.readParcelable(Template.class.getClassLoader());
+        this.path = in.readString();
     }
 
     //Method for setting the behaviour template.
@@ -75,12 +94,12 @@ public class Session {
 
     //Sets the date and time of when the session began
     public void startSession() {
-        this.startTime = Calendar.getInstance();
+        this.startTime = new Date();
     }
 
     //Sets then date and time of when the session ended
     public void endSession() {
-        this.endTime = Calendar.getInstance();
+        this.endTime = new Date();
     }
 
     /**
@@ -118,7 +137,7 @@ public class Session {
             out += b.bName + "\n";
             String starts = "Start Times\n";
             for (Event e : b.eventHistory) {
-                starts += timeDiff(startTime.getTime(), e.startTime) + ",";
+                starts += timeDiff(startTime, e.startTime) + ",";
             }
             out += starts + "\n";
         }
@@ -130,7 +149,7 @@ public class Session {
             String starts = "Start Times\n";
             String duration = "Durations\n";
             for (Event e : b.eventHistory) {
-                starts += timeDiff(startTime.getTime(), e.startTime) + ",";
+                starts += timeDiff(startTime, e.startTime) + ",";
                 duration += e.duration + ",";
             }
             out += starts + "\n";
@@ -167,4 +186,35 @@ public class Session {
         }
         return out;
     }
+
+
+    //Stuff to make it parcelable.
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+
+    //Adds contents of Session to parcel for Parcelisation in order to be entered into the
+    //Parcelisation Matrix which allows it to be sent to the other activity...
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeLong(startTime.getTime());
+        dest.writeLong(endTime.getTime());
+        dest.writeString(location);
+        dest.writeParcelable(template,flags);
+        dest.writeString(path);
+    }
+
+    public static final Parcelable.Creator<Session> CREATOR = new Parcelable.Creator<Session>() {
+
+        public Session createFromParcel(Parcel in) {
+            return new Session(in);
+        }
+
+        public Session[] newArray(int size) {
+            return new Session[size];
+        }
+    };
 }

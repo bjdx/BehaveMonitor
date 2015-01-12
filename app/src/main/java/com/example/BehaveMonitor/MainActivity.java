@@ -220,7 +220,7 @@ public class MainActivity extends Activity {
     }
 
     public String getTemplateName() {
-        if(activeTemplate==null) return "";
+        if(activeTemplate.name==null) return "";
         return activeTemplate.name;
     }
 

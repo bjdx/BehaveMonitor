@@ -150,11 +150,16 @@ public class SessionActivity extends Activity {
             sml.addView(currentLevel);
         }
 
+
+        //THIS IS WHERE THE LOG NEEDS TO GO ------------------------------------------------------------<<<<
+
+        //THIS IS WHERE THE END SESSION BUTTON NEEDS TO GO----------------------------------------------<<<<
     }
 
     // create the button for the sessions layout
     public Button createBehaviourButton(final Behaviour b) {
         Button button = new Button(this);
+        button.setWidth(149);
         //set the buttons name to the behaviour name
         button.setText(b.bName);
         button.setOnClickListener(new View.OnClickListener() {

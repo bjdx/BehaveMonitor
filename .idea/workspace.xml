@@ -17,13 +17,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="app: com.example.BehaveMonitor" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b0603c9-8a83-4e73-8c4a-5c8fb75d7051" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/BehaveMonitor/Behaviour.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/BehaveMonitor/Behaviour.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/BehaveMonitor/Event.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/BehaveMonitor/Event.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build/generated/source/r/debug/com/example/BehaveMonitor/R.java" afterPath="$PROJECT_DIR$/app/build/generated/source/r/debug/com/example/BehaveMonitor/R.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/BehaveMonitor/Session.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/BehaveMonitor/Session.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/BehaveMonitor/SessionActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/BehaveMonitor/SessionActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/BehaveMonitor/Template.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/BehaveMonitor/Template.java" />
+    <list default="true" id="9b0603c9-8a83-4e73-8c4a-5c8fb75d7051" name="Default" comment="Button Array implemented, button times, not working Session timer. Needs layout of buttons fixing.">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="gradle.iws" />
@@ -50,8 +44,8 @@
       <file leaf-file-name="SessionActivity.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/BehaveMonitor/SessionActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.13893966" vertical-offset="3324" max-vertical-offset="4420">
-              <caret line="216" column="57" selection-start-line="216" selection-start-column="57" selection-end-line="216" selection-end-column="57" />
+            <state vertical-scroll-proportion="0.38756856" vertical-offset="2253" max-vertical-offset="4420">
+              <caret line="161" column="41" selection-start-line="161" selection-start-column="41" selection-end-line="161" selection-end-column="41" />
               <folding>
                 <element signature="e#2399#2548#0" expanded="true" />
                 <element signature="e#2537#2538#0" expanded="true" />
@@ -1451,7 +1445,11 @@
       <created>1420822268708</created>
       <updated>1420822268708</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Button Array implemented, button times, not working Session timer. Needs layout of buttons fixing.">
+      <created>1421073545606</created>
+      <updated>1421073545606</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -1479,7 +1477,7 @@
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32925472" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32925472" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32995737" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1491,7 +1489,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32925472" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32925472" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32925472" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.51390433" sideWeight="0.80597013" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32925472" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1691,8 +1689,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/BehaveMonitor/SessionActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.13893966" vertical-offset="3324" max-vertical-offset="4420">
-          <caret line="216" column="57" selection-start-line="216" selection-start-column="57" selection-end-line="216" selection-end-column="57" />
+        <state vertical-scroll-proportion="0.38756856" vertical-offset="2253" max-vertical-offset="4420">
+          <caret line="161" column="41" selection-start-line="161" selection-start-column="41" selection-end-line="161" selection-end-column="41" />
           <folding>
             <element signature="e#2399#2548#0" expanded="true" />
             <element signature="e#2537#2538#0" expanded="true" />

@@ -120,6 +120,7 @@ public class SessionActivity extends Activity {
         tv.setGravity(17);
         sessionTimeTV = tv;
         addSessionTimerTask();
+        sml.addView(sessionTimeTV);
 
 
 

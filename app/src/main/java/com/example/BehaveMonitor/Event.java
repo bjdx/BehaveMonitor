@@ -56,8 +56,8 @@ public class Event implements Parcelable{
                 break;
             case(3):
                 duration += ""+ diff;
+                break;
             default:
-                duration += "inv";
                 break;
         }
 	}

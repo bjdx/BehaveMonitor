@@ -22,7 +22,8 @@ public class Template implements Parcelable {
         behaviours = new ArrayList<Behaviour>();
         in.readTypedList(behaviours,Behaviour.CREATOR);
     }
-    
+
+    //This parses a template from a stirng
     Template(String string) {
     	String[] namePart = string.split(";");
     	if(namePart.length>1) {

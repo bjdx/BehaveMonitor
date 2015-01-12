@@ -22,7 +22,7 @@ public class Behaviour implements Parcelable {
 	ArrayList<Event> eventHistory = new ArrayList<Event>();
 	
 	//Holds the current state event before its ended and added to the history.
-	Event currentEvent;
+	Event currentEvent = null;
 
     Behaviour(){};
 
@@ -47,13 +47,12 @@ public class Behaviour implements Parcelable {
 
 
 	
-	public void newEvent(int eType) {
-		this.type = eType;
-		if(eType==0) {
+	public void newEvent() {
+		if(this.type==0) {
 			Event event = new Event();
 			event.duration = "";
 			eventHistory.add(event);
-		} else if(eType == 1) {
+		} else if(this.type == 1) {
 			Event event = new Event();
 			currentEvent = event;
 		} else {
@@ -70,7 +69,13 @@ public class Behaviour implements Parcelable {
 			currentEvent = null;
 		}
 	}
-	
+
+    //returns the last event added to the event history.
+    public Event getLastEvent() {
+        if(!eventHistory.isEmpty()) return eventHistory.get(eventHistory.size()-1);
+        else return null;
+    }
+
 	//Returns the behaviour and all its events for session Saving
 	public String toString() {
 		//Get name and type of behaviour

@@ -158,7 +158,7 @@ public class Session implements Parcelable {
         return out;
     }
 
-    //Takes two dates and returns the difference in the format SS.sss
+    //Takes two dates and returns the difference in the format SS.sss 3dp.
     public String timeDiff(Date sT, Date eT) {
 
         long diff = eT.getTime() - sT.getTime();
@@ -180,11 +180,19 @@ public class Session implements Parcelable {
                 break;
             case(3):
                 out += ""+ diff;
+                break;
             default:
-                out+= "inv";
                 break;
         }
         return out;
+    }
+
+    //Returns a string of hours mins and secs since now Date.
+    public String getRelativeHMS(Date now) {
+        long diff = now.getTime() - this.startTime.getTime();
+        Date out = new Date(diff);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        return sdf.format(out);
     }
 
 

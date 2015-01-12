@@ -16,18 +16,37 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="2dp" >
+
+    <TextView
+        android:id="@+id/name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Session Name:"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    <EditText
+        android:id="@+id/session_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+
+</LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="2dp" >
 
         <TextView
-            android:id="@+id/name_label"
+            android:id="@+id/location_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Session Name:"
+            android:text="Session Location:"
             android:textAppearance="?android:attr/textAppearanceLarge" />
         <EditText
-            android:id="@+id/session_name"
+            android:id="@+id/session_location"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
 
@@ -44,14 +63,14 @@
         android:paddingTop="20dp" >
 
         <Button
-            android:id="@+id/select_folder"
+            android:id="@+id/create_session"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:text="Select Folder" />
+            android:text="Create Session" />
 
     </RelativeLayout>
 
 </LinearLayout>
-<!-- From: file:/C:/Users/barney.dennis/Android/BehaveMonitor/app/src/main/res/layout/fragment_session.xml -->
+<!-- From: file:/C:/Users/barney.dennis/Projects/BehaveMonitor/app/src/main/res/layout/fragment_session.xml -->

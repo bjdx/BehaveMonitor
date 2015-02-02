@@ -1,11 +1,11 @@
 package com.example.BehaveMonitor;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,8 +99,8 @@ public class TemplateFragment extends Fragment {
 		catch  (Exception e) {  
 		}
 		
-		((MainActivity) getActivity()).setActiveTmp(new Template(storedString.toString()));
-		((MainActivity) getActivity()).selectItem(2);
+		((HomeActivity) getActivity()).setActiveTmp(new Template(storedString.toString()));
+		((HomeActivity) getActivity()).displayFragment(2);
 	}
 	
 	

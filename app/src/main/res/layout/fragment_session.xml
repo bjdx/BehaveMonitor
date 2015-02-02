@@ -13,6 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Session Information"
+        android:layout_marginBottom="10dp"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout
@@ -24,7 +25,7 @@
         android:id="@+id/name_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Session Name:"
+        android:text="Name:"
         android:textAppearance="?android:attr/textAppearanceLarge" />
     <EditText
         android:id="@+id/session_name"
@@ -43,7 +44,7 @@
             android:id="@+id/location_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Session Location:"
+            android:text="Location:"
             android:textAppearance="?android:attr/textAppearanceLarge" />
         <EditText
             android:id="@+id/session_location"
@@ -68,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:text="Create Session" />
+            android:text="Create" />
 
     </RelativeLayout>
 

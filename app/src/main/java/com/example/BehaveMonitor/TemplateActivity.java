@@ -193,7 +193,7 @@ public class TemplateActivity extends Activity {
 	}
 	
 	public void backToMain() {
-        Intent intent = new Intent(TemplateActivity.this, MainActivity.class);
+        Intent intent = new Intent(TemplateActivity.this, HomeActivity.class);
         intent.putExtra("result",newTemp.name);
         startActivity(intent);
     }

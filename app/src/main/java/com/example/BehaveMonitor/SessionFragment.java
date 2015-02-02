@@ -1,9 +1,9 @@
 package com.example.BehaveMonitor;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,13 +51,13 @@ public class SessionFragment extends Fragment {
 
         if(n.length()>0 && loc.length()>0) {
 
-            MainActivity mA = (MainActivity) getActivity();
+            HomeActivity mA = (HomeActivity) getActivity();
             if(mA.getTemplateName().equals("")) {
                 makeSomeToast("Please select a template to use in this session.");
-                mA.selectItem(1);
+                mA.displayFragment(1);
             } else if(mA.getFolderName().equals("")){
                 makeSomeToast("Please select a folder to use in this session.");
-                mA.selectItem(0);
+                mA.displayFragment(0);
             } else {
                 Session newSession = mA.makeSession(n, loc);
                 Bundle b = new Bundle();

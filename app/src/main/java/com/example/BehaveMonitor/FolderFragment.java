@@ -1,16 +1,11 @@
 package com.example.BehaveMonitor;
 
-import java.io.File;
-
-import com.example.BehaveMonitor.R;
-
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+
+import java.io.File;
 
 public class FolderFragment extends Fragment {
 
@@ -35,7 +32,7 @@ public class FolderFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_folder, container,
 				false);
 
-        MainActivity mA = (MainActivity) getActivity();
+        HomeActivity mA = (HomeActivity) getActivity();
         activeFolder = mA.getFolderName();
 
 		setDeleteButton(rootView);
@@ -169,7 +166,7 @@ public class FolderFragment extends Fragment {
 		// Apply the adapter to the spinner
 		spinner.setAdapter(adapter);
 
-        if(activeFolder!=null) {
+        if(activeFolder != null) {
             int i = 0;
             for(String s:folders) {
                 if(s.equals(activeFolder)) spinner.setSelection(i);
@@ -203,11 +200,11 @@ public class FolderFragment extends Fragment {
 						+ File.separator + "Session Folders" + File.separator
 						+ folderName;
 				File activeFolder = new File(dirPath);
-				((MainActivity) getActivity()).setActiveDir(activeFolder);
+				((HomeActivity) getActivity()).setActiveDir(activeFolder);
 				// Change colour and move to next fragment
 
 				spinner.setBackgroundColor(Color.parseColor("#33B5E5"));
-				((MainActivity) getActivity()).selectItem(1);
+				((HomeActivity) getActivity()).displayFragment(1);
 			}
 
 		});

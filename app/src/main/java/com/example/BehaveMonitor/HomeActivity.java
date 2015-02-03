@@ -37,6 +37,8 @@ public class HomeActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        FileHandler.setRootDirectory();
+
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
@@ -46,51 +48,46 @@ public class HomeActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        checkFoldersExist();
+        FileHandler.checkFoldersExist();
 
         if (savedInstanceState != null) {
-//            Log.d("I AM BEING CALLED LOOK AT ME","OOOOOOOOOOOOOOOOOOOOO");
             String path = savedInstanceState.getString("activeFolderString");
             String tString = savedInstanceState.getString("activeTemplateString");
-            String sName = savedInstanceState.getString("activeSessionName");
-            String sLoc = savedInstanceState.getString("activeSessionLoc");
-            if(path != null) activeFolder = new File(path);
-            if(tString != null) activeTemplate = new Template(tString);
+//            String sName = savedInstanceState.getString("activeSessionName");
+//            String sLoc = savedInstanceState.getString("activeSessionLoc");
+            if (path != null) activeFolder = new File(path);
+            if (tString != null) activeTemplate = new Template(tString);
+        }
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            int redirect = bundle.getInt("redirect", -1);
+            String tString = bundle.getString("activeTemplateString");
+
+            if (tString != null) activeTemplate = new Template(tString);
+            if (redirect != -1) {
+                displayFragment(redirect);
+            }
         }
     }
 
     /**
-     * Checks the required folders have been created.
+     * @return The name of the active folder, or "" if no folder has been selected.
      */
-    public void checkFoldersExist() {
-        // If template folder doesnt exist make it
-        String dirPath = getFilesDir().getAbsolutePath() + File.separator + "Templates";
-        File projDir = new File(dirPath);
-        if (!projDir.exists()) projDir.mkdirs();
-
-        // If session folder doesn't exist make it
-        dirPath = getFilesDir().getAbsolutePath() + File.separator + "Session Folders";
-        projDir = new File(dirPath);
-        if (!projDir.exists()) projDir.mkdirs();
-
-        // If default session folder doesn't exist make it
-        dirPath = getFilesDir().getAbsolutePath() + File.separator + "Session Folders" + File.separator + "Default";
-        projDir = new File(dirPath);
-        if (!projDir.exists()) projDir.mkdirs();
-
-    }
-
     public String getFolderName() {
         if(activeFolder == null) return "";
         return activeFolder.getName();
     }
 
+    /**
+     * @return The name of the active template, or "" if no template has been selected.
+     */
     public String getTemplateName() {
-        if(activeTemplate.name == null) return "";
+        if (activeTemplate == null) return "";
         return activeTemplate.name;
     }
 
-    public void setActiveDir(File file) {
+    public void setActiveFolder(File file) {
         activeFolder = file;
     }
 
@@ -108,7 +105,7 @@ public class HomeActivity extends ActionBarActivity
 
     public Session makeSession(String name, String loc) {
         activeSession = new Session(name, loc, activeFolder.getAbsolutePath());
-        activeSession.template = activeTemplate;
+        activeSession.setTemplate(activeTemplate);
         return activeSession;
     }
 
@@ -150,5 +147,17 @@ public class HomeActivity extends ActionBarActivity
                 .commit();
 
         fragmentDisplayed = position;
+        if  (mNavigationDrawerFragment != null) {
+            mNavigationDrawerFragment.setItemChecked(position);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (fragmentDisplayed > 0) {
+            displayFragment(fragmentDisplayed - 1);
+        } else {
+            super.onBackPressed();
+        }
     }
 }

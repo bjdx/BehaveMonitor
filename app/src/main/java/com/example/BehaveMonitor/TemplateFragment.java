@@ -14,12 +14,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.Reader;
 
 public class TemplateFragment extends Fragment {
 
@@ -33,28 +30,23 @@ public class TemplateFragment extends Fragment {
 
 		View rootView = inflater.inflate(R.layout.fragment_template, container, false);
 
-        Bundle b = getActivity().getIntent().getExtras();
-        if(b!=null) {
-            setSpinner(rootView);
-            String tmpName = b.getString("result");
+        activeTemplate = ((HomeActivity) getActivity()).getTemplateName();
+        if(!"".equals(activeTemplate)) {
+            Spinner spinner = setSpinner(rootView);
+//            Spinner spinner = (Spinner) rootView.findViewById(R.id.template_spinner);
 
-            if (tmpName != null) {
-                Spinner spinner = (Spinner) rootView.findViewById(R.id.template_spinner);
-
-                for (int i = 0; i < spinner.getAdapter().getCount(); i++) {
-                    if (spinner.getItemAtPosition(i).toString().equals(tmpName))
-                        spinner.setSelection(i, true);
+            for (int i = 0; i < spinner.getAdapter().getCount(); i++) {
+                if (spinner.getItemAtPosition(i).toString().equals(activeTemplate)) {
+                    spinner.setSelection(i, true);
                 }
             }
         } else {
             setSpinner(rootView);
         }
+
 		setNewButton(rootView);
 		setDeleteButton(rootView);
 		setSelectButton(rootView);
-
-
-
 
 		return rootView;
 	}
@@ -82,37 +74,27 @@ public class TemplateFragment extends Fragment {
 	
 	public void loadSelectedTemplate() {
 		Spinner spinner = (Spinner) getView().findViewById(R.id.template_spinner);
-		String folderName = spinner.getSelectedItem().toString();
-		FileInputStream fis;
-		final StringBuffer storedString = new StringBuffer();
-		String dirPath = getActivity().getFilesDir().getAbsolutePath() + File.separator + "Templates" + File.separator;
-		File file = new File(dirPath + folderName+".tmp");
-		try {
-		    Reader dataIO = new FileReader(file);
-		    String strLine = null;
-		    BufferedReader br = new BufferedReader(dataIO);
-		    if ((strLine = br.readLine()) != null) {
-		        storedString.append(strLine);
-		    }
-		    dataIO.close();
-		}
-		catch  (Exception e) {  
-		}
-		
-		((HomeActivity) getActivity()).setActiveTmp(new Template(storedString.toString()));
-		((HomeActivity) getActivity()).displayFragment(2);
+		String templateName = spinner.getSelectedItem().toString();
+
+        String template = FileHandler.readTemplate(templateName);
+
+        if (!"".equals(template)) {
+            HomeActivity homeActivity = (HomeActivity) getActivity();
+            homeActivity.setActiveTmp(new Template(template));
+            homeActivity.displayFragment(2);
+        } else {
+            makeSomeToast("Error reading template.");
+        }
 	}
 	
-	
-	
-	public void setSpinner(View rootView) {
+	public Spinner setSpinner(View rootView) {
 
 		String[] folders = getTemplateNames();
-		if(folders == null) {
+		if(folders == null || folders.length == 0) {
 			folders = new String[]{"No templates exist."};
 		} else {
             for(String s: folders) {
-                Log.d("Folder name:",s);
+                Log.d("Folder name:", s);
             }
         }
 
@@ -126,18 +108,20 @@ public class TemplateFragment extends Fragment {
 		// Apply the adapter to the spinner
 		spinner.setAdapter(adapter);
 
-        if(activeTemplate!=null) {
+        if (activeTemplate != null) {
             int i = 0;
-            for(String s:folders) {
-                if(s.equals(activeTemplate)) spinner.setSelection(i);
+            for (String s : folders) {
+                if (s.equals(activeTemplate)) spinner.setSelection(i);
                 else i++;
             }
         }
+
+        return spinner;
 	}
 	
 	public String[] getTemplateNames() {
-		String dirPath = getActivity().getFilesDir().getAbsolutePath()+ File.separator + "Templates";
-		File projDir = new File(dirPath);
+//		String dirPath = getActivity().getFilesDir().getAbsolutePath()+ File.separator + "Templates";
+		File projDir = new File(FileHandler.getTemplateDirectory());
 		String[] files = projDir.list();
 		if(files.length == 0) {
 			Log.e("getFolders Error", "No templates exist.");
@@ -145,11 +129,11 @@ public class TemplateFragment extends Fragment {
 		} else {
 			
 			String[] tmpNames = new String[files.length];
-			Log.w("num of names",""+tmpNames.length);
+			Log.w("Behave", "Num of templates found: " + tmpNames.length);
 			for (int i = 0; i < files.length; i++) {
 				String[] parts = files[i].split("\\.");
-				if(parts.length>1) {
-					if(parts[1].equals("tmp")){
+				if (parts.length > 1) {
+					if (parts[1].equals("template")) {
 						tmpNames[i] = parts[0];
 					}
 				}
@@ -159,10 +143,8 @@ public class TemplateFragment extends Fragment {
 		}
 	}
 	
-
-	
 	public void setNewButton(View rootView) {
-		ImageButton button = (ImageButton) rootView.findViewById(R.id.new_folder);
+		ImageButton button = (ImageButton) rootView.findViewById(R.id.new_template);
 		Log.w("button",button.toString());
 		button.setOnClickListener(new View.OnClickListener() {
 
@@ -176,11 +158,11 @@ public class TemplateFragment extends Fragment {
 		});
 	}
 	
-	
-	
-	
 	public void newTemplate(final Context context) {
 		Intent intent = new Intent(context, TemplateActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
 	}
 
@@ -194,7 +176,7 @@ public class TemplateFragment extends Fragment {
 				Spinner spinner = (Spinner) rootView.findViewById(R.id.template_spinner);
 				String tmpName = spinner.getSelectedItem().toString();
 				if (tmpName.equals("No templates exist.")) {
-					return;
+					// Do nothing.
 				} else {
 					deleteTemplate(getActivity(), rootView);
 				}
@@ -208,7 +190,7 @@ public class TemplateFragment extends Fragment {
 		AlertDialog.Builder alert = new AlertDialog.Builder(context);
 	
 		alert.setTitle("Delete Current Template");
-		alert.setMessage("Are you sure you want to delete this folder? (Template will not be reusable!)");
+		alert.setMessage("Are you sure you want to delete this template? (Template will not be reusable!)");
 	
 	
 		alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -216,20 +198,8 @@ public class TemplateFragment extends Fragment {
 			Spinner spinner = (Spinner) rootView.findViewById(R.id.template_spinner);
 			String tmpName = spinner.getSelectedItem().toString();
 
-			Log.d("Files spinner", "Name:"+tmpName);
-		  	String dirPath = context.getFilesDir().getAbsolutePath() + File.separator + "Templates" + File.separator + tmpName + ".tmp";
-			File projDir = new File(dirPath);
-			if (projDir.exists()) {
-				try {
-					projDir.delete();
-					setSpinner(getView());
-				} catch(Exception e) {
-					Log.e("ERROR", "Failed to delete directory!");
-				}
-			} else {
-				//The folder already exists
-				Log.e("ERROR", "Directory doesn't exist!");
-			}
+            FileHandler.deleteTemplate(tmpName);
+            setSpinner(getView());
 		  }
 		});
 	
@@ -249,4 +219,11 @@ public class TemplateFragment extends Fragment {
 		return (parts[parts.length-1].equals(".tmp"));
 	}
 
+    private void makeSomeToast(final String message) {
+        final Context context = getActivity();
+        final int duration = Toast.LENGTH_SHORT;
+
+        final Toast toast = Toast.makeText(context, message, duration);
+        toast.show();
+    }
 }

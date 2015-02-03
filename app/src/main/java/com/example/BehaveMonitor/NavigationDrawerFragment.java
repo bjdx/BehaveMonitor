@@ -192,6 +192,12 @@ public class NavigationDrawerFragment extends Fragment {
         }
     }
 
+    public void setItemChecked(int position) {
+        if (mDrawerListView != null) {
+            mDrawerListView.setItemChecked(position, true);
+        }
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

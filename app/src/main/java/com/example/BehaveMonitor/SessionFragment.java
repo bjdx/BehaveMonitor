@@ -60,9 +60,13 @@ public class SessionFragment extends Fragment {
                 mA.displayFragment(0);
             } else {
                 Session newSession = mA.makeSession(n, loc);
-                Bundle b = new Bundle();
+//                Bundle b = new Bundle();
                 Intent intent = new Intent(getActivity(), SessionActivity.class);
-                intent.putExtra("Session",newSession);
+                intent.putExtra("activeFolderString", mA.getFolderName());
+                intent.putExtra("Session", newSession);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
             }
 

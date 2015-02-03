@@ -2,18 +2,18 @@ package com.example.BehaveMonitor;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,13 +28,16 @@ public class SessionActivity extends Activity {
     Button activeButton = null;
     Timer bTimer = null;
 
+    private String activeFolder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session);
         Bundle b = getIntent().getExtras();
         activeSession = b.getParcelable("Session");
-        if(activeSession != null) Log.e("Active Session is null","Parcel didnt work"+activeSession.name);
+        activeFolder = b.getString("activeFolderString");
+//        if(activeSession != null) Log.e("Active Session is null","Parcel didnt work"+activeSession.name);
         setupTimer();
         loadSessionInfo();
         setStartButton();
@@ -51,15 +54,15 @@ public class SessionActivity extends Activity {
         TextView name = (TextView) findViewById(R.id.sNameText);
         TextView location = (TextView) findViewById(R.id.sLocText);
         TextView tmpText = (TextView) findViewById(R.id.sTmpText);
-        name.setText(name.getText().toString()+"  "+activeSession.name);
-        location.setText(location.getText().toString()+"  "+activeSession.location);
-        tmpText.setText(tmpText.getText().toString()+"  "+activeSession.template.name);
+        name.setText(name.getText().toString()+"  "+activeSession.getName());
+        location.setText(location.getText().toString()+"  "+activeSession.getLocation());
+        tmpText.setText(tmpText.getText().toString()+"  "+activeSession.getTemplate().name);
 
         //Creates list of behaviours
         LinearLayout ll = (LinearLayout) findViewById(R.id.behaveLayout);
-        TextView[] bTV = new TextView[activeSession.template.behaviours.size()];
+        TextView[] bTV = new TextView[activeSession.getTemplate().behaviours.size()];
         int i = 0;
-        for(Behaviour b:activeSession.template.behaviours){
+        for(Behaviour b:activeSession.getTemplate().behaviours){
             bTV[i] = new TextView(this);
             bTV[i].setText(b.bName);
             ll.addView(bTV[i]);
@@ -116,8 +119,7 @@ public class SessionActivity extends Activity {
         //Add current session time to the top of the screen
         TextView tv = new TextView(this);
         tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        //17 is CENTER gravity.
-        tv.setGravity(17);
+        tv.setGravity(Gravity.CENTER);
         sessionTimeTV = tv;
         addSessionTimerTask();
         sml.addView(sessionTimeTV);
@@ -129,7 +131,7 @@ public class SessionActivity extends Activity {
         LinearLayout currentLevel = null;
 
         //Go through the Behaviours and create the button layout
-        for(Behaviour b : activeSession.template.behaviours) {
+        for(Behaviour b : activeSession.getTemplate().behaviours) {
             //if its the first behaviour in a block of three create a new layout.
             if(index % 3 == 0) {
                 //check to see its not the first behaviour (currentLevel hasn't been created).
@@ -146,7 +148,7 @@ public class SessionActivity extends Activity {
         }
 
         //If there is less than 3 buttons in the final row, it won't have been added so add it.
-        if(index % 3 != 0) {
+        if(index % 3 != 0 && currentLevel != null) {
             sml.addView(currentLevel);
         }
 
@@ -154,6 +156,7 @@ public class SessionActivity extends Activity {
         //THIS IS WHERE THE LOG NEEDS TO GO ------------------------------------------------------------<<<<
 
         //THIS IS WHERE THE END SESSION BUTTON NEEDS TO GO----------------------------------------------<<<<
+//        findViewById(R.id.end_session_btn).setVisibility(View.VISIBLE);
     }
 
     // create the button for the sessions layout
@@ -181,11 +184,11 @@ public class SessionActivity extends Activity {
                     } else {
                         //If the behaviour is active end it
                         if(activeBehaviour.bName.equals(b.bName)) {
-                            deactivateBehaviour(b,button);
+                            deactivateBehaviour();
 
                         //If its a new behaviour, end the old one and start the new one.
                         } else {
-                            deactivateBehaviour(activeBehaviour,activeButton);
+                            deactivateBehaviour();
                             activateBehaviour(b,button);
 
                         }
@@ -213,14 +216,14 @@ public class SessionActivity extends Activity {
         }, 0, 100);
     }
 
-    private void deactivateBehaviour(Behaviour b, Button button) {
+    private void deactivateBehaviour() {
         //removes any button update tasks.
         bTimer.purge();
 
-        b.endCurrentEvent();
+        activeBehaviour.endCurrentEvent();
         //reset the button to its name
-        activeButton.setText(b.bName);
-        button.setTextColor(Color.parseColor("#000000"));
+        activeButton.setText(activeBehaviour.bName);
+        activeButton.setTextColor(Color.parseColor("#000000"));
         //makeSomeToast(b.bName + " " + b.getLastEvent().duration);
         activeButton = null;
         activeBehaviour = null;
@@ -243,34 +246,84 @@ public class SessionActivity extends Activity {
         }
     };
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_session, menu);
-        return true;
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.menu_session, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
+
+    public void endSession(View view) {
+        if (activeBehaviour != null) deactivateBehaviour();
+        activeSession.endSession();
+
+        boolean saved = FileHandler.saveSession(activeFolder, activeSession);
+        if (saved) {
+            makeSomeToast("File saved.");
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.putExtra("activeFolderString", new File(FileHandler.getSessionsDirectory(), activeFolder).getAbsolutePath());
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+        } else {
+            makeSomeToast("Error when saving.");
+        }
+//        File rootDir = new File(Environment.getExternalStorageDirectory(), "Behaviour Monitor" + File.separator + activeFolder);
+//        if (!rootDir.exists()) { // If this returns false, something has gone wrong in the folder creation.
+//            if (!rootDir.mkdirs()) {
+//                makeSomeToast("Failed to make root folder, session already ended");
+//                return;
+//            }
+//        }
+//
+//        // Create a media file name
+//        String name = activeSession.getName();
+//        File file = new File(rootDir, name + ".txt");
+//
+//        try {
+//            PrintWriter printWriter = new PrintWriter(file);
+//            printWriter.write(activeSession.toString());
+//            printWriter.close();
+//            makeSomeToast("File saved.");
+//            Intent intent = new Intent(this, HomeActivity.class);
+//            intent.putExtra("activeFolderString", rootDir);
+//
+//        } catch (FileNotFoundException e) {
+//            makeSomeToast("Error trying to save, FNF");
+//        }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public void onBackPressed() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.putExtra("activeFolderString", new File(FileHandler.getSessionsDirectory(), activeFolder).getAbsolutePath());
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intent);
     }
 
     private void makeSomeToast(final String message) {
         final Context context = getApplicationContext();
-        final CharSequence text = message;
         final int duration = Toast.LENGTH_SHORT;
 
-        final Toast toast = Toast.makeText(context, text, duration);
+        final Toast toast = Toast.makeText(context, message, duration);
         toast.show();
     }
 }

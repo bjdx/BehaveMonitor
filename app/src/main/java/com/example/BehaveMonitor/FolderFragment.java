@@ -3,7 +3,6 @@ package com.example.BehaveMonitor;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -28,6 +27,8 @@ public class FolderFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
+//        return inflater.inflate(R.layout.fragment_session_create, container, false);
 
 		View rootView = inflater.inflate(R.layout.fragment_folder, container,
 				false);
@@ -69,21 +70,8 @@ public class FolderFragment extends Fragment {
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String folderName = input.getText().toString();
-				String dirPath = context.getFilesDir().getAbsolutePath()
-						+ File.separator + "Session Folders" + File.separator
-						+ folderName;
-				File projDir = new File(dirPath);
-				if (!projDir.exists()) {
-					try {
-						projDir.mkdirs();
-						setSpinner(getView());
-					} catch (Exception e) {
-						Log.e("ERROR", "Failed to create directory!");
-					}
-				} else {
-					// The folder already exists
-					Log.e("ERROR", "Directory already exists!");
-				}
+                FileHandler.createNewFolder(folderName);
+                setSpinner(getView());
 			}
 		});
 
@@ -120,24 +108,10 @@ public class FolderFragment extends Fragment {
 
 		alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
-				Spinner spinner = (Spinner) rootView
-						.findViewById(R.id.folder_spinner);
+				Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_spinner);
 				String folderName = spinner.getSelectedItem().toString();
-				String dirPath = context.getFilesDir().getAbsolutePath()
-						+ File.separator + "Session Folders" + File.separator
-						+ folderName;
-				File projDir = new File(dirPath);
-				if (projDir.exists()) {
-					try {
-						projDir.delete();
-						setSpinner(getView());
-					} catch (Exception e) {
-						Log.e("ERROR", "Failed to delete directory!");
-					}
-				} else {
-					// The folder already exists
-					Log.e("ERROR", "Directory doesn't exist!");
-				}
+				FileHandler.deleteFolder(folderName);
+                setSpinner(getView());
 			}
 		});
 
@@ -177,9 +151,7 @@ public class FolderFragment extends Fragment {
 	}
 
 	public String[] getFolders() {
-		String dirPath = getActivity().getFilesDir().getAbsolutePath()
-				+ File.separator + "Session Folders";
-		File projDir = new File(dirPath);
+		File projDir = new File(FileHandler.getSessionsDirectory());
 		String[] folders = projDir.list();
 		if (folders.length == 0)
 			Log.e("getFolders Error", "The Session Folder doesn't exist.");
@@ -193,17 +165,14 @@ public class FolderFragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				Spinner spinner = (Spinner) rootView
-						.findViewById(R.id.folder_spinner);
-				String folderName = spinner.getSelectedItem().toString();
-				String dirPath = getActivity().getFilesDir().getAbsolutePath()
-						+ File.separator + "Session Folders" + File.separator
-						+ folderName;
-				File activeFolder = new File(dirPath);
-				((HomeActivity) getActivity()).setActiveDir(activeFolder);
-				// Change colour and move to next fragment
+				Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_spinner);
 
-				spinner.setBackgroundColor(Color.parseColor("#33B5E5"));
+				String folderName = spinner.getSelectedItem().toString();
+				File activeFolder = new File(FileHandler.getSessionsDirectory(), folderName);
+				((HomeActivity) getActivity()).setActiveFolder(activeFolder);
+
+				// Change colour and move to next fragment
+//				spinner.setBackgroundColor(Color.parseColor("#33B5E5"));
 				((HomeActivity) getActivity()).displayFragment(1);
 			}
 

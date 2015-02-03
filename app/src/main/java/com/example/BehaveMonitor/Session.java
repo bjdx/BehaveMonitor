@@ -54,17 +54,17 @@ Durations
 
 public class Session implements Parcelable {
     //Name of the session
-    String name;
+    private String name;
     //Date and time the session was started
-    Date startTime = new Date();
+    private Date startTime = new Date();
     //Date and time the session was started
-    Date endTime = new Date();
+    private Date endTime = new Date();
     //The location of the session
-    String location;
+    private String location;
     //The behaviour template the session used
-    Template template;
+    private Template template;
     //The path to the folder the session will be saved to
-    String path;
+    private String path;
 
 
     //Constructor initialising the name and location
@@ -85,6 +85,50 @@ public class Session implements Parcelable {
         // readParcelable need class loader
         this.template = in.readParcelable(Template.class.getClassLoader());
         this.path = in.readString();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public Template getTemplate() {
+        return template;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     //Method for setting the behaviour template.

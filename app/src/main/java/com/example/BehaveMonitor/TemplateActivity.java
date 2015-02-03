@@ -19,15 +19,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-//Templates are saved as .tmp files.
+//Templates are saved as .template files.
 //Templates are stored in the format "TemplateName;BehaviourName1,BehaviourType1:BehaviourName2,BehaviourType2... "
 
 
@@ -68,118 +62,12 @@ public class TemplateActivity extends Activity {
 		final EditText input = new EditText(context);
 		alert.setView(input);
 
-
         //If yes start save.
 		alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 		public void onClick(DialogInterface dialog, int whichButton) {
-			final String tmpName = input.getText().toString();
-			newTemp.name = tmpName;
-		  	String dirPath = context.getFilesDir().getAbsolutePath() + File.separator + "Templates" + File.separator;
-			final File file = new File(dirPath + tmpName+".tmp");
-
-            //Check if the template already exists.
-            if(file.exists()) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-                alert.setTitle("Overwrite Template");
-                alert.setMessage("Warning a template with this name already exists, do you want to overwrite it?");
-
-                //If yes overwrite
-                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        //Convert template to string the write it and read it back to check.
-                        String string = newTemp.toString();
-
-                        //Save File
-                        try {
-                            FileOutputStream fos = new FileOutputStream(file);
-                            fos.write(string.getBytes());
-                            fos.flush();
-                            fos.close();
-                        } catch (FileNotFoundException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-
-
-                        //Read back file and check against original.
-                        try {
-                            FileInputStream fis = new FileInputStream(file);
-                            byte[] data = new byte[(int)file.length()];
-
-                            fis.read(data);
-                            String tmpIN = new String(data,"UTF-8");
-                            Log.d("Read Back Template:", tmpIN);
-                            Log.d("Template Saved Correctly:",""+tmpIN.equals(string));
-                        } catch (FileNotFoundException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (UnsupportedEncodingException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-
-                        //Set template name and go back to select template
-                        backToMain();
-
-                    }
-                });
-
-                alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Canceled.
-                    }
-                });
-
-                alert.show();
-
-            } else {
-                //Convert template to string the write it and read it back to check.
-                String string = newTemp.toString();
-
-                //Save File
-                try {
-                    FileOutputStream fos = new FileOutputStream(file);
-                    fos.write(string.getBytes());
-                    fos.flush();
-                    fos.close();
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-
-                //Read back file and check against original.
-                try {
-                    FileInputStream fis = new FileInputStream(file);
-                    byte[] data = new byte[(int)file.length()];
-
-                    fis.read(data);
-                    String tmpIN = new String(data,"UTF-8");
-                    Log.d("Read Back Template:", tmpIN);
-                    Log.d("Template Saved Correctly:",""+tmpIN.equals(string));
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                backToMain();
-            }
+			newTemp.name = input.getText().toString();;
+            FileHandler.saveTemplate(context, newTemp);
+            backToMain();
 		  }
 		});
 	
@@ -191,10 +79,14 @@ public class TemplateActivity extends Activity {
 	
 		alert.show();
 	}
-	
+
 	public void backToMain() {
         Intent intent = new Intent(TemplateActivity.this, HomeActivity.class);
-        intent.putExtra("result",newTemp.name);
+        intent.putExtra("redirect", 1);
+        intent.putExtra("activeTemplateString", newTemp.toString());
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
     }
 

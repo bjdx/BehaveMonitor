@@ -44,35 +44,48 @@ public class SessionFragment extends Fragment {
     //starts Activity.
     public void createSession() {
         View rootView = getView();
+        if (rootView == null) {
+            return;
+        }
+
         EditText nameET = (EditText) rootView.findViewById(R.id.session_name);
         EditText locET = (EditText) rootView.findViewById(R.id.session_location);
-        String n = nameET.getText().toString();
-        String loc = locET.getText().toString();
+        String name = nameET.getText().toString();
+        String location = locET.getText().toString();
 
-        if(n.length()>0 && loc.length()>0) {
-
+        if (name.length() > 0 && location.length() > 0) {
             HomeActivity mA = (HomeActivity) getActivity();
+
             if(mA.getTemplateName().equals("")) {
                 makeSomeToast("Please select a template to use in this session.");
                 mA.displayFragment(1);
-            } else if(mA.getFolderName().equals("")){
-                makeSomeToast("Please select a folder to use in this session.");
-                mA.displayFragment(0);
-            } else {
-                Session newSession = mA.makeSession(n, loc);
-//                Bundle b = new Bundle();
-                Intent intent = new Intent(getActivity(), SessionActivity.class);
-                intent.putExtra("activeFolderString", mA.getFolderName());
-                intent.putExtra("Session", newSession);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
             }
 
-        } else {
+            String activeFolder = mA.getFolderName();
+            if ("".equals(activeFolder)) {
+                makeSomeToast("Please select a folder to use in this session.");
+                mA.displayFragment(0);
 
-            //ADD TOAST TO TELL THEM TO FILL OUT THING
+                return;
+            } else {
+                if (!FileHandler.checkSessionName(activeFolder, name)) {
+                    makeSomeToast("A session of this name already exists in the selected folder.");
+                    return;
+                }
+            }
+
+            Session newSession = mA.makeSession(name, location);
+            Intent intent = new Intent(getActivity(), SessionActivity.class);
+            intent.putExtra("activeFolderString", mA.getFolderName());
+            intent.putExtra("Session", newSession);
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+            startActivity(intent);
+
+        } else {
             makeSomeToast("Please enter a name and location for this session before continuing.");
         }
     }

@@ -64,6 +64,17 @@ public class FileHandler {
         }
     }
 
+    /**
+     * Checks to see if a session with the given name already exists within the given folder.
+     * @param activeFolder the folder to check in
+     * @param session the session name to check for
+     * @return true if the session name is unique within the folder, false otherwise.
+     */
+    public static boolean checkSessionName(String activeFolder, String session) {
+        File file = new File(getSessionsDirectory(), activeFolder + File.separator + session + ".txt");
+        return !file.exists();
+    }
+
     public static boolean saveSession(String folder, Session session) {
         String name = session.getName() + ".txt";
         File file = new File(getSessionsDirectory(), folder + File.separator + name);

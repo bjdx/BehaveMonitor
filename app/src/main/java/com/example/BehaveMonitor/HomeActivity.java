@@ -7,6 +7,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
+import com.example.BehaveMonitor.fragments.FolderFragment;
+import com.example.BehaveMonitor.fragments.NavigationDrawerFragment;
+import com.example.BehaveMonitor.fragments.SessionFragment;
+import com.example.BehaveMonitor.fragments.TemplateFragment;
+
 import java.io.File;
 
 
@@ -61,13 +66,13 @@ public class HomeActivity extends ActionBarActivity
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            int redirect = bundle.getInt("redirect", -1);
+//            int redirect = bundle.getInt("redirect", -1);
             String tString = bundle.getString("activeTemplateString");
 
             if (tString != null) activeTemplate = new Template(tString);
-            if (redirect != -1) {
-                displayFragment(redirect);
-            }
+//            if (redirect != -1) {
+//                displayFragment(redirect);
+//            }
         }
     }
 
@@ -124,13 +129,13 @@ public class HomeActivity extends ActionBarActivity
         Fragment fragment = null;
         switch(position) {
             case 0:
-                fragment = new FolderFragment();
+                fragment = new SessionFragment();
                 break;
             case 1:
-                fragment = new TemplateFragment();
+                fragment = new FolderFragment();
                 break;
             case 2:
-                fragment = new SessionFragment();
+                fragment = new TemplateFragment();
                 break;
             default:
                 break;

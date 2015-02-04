@@ -1,5 +1,6 @@
-package com.example.BehaveMonitor;
+package com.example.BehaveMonitor.adapters;
 
+import com.example.BehaveMonitor.ObjectDrawerItem;
 import com.example.BehaveMonitor.R;
 
 import android.app.Activity;

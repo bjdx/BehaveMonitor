@@ -7,4 +7,4 @@
     android:divider="@android:color/transparent"
     android:dividerHeight="0dp"
     android:background="@color/black"
-    tools:context="com.example.BehaveMonitor.NavigationDrawerFragment" />
+    tools:context="com.example.BehaveMonitor.fragments.NavigationDrawerFragment" />

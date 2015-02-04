@@ -124,9 +124,6 @@ public class SessionActivity extends Activity {
         addSessionTimerTask();
         sml.addView(sessionTimeTV);
 
-
-
-
         int index = 0;
         LinearLayout currentLevel = null;
 
@@ -144,11 +141,12 @@ public class SessionActivity extends Activity {
                 Button button = createBehaviourButton(b);
                 if(currentLevel != null) currentLevel.addView(button);
             }
+
             index++;
         }
 
         //If there is less than 3 buttons in the final row, it won't have been added so add it.
-        if(index % 3 != 0 && currentLevel != null) {
+        if(index % 3 != 1 && currentLevel != null) {
             sml.addView(currentLevel);
         }
 
@@ -313,6 +311,7 @@ public class SessionActivity extends Activity {
     public void onBackPressed() {
         Intent intent = new Intent(this, HomeActivity.class);
         intent.putExtra("activeFolderString", new File(FileHandler.getSessionsDirectory(), activeFolder).getAbsolutePath());
+        intent.putExtra("activeTemplateString", activeSession.getTemplate().toString());
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);

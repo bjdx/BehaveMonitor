@@ -1,6 +1,7 @@
-package com.example.BehaveMonitor;
+package com.example.BehaveMonitor.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -17,8 +18,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import com.example.BehaveMonitor.ObjectDrawerItem;
+import com.example.BehaveMonitor.R;
+import com.example.BehaveMonitor.adapters.DrawerItemCustomAdapter;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -56,6 +62,9 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
+    private String[] mNavigationDrawerItemTitles;
+//    private CharSequence mTitle;
+
     public NavigationDrawerFragment() {
     }
 
@@ -72,6 +81,9 @@ public class NavigationDrawerFragment extends Fragment {
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
             mFromSavedInstanceState = true;
         }
+
+        mNavigationDrawerItemTitles = getResources().getStringArray(R.array.navigation_drawer_items_array);
+//        mTitle = mNavigationDrawerItemTitles[mCurrentSelectedPosition];
 
         // Select either the default item (0) or the last selected item.
         selectItem(mCurrentSelectedPosition);
@@ -97,9 +109,9 @@ public class NavigationDrawerFragment extends Fragment {
         });
 
         ObjectDrawerItem[] objectDrawerItems = new ObjectDrawerItem[] {
-                new ObjectDrawerItem(R.drawable.ic_action_collection, "Folder"),
-                new ObjectDrawerItem(R.drawable.ic_action_copy, "Template"),
-                new ObjectDrawerItem(R.drawable.ic_action_labels, "Session")
+                new ObjectDrawerItem(R.drawable.ic_action_collection, mNavigationDrawerItemTitles[0]),
+                new ObjectDrawerItem(R.drawable.ic_action_copy, mNavigationDrawerItemTitles[1]),
+                new ObjectDrawerItem(R.drawable.ic_action_labels, mNavigationDrawerItemTitles[2])
         };
         DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(getActivity(),  R.layout.listview_item_row, objectDrawerItems);
         mDrawerListView.setAdapter(adapter);
@@ -126,9 +138,12 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
 
-        ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        final ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle(mNavigationDrawerItemTitles[0]);
+
+//        mNavigationDrawerItemTitles = getResources().getStringArray(R.array.navigation_drawer_items_array);
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the navigation drawer and the action bar app icon.
@@ -141,6 +156,7 @@ public class NavigationDrawerFragment extends Fragment {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+
                 if (!isAdded()) {
                     return;
                 }
@@ -153,6 +169,12 @@ public class NavigationDrawerFragment extends Fragment {
                 super.onDrawerOpened(drawerView);
                 if (!isAdded()) {
                     return;
+                }
+
+                View currentFocus = getActivity().getCurrentFocus();
+                if (currentFocus != null) {
+                    InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
                 }
 
                 if (!mUserLearnedDrawer) {
@@ -193,6 +215,7 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     public void setItemChecked(int position) {
+        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(mNavigationDrawerItemTitles[position]);
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
         }

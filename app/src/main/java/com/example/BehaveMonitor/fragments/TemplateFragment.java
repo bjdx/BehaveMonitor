@@ -1,4 +1,4 @@
-package com.example.BehaveMonitor;
+package com.example.BehaveMonitor.fragments;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,14 +16,19 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.BehaveMonitor.FileHandler;
+import com.example.BehaveMonitor.HomeActivity;
+import com.example.BehaveMonitor.R;
+import com.example.BehaveMonitor.Template;
+import com.example.BehaveMonitor.TemplateActivity;
+
 import java.io.File;
 
 public class TemplateFragment extends Fragment {
 
     private String activeTemplate;
 
-	public TemplateFragment() {
-	}
+	public TemplateFragment() { }
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -121,7 +126,7 @@ public class TemplateFragment extends Fragment {
 	
 	public String[] getTemplateNames() {
 //		String dirPath = getActivity().getFilesDir().getAbsolutePath()+ File.separator + "Templates";
-		File projDir = new File(FileHandler.getTemplateDirectory());
+		File projDir = FileHandler.getTemplateDirectory();
 		String[] files = projDir.list();
 		if(files.length == 0) {
 			Log.e("getFolders Error", "No templates exist.");
@@ -145,24 +150,16 @@ public class TemplateFragment extends Fragment {
 	
 	public void setNewButton(View rootView) {
 		ImageButton button = (ImageButton) rootView.findViewById(R.id.new_template);
-		Log.w("button",button.toString());
 		button.setOnClickListener(new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
-				
 				newTemplate(getActivity());
 			}
-			
-		
 		});
 	}
 	
 	public void newTemplate(final Context context) {
 		Intent intent = new Intent(context, TemplateActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
 	}
 
@@ -181,8 +178,6 @@ public class TemplateFragment extends Fragment {
 					deleteTemplate(getActivity(), rootView);
 				}
 			}
-			
-		
 		});
 	}
 	
@@ -211,12 +206,16 @@ public class TemplateFragment extends Fragment {
 	
 		alert.show();
 	}
-	
-	
-	//returns true if the filePath has the extension .tmp
-	public boolean checkTmpExt(String filePath) {
+
+
+    /**
+     * Takes a path to a file and checks if the file is a template.
+     * @param filePath the path to the file to check
+     * @return true if the filePath has the extension .template
+     */
+	public boolean checkTemplateExtension(String filePath) {
 		String[] parts = filePath.split(".");
-		return (parts[parts.length-1].equals(".tmp"));
+		return (parts[parts.length-1].equals(".template"));
 	}
 
     private void makeSomeToast(final String message) {

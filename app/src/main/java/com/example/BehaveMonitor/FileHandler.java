@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileHandler {
 
@@ -25,13 +27,17 @@ public class FileHandler {
         rootDir = new File(Environment.getExternalStorageDirectory(), "Behaviour Monitor").getAbsolutePath();
     }
 
-    public static String getSessionsDirectory() {
-        return new File(rootDir, "Sessions").getAbsolutePath();
+    public static File getSessionsDirectory() {
+        return new File(rootDir, "Sessions");
     }
 
-    public static String getTemplateDirectory() {
-        return new File(rootDir, "Templates").getAbsolutePath();
+    public static File getTemplateDirectory() {
+        return new File(rootDir, "Templates");
     }
+
+//    public static String getTemplateDirectoryPath() {
+//        return new File(rootDir, "Templates").getAbsolutePath();
+//    }
 
     /**
      * Checks the required folders have been created.
@@ -41,11 +47,34 @@ public class FileHandler {
             setRootDirectory();
         }
 
-        File file = new File(rootDir, "Templates");
+        File file = getTemplateDirectory();
         file.mkdirs(); // Creates the specified folder if it doesn't already exist. Will also create any missing directories.
 
-        file = new File(rootDir, "Sessions" + File.separator + "Default");
+        file = new File(getSessionsDirectory(), "Default");
         file.mkdirs();
+    }
+
+    public static String[] getFolders() {
+        File projDir = getSessionsDirectory();
+        String[] folders = projDir.list();
+        if (folders.length == 0) {
+            Log.e("Behave", "No folders found!");
+        }
+
+        return folders;
+    }
+
+    public static List<Integer> getSessionCounts() {
+        String[] folderNames = getFolders();
+
+        List<Integer> sessionCounts = new ArrayList<>();
+        for (String name : folderNames) {
+            File folder = new File(getSessionsDirectory(), name);
+            String[] sessions = folder.list();
+            sessionCounts.add(sessions.length);
+        }
+
+        return sessionCounts;
     }
 
     public static void createNewFolder(String folderName) {
@@ -88,6 +117,27 @@ public class FileHandler {
             Log.e("Behave", "Failed to save session, couldn't find file");
         }
         return false;
+    }
+
+    public static String[] getTemplateNames() {
+        File projDir = getTemplateDirectory();
+        String[] files = projDir.list();
+        if (files.length == 0) {
+            Log.e("Behave", "No templates exist.");
+            return null;
+        } else {
+            String[] tmpNames = new String[files.length];
+            for (int i = 0; i < files.length; i++) {
+                String[] parts = files[i].split("\\.");
+                if (parts.length > 1) {
+                    if (parts[1].equals("template")) {
+                        tmpNames[i] = parts[0];
+                    }
+                }
+            }
+
+            return tmpNames;
+        }
     }
 
     public static void saveTemplate(Context context, final Template newTemp) {

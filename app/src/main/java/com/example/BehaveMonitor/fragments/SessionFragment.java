@@ -1,0 +1,350 @@
+package com.example.BehaveMonitor.fragments;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.example.BehaveMonitor.FileHandler;
+import com.example.BehaveMonitor.HomeActivity;
+import com.example.BehaveMonitor.R;
+import com.example.BehaveMonitor.Session;
+import com.example.BehaveMonitor.SessionActivity;
+import com.example.BehaveMonitor.Template;
+import com.example.BehaveMonitor.TemplateActivity;
+
+import java.io.File;
+
+public class SessionFragment extends Fragment {
+
+    private View rootView;
+
+    private String sessionName;
+    private String sessionLocation;
+
+    private File activeFolder;
+    private String activeFolderName;
+
+    private Template activeTemplate;
+    private String activeTemplateName;
+
+	public SessionFragment() { }
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+
+        rootView = inflater.inflate(R.layout.fragment_session_create, container, false);
+
+        rootView.findViewById(R.id.session_name).clearFocus();
+
+        HomeActivity homeActivity = (HomeActivity) getActivity();
+        activeFolderName = homeActivity.getFolderName();
+        activeTemplateName = homeActivity.getTemplateName();
+
+        setFolderSpinner();
+        setTemplateSpinner();
+        setNewButtons();
+
+        setCreateButton();
+
+        return rootView;
+//		View rootView = inflater.inflate(R.layout.fragment_folder, container,
+//				false);
+//
+//        HomeActivity mA = (HomeActivity) getActivity();
+//        activeFolder = mA.getFolderName();
+//
+//		setDeleteButton(rootView);
+//		setSpinner(rootView);
+//		setNewButton(rootView);
+//		setActiveFolderButton(rootView);
+//		return rootView;
+	}
+
+	private void setNewButtons() {
+		ImageButton newFolderButton = (ImageButton) rootView.findViewById(R.id.new_folder);
+		newFolderButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				newFolder(getActivity());
+			}
+		});
+
+        ImageButton newTemplateButton = (ImageButton) rootView.findViewById(R.id.new_template);
+        newTemplateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+             public void onClick(View v) {
+                newTemplate(getActivity());
+            }
+        });
+	}
+
+	private void newFolder(final Context context) {
+		AlertDialog.Builder alert = new AlertDialog.Builder(context);
+
+        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_new_folder, null);
+        alert.setView(dialogView);
+        final EditText input = (EditText) dialogView.findViewById(R.id.dialog_folder_name);
+
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				String folderName = input.getText().toString();
+                if (!"".equals(folderName)) {
+                    FileHandler.createNewFolder(folderName);
+                    activeFolderName = folderName;
+                    setFolderSpinner();
+                }
+			}
+		});
+
+		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+		alert.show();
+	}
+
+    private void newTemplate(final Context context) {
+        Intent intent = new Intent(context, TemplateActivity.class);
+        startActivity(intent);
+    }
+
+//	public void setDeleteButton(final View rootView) {
+//		ImageButton button = (ImageButton) rootView
+//				.findViewById(R.id.delete_folder);
+//		Log.w("button", button.toString());
+//		button.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//
+//				deleteFolder(getActivity(), rootView);
+//			}
+//
+//		});
+//	}
+//
+//	public void deleteFolder(final Context context, final View rootView) {
+//		AlertDialog.Builder alert = new AlertDialog.Builder(context);
+//
+//		alert.setTitle("Delete Current Folder");
+//		alert.setMessage("Are you sure you want to delete this folder? (Data inside the folder will be lost!)");
+//
+//		alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int whichButton) {
+//				Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_spinner);
+//				String folderName = spinner.getSelectedItem().toString();
+//				FileHandler.deleteFolder(folderName);
+//                setFolderSpinner();
+//			}
+//		});
+//
+//		alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int whichButton) {
+//				// Canceled.
+//			}
+//		});
+//
+//		alert.show();
+//	}
+
+	private void setFolderSpinner() {
+		String[] folders = FileHandler.getFolders();
+		Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_spinner);
+
+		// Create an ArrayAdapter using the string array and a default spinner layout
+		Log.w("spinner", spinner.toString());
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+				android.R.layout.simple_spinner_item,
+                folders);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinner.setAdapter(adapter);
+
+        if (!"".equals(activeFolderName)) {
+            int i = 0;
+            while (i < folders.length && i != -1) {
+                if (folders[i].equals(activeFolderName)) {
+                    spinner.setSelection(i);
+                    i = -2;
+                }
+                i++;
+            }
+        }
+	}
+
+    private Spinner setTemplateSpinner() {
+        String[] templates = FileHandler.getTemplateNames();
+        if (templates == null || templates.length == 0) {
+            templates = new String[]{"No templates exist."};
+        } else {
+            for (String s : templates) {
+                Log.e("Behave", "Folder name: " + s);
+            }
+        }
+
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.template_spinner);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, templates);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        if (!"".equals(activeTemplateName)) {
+            int i = 0;
+            while (i < templates.length && i != -1) {
+                if (templates[i].equals(activeTemplateName)) {
+                    spinner.setSelection(i);
+                    i = -2;
+                }
+                i++;
+            }
+        }
+
+        return spinner;
+    }
+
+    private void setCreateButton() {
+        Button button = (Button) rootView.findViewById(R.id.session_create_btn);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveFolder();
+                if (validate()) {
+                    if (loadSelectedTemplate()) {
+                        createSession();
+                    }
+                }
+            }
+        });
+    }
+
+    private boolean validate() {
+        sessionName = ((EditText) rootView.findViewById(R.id.session_name)).getText().toString();
+        sessionLocation = ((EditText) rootView.findViewById(R.id.session_location)).getText().toString();
+
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.template_spinner);
+        activeTemplateName = spinner.getSelectedItem().toString();
+
+        if ("No templates exist.".equals(activeTemplateName)) {
+            makeSomeToast("Must select a template");
+            return false;
+        }
+
+        if ("".equals(sessionName)) {
+            makeSomeToast("Must enter a name");
+            return false;
+        }
+
+        if (!FileHandler.checkSessionName(activeFolderName, sessionName)) {
+            makeSomeToast("A session of this name already exists in the selected folder.");
+            return false;
+        }
+
+        if ("".equals(sessionLocation)) {
+            makeSomeToast("Must enter a location");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void setActiveFolder() {
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_spinner);
+
+        String folderName = spinner.getSelectedItem().toString();
+        activeFolder = new File(FileHandler.getSessionsDirectory(), folderName);
+        activeFolderName = activeFolder.getName();
+    }
+
+    private boolean loadSelectedTemplate() {
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.template_spinner);
+        String templateName = spinner.getSelectedItem().toString();
+
+        String template = FileHandler.readTemplate(templateName);
+
+        if (!"".equals(template)) {
+            activeTemplate = new Template(template);
+            activeTemplateName = templateName;
+            return true;
+//            HomeActivity homeActivity = (HomeActivity) getActivity();
+//            homeActivity.setActiveTmp(new Template(template));
+        } else {
+            makeSomeToast("Error reading template.");
+        }
+
+        return false;
+    }
+
+    /**
+     * Creates new intent to go to SessionActivity, adds the user defined Session
+     * (parcelable so can be putExtra-ed no hassle),
+     * starts Activity.
+     */
+    public void createSession() {
+        Session newSession = new Session(sessionName, sessionLocation, activeFolder.getAbsolutePath());
+        newSession.setTemplate(activeTemplate);
+
+        Intent intent = new Intent(getActivity(), SessionActivity.class);
+        intent.putExtra("activeFolderString", activeFolderName);
+        intent.putExtra("Session", newSession);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+        startActivity(intent);
+    }
+
+    private void makeSomeToast(final String message) {
+        final Context context = getActivity();
+        final int duration = Toast.LENGTH_SHORT;
+
+        final Toast toast = Toast.makeText(context, message, duration);
+        toast.show();
+    }
+
+//    /**
+//     * Takes a path to a file and checks if the file is a template.
+//     * @param filePath the path to the file to check
+//     * @return true if the filePath has the extension .template
+//     */
+//    public boolean checkTemplateExtension(String filePath) {
+//        String[] parts = filePath.split("\\.");
+//        if (parts.length == 0) return false;
+//        return parts[parts.length - 1].equals(".template");
+//    }
+
+//	public void setActiveFolderButton(final View rootView) {
+//		Button button = (Button) rootView.findViewById(R.id.select_folder);
+//		button.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_spinner);
+//
+//				String folderName = spinner.getSelectedItem().toString();
+//				File activeFolder = new File(FileHandler.getSessionsDirectory(), folderName);
+//				((HomeActivity) getActivity()).setActiveFolder(activeFolder);
+//
+//				// Change colour and move to next fragment
+//				((HomeActivity) getActivity()).displayFragment(1);
+//			}
+//
+//		});
+//	}
+
+}

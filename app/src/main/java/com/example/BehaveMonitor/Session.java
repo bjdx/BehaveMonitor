@@ -68,7 +68,7 @@ public class Session implements Parcelable {
 
 
     //Constructor initialising the name and location
-    Session(String name, String location, String path) {
+    public Session(String name, String location, String path) {
         this.name = name;
         this.location = location;
         this.path = path;

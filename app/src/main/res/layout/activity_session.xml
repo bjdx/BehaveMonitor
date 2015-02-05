@@ -49,13 +49,12 @@
             android:orientation="horizontal"
             android:paddingTop="20dp">
 
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Behaviours:"
-                android:id="@+id/bText"/>
+                android:id="@+id/bText" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -63,7 +62,6 @@
                 android:orientation="vertical"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:id="@+id/behaveLayout">
-
 
             </LinearLayout>
 
@@ -81,11 +79,9 @@
                 android:text="Start Session"
                 android:background="@drawable/button_style"
                 android:textColor="@color/white"
-                android:id="@+id/start_session"/>
+                android:id="@+id/start_session" />
 
-            </LinearLayout>
-
-
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -93,10 +89,50 @@
         android:id="@+id/end_session_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/button_style"
         android:textColor="@color/white"
         android:text="End Session"
         android:onClick="endSession" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/black"
+            android:gravity="end"
+            android:text="Session time:  "/>
+
+        <TextView
+            android:id="@+id/session_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/black"
+            android:text="00:00:00" />
+
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/session_behaviour_grid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:stretchMode="columnWidth"
+        android:numColumns="3"
+        android:horizontalSpacing="5dp"
+        android:verticalSpacing="5dp"
+        android:gravity="center" />
+
+    <ListView
+        android:id="@+id/session_history_list"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="10dp" />
 
 </LinearLayout>

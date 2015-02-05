@@ -86,9 +86,35 @@ public class FileHandler {
 
     public static void deleteFolder(String folder) {
         File projDir = new File(getSessionsDirectory(), folder);
-        if (projDir.exists()) {
-            if (!projDir.delete()) {
-                Log.e("Behave", "Failed to delete session folder!");
+        deleteDirectory(projDir);
+
+//        if (projDir.exists()) {
+//            if (!projDir.delete()) {
+//                Log.e("Behave", "Failed to delete session folder!");
+//            }
+//        }
+
+        if ("Default".equals(folder)) { // If default folder, remake folder
+            File file = new File(getSessionsDirectory(), "Default");
+            file.mkdirs();
+        }
+    }
+
+    private static void deleteDirectory(File directory) {
+        if (directory.exists()) {
+            File[] contents = directory.listFiles();
+            for (File content : contents) {
+                if (content.isDirectory()) {
+                    deleteDirectory(content);
+                } else {
+                    if (!content.delete()) {
+                        Log.e("Behave", "Failed to delete file: " + content.getName());
+                    }
+                }
+            }
+
+            if (!directory.delete()) {
+                Log.e("Behave", "Failed to delete file: " + directory.getName());
             }
         }
     }
@@ -180,11 +206,9 @@ public class FileHandler {
             fos.write(string.getBytes());
             fos.flush();
             fos.close();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

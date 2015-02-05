@@ -19,17 +19,17 @@ public class Behaviour implements Parcelable {
 	int type;
 	
 	//Holds the events for this behaviour.
-	ArrayList<Event> eventHistory = new ArrayList<Event>();
+	ArrayList<Event> eventHistory = new ArrayList<>();
 	
 	//Holds the current state event before its ended and added to the history.
 	Event currentEvent = null;
 
-    Behaviour(){};
+    Behaviour(){}
 
     Behaviour(Parcel in) {
         bName = in.readString();
         type = in.readInt();
-        eventHistory = new ArrayList<Event>();
+        eventHistory = new ArrayList<>();
         in.readTypedList(eventHistory,Event.CREATOR);
         currentEvent = in.readParcelable(Event.class.getClassLoader());
     }
@@ -45,16 +45,25 @@ public class Behaviour implements Parcelable {
         }
     };
 
+    public String getName() {
+        return bName;
+    }
 
-	
-	public void newEvent() {
+    public int getType() {
+        return type;
+    }
+
+    public Event getCurrentEvent() {
+        return currentEvent;
+    }
+
+    public void newEvent() {
 		if(this.type==0) {
 			Event event = new Event();
 			event.duration = "";
 			eventHistory.add(event);
 		} else if(this.type == 1) {
-			Event event = new Event();
-			currentEvent = event;
+			currentEvent = new Event();
 		} else {
 			Log.e("Event type error", "the eType was not a 1 or a 0");
 			//ERROR

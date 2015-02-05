@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by BJD on 06/12/2014.
@@ -77,9 +78,11 @@ public class Session implements Parcelable {
     public Session(Parcel in) {
         this.name = in.readString();
         Long tmpTime = in.readLong();
-        if (tmpTime != null) this.startTime = new Date(tmpTime);
+//        if (tmpTime != null)
+        this.startTime = new Date(tmpTime);
         tmpTime = in.readLong();
-        if (tmpTime != null) this.endTime = new Date(tmpTime);
+//        if (tmpTime != null)
+        this.endTime = new Date(tmpTime);
         this.location = in.readString();
 
         // readParcelable need class loader
@@ -95,41 +98,21 @@ public class Session implements Parcelable {
         this.name = name;
     }
 
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
-
     public String getLocation() {
         return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public Template getTemplate() {
         return template;
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
+//    public String getPath() {
+//        return path;
+//    }
+//
+//    public void setPath(String path) {
+//        this.path = path;
+//    }
 
     //Method for setting the behaviour template.
     public void setTemplate(Template template) {
@@ -165,8 +148,8 @@ public class Session implements Parcelable {
         out += "Template Name," + this.template.name + "\n";
 
         //Split behaviour types.
-        ArrayList<Behaviour> eBe = new ArrayList<Behaviour>();
-        ArrayList<Behaviour> sBe = new ArrayList<Behaviour>();
+        ArrayList<Behaviour> eBe = new ArrayList<>();
+        ArrayList<Behaviour> sBe = new ArrayList<>();
         for (Behaviour b : this.template.behaviours) {
             if (b.type == 0) {
                 eBe.add(b);
@@ -210,7 +193,7 @@ public class Session implements Parcelable {
         diff -= seconds*1000;
 
         String out = "" + seconds + ".";
-        int length = new String(""+diff).length();
+        int length = ("" + diff).length();
 
         switch(length) {
             case(0):
@@ -233,23 +216,26 @@ public class Session implements Parcelable {
 
     //Returns a string of hours mins and secs since now Date.
     public String getRelativeHMS(Date now) {
-        long diff = now.getTime() - this.startTime.getTime();
-        Date out = new Date(diff);
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        return sdf.format(out);
+        long millis = now.getTime() - this.startTime.getTime();
+        return String.format("%02d:%02d:%02d",
+                    TimeUnit.MILLISECONDS.toHours(millis),
+                    TimeUnit.MILLISECONDS.toMinutes(millis) -
+                    TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+                    TimeUnit.MILLISECONDS.toSeconds(millis) -
+                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
     }
 
-
     //Stuff to make it parcelable.
-
     @Override
     public int describeContents() {
         return 0;
     }
 
 
-    //Adds contents of Session to parcel for Parcelisation in order to be entered into the
-    //Parcelisation Matrix which allows it to be sent to the other activity...
+    /**
+     * Adds contents of Session to parcel for Parcelisation in order to be entered into the
+     * Parcelisation Matrix which allows it to be sent to the other activity...
+     */
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeLong(startTime.getTime());

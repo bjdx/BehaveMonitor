@@ -23,6 +23,10 @@ public class Event implements Parcelable{
         duration = in.readString();
     }
 
+    public Date getStartTime() {
+        return startTime;
+    }
+
     public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
 
         public Event createFromParcel(Parcel in) {
@@ -42,7 +46,7 @@ public class Event implements Parcelable{
         diff -= seconds * 1000;
 
         duration = "" + seconds + ".";
-        int length = new String("" + diff).length();
+        int length = ("" + diff).length();
 
         switch(length) {
             case(0):

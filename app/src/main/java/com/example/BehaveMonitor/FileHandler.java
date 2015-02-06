@@ -1,8 +1,6 @@
 package com.example.BehaveMonitor;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Environment;
 import android.util.Log;
 
@@ -131,7 +129,7 @@ public class FileHandler {
     }
 
     public static boolean saveSession(String folder, Session session) {
-        String name = session.getName() + ".txt";
+        String name = session.getName() + ".csv";
         File file = new File(getSessionsDirectory(), folder + File.separator + name);
 
         try {
@@ -166,34 +164,39 @@ public class FileHandler {
         }
     }
 
+    public static boolean templateExists(String template) {
+        final File file = new File(getTemplateDirectory(), template + ".template");
+        return file.exists();
+    }
+
     public static void saveTemplate(Context context, final Template newTemp) {
         final File file = new File(getTemplateDirectory(), newTemp.name + ".template");
 
         //Check if the template already exists.
-        if(file.exists()) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-            alert.setTitle("Overwrite Template");
-            alert.setMessage("Warning a template with this name already exists, do you want to overwrite it?");
-
-            //If yes overwrite
-            alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    saveTemplateFile(file, newTemp);
-                }
-            });
-
-            alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    // Canceled.
-                }
-            });
-
-            alert.show();
-
-        } else {
+//        if(file.exists()) {
+//            AlertDialog.Builder alert = new AlertDialog.Builder(context);
+//
+//            alert.setTitle("Overwrite Template");
+//            alert.setMessage("Warning a template with this name already exists, do you want to overwrite it?");
+//
+//            //If yes overwrite
+//            alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                public void onClick(DialogInterface dialog, int whichButton) {
+//                    saveTemplateFile(file, newTemp);
+//                }
+//            });
+//
+//            alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                public void onClick(DialogInterface dialog, int whichButton) {
+//                    // Canceled.
+//                }
+//            });
+//
+//            alert.show();
+//
+//        } else {
             saveTemplateFile(file, newTemp);
-        }
+//        }
     }
 
     private static void saveTemplateFile(File file, Template newTemp) {

@@ -10,10 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.BehaveMonitor.FileHandler;
 import com.example.BehaveMonitor.R;
@@ -94,43 +91,43 @@ public class FolderFragment extends Fragment {
         list.setAdapter(adapter);
     }
 
-	public void setDeleteButton() {
-		ImageButton button = (ImageButton) rootView.findViewById(R.id.delete_folder);
-		button.setOnClickListener(new View.OnClickListener() {
+//	public void setDeleteButton() {
+//		ImageButton button = (ImageButton) rootView.findViewById(R.id.delete_folder);
+//		button.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//
+//				deleteFolder(getActivity(), rootView);
+//			}
+//
+//		});
+//	}
 
-			@Override
-			public void onClick(View v) {
-
-				deleteFolder(getActivity(), rootView);
-			}
-
-		});
-	}
-
-	public void deleteFolder(final Context context, final View rootView) {
-		AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-		alert.setTitle("Delete Current Folder");
-		alert.setMessage("Are you sure you want to delete this folder? (Data inside the folder will be lost!)");
-
-		alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_spinner);
-				String folderName = spinner.getSelectedItem().toString();
-				FileHandler.deleteFolder(folderName);
-//                activeFolder = "";
-//                setSpinner();
-			}
-		});
-
-		alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				// Canceled.
-			}
-		});
-
-		alert.show();
-	}
+//	public void deleteFolder(final Context context, final View rootView) {
+//		AlertDialog.Builder alert = new AlertDialog.Builder(context);
+//
+//		alert.setTitle("Delete Current Folder");
+//		alert.setMessage("Are you sure you want to delete this folder? (Data inside the folder will be lost!)");
+//
+//		alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int whichButton) {
+//				Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_spinner);
+//				String folderName = spinner.getSelectedItem().toString();
+//				FileHandler.deleteFolder(folderName);
+////                activeFolder = "";
+////                setSpinner();
+//			}
+//		});
+//
+//		alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int whichButton) {
+//				// Canceled.
+//			}
+//		});
+//
+//		alert.show();
+//	}
 
 //	private void setSpinner() {
 //		String[] folders = FileHandler.getFolders();
@@ -156,13 +153,13 @@ public class FolderFragment extends Fragment {
 //        }
 //	}
 
-    private void makeSomeToast(final String message) {
-        final Context context = getActivity();
-        final int duration = Toast.LENGTH_SHORT;
-
-        final Toast toast = Toast.makeText(context, message, duration);
-        toast.show();
-    }
+//    private void makeSomeToast(final String message) {
+//        final Context context = getActivity();
+//        final int duration = Toast.LENGTH_SHORT;
+//
+//        final Toast toast = Toast.makeText(context, message, duration);
+//        toast.show();
+//    }
 
 //    /**
 //     * Takes a path to a file and checks if the file is a template.

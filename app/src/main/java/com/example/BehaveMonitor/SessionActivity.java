@@ -292,6 +292,8 @@ public class SessionActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+        endSession(null);
+
         Intent intent = new Intent(this, HomeActivity.class);
         intent.putExtra("activeFolderString", new File(FileHandler.getSessionsDirectory(), activeFolder).getAbsolutePath());
         intent.putExtra("activeTemplateString", activeSession.getTemplate().toString());

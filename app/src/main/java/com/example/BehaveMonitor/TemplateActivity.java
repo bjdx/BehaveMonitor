@@ -27,7 +27,6 @@ import java.util.ArrayList;
 
 
 public class TemplateActivity extends Activity {
-	public int which = -1;
 	Template newTemp = new Template();
 
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,32 +45,58 @@ public class TemplateActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				//if the template isnt empty save it;
-				if(!newTemp.isEmpty())saveTemplate(v);
+				if(!newTemp.isEmpty())saveTemplate();
 			}
 		});
 	}
 	
-	public void saveTemplate(final View rootView) {
+	public void saveTemplate() {
 
         //Check to save
         final Context context = TemplateActivity.this;
 		AlertDialog.Builder alert = new AlertDialog.Builder(context);
-		
-		alert.setTitle("Save Template");
-		alert.setMessage("What do you want to save the template as:");
-		final EditText input = new EditText(context);
-		alert.setView(input);
+
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_save_template, null);
+        final EditText input = (EditText) dialogView.findViewById(R.id.dialog_template_name);
+
+//		alert.setTitle("Save Template");
+//		alert.setMessage("What do you want to save the template as:");
+//		final EditText input = new EditText(context);
+		alert.setView(dialogView);
 
         //If yes start save.
-		alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
 		public void onClick(DialogInterface dialog, int whichButton) {
-			newTemp.name = input.getText().toString();;
-            FileHandler.saveTemplate(context, newTemp);
-            backToMain();
+            String template = input.getText().toString();
+            if (FileHandler.templateExists(template)) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(context);
+
+                alert.setTitle("Overwrite Template");
+                alert.setMessage("Warning a template with this name already exists, do you want to overwrite it?");
+
+                //If yes overwrite
+                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        FileHandler.saveTemplate(TemplateActivity.this, newTemp);
+                    }
+                });
+
+                alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Canceled.
+                    }
+                });
+
+                alert.show();
+            } else {
+                newTemp.name = template;
+                FileHandler.saveTemplate(context, newTemp);
+                backToMain();
+            }
 		  }
 		});
 	
-		alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 		  public void onClick(DialogInterface dialog, int whichButton) {
 		    // Canceled.
 		  }
@@ -90,7 +115,35 @@ public class TemplateActivity extends Activity {
         startActivity(intent);
     }
 
-	//re-add behaviours to layout
+    @Override
+    public void onBackPressed() {
+        if (newTemp.isEmpty()) {
+            backToMain();
+            return;
+        }
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Save before exit?");
+        alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                saveTemplate();
+            }
+        });
+
+        alert.setNeutralButton("Don't save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                backToMain();
+            }
+        });
+
+        alert.setNegativeButton("Cancel", null);
+        alert.show();
+    }
+
+    //re-add behaviours to layout
 	//cycles through the behaviours in newTemp and adds them to the layout
 	public void updateBehaviours() {
 		LinearLayout bLayout = (LinearLayout) findViewById(R.id.behaviour_layout);
@@ -153,28 +206,41 @@ public class TemplateActivity extends Activity {
 	public void newBehaviour(final Context context) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(context);
 	
-		alert.setTitle("Behaviour Editor");
-		alert.setMessage("Specify behaviour name and type:");
-		
-		 LinearLayout layout = new LinearLayout(this);
-		 layout.setOrientation(LinearLayout.VERTICAL);
-		 layout.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
-		 
+//		alert.setTitle("Behaviour Editor");
+//		alert.setMessage("Specify behaviour name and type:");
 
-		
-		// Set an EditText view to get user input 
-		final EditText bName = new EditText(context);
-		layout.addView(bName);
-		
-		
-		final Spinner spinner = new Spinner(context);
-		String[] spinnerArray = new String[]{"Event","State"};
-		ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_behaviour, null);
+
+        final EditText bName = (EditText) dialogView.findViewById(R.id.dialog_behaviour_name);
+        final Spinner spinner = (Spinner) dialogView.findViewById(R.id.behaviour_type_spinner);
+        String[] spinnerArray = new String[]{"Event","State"};
+		ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
 		spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(spinnerArrayAdapter);
 
-		layout.addView(spinner);
-		alert.setView(layout);
+
+        alert.setView(dialogView);
+
+		
+//		 LinearLayout layout = new LinearLayout(this);
+//		 layout.setOrientation(LinearLayout.VERTICAL);
+//		 layout.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+//
+//
+//
+//		// Set an EditText view to get user input
+//		final EditText bName = new EditText(context);
+//		layout.addView(bName);
+//
+//
+//		final Spinner spinner = new Spinner(context);
+//		String[] spinnerArray = new String[]{"Event","State"};
+//		ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+//		spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//		spinner.setAdapter(spinnerArrayAdapter);
+//
+//		layout.addView(spinner);
+//		alert.setView(layout);
 		
         
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {

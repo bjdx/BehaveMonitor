@@ -95,15 +95,17 @@ public class Behaviour implements Parcelable {
 		String startTimes = "Start Times:";
 		if(this.type==0) {
 			for (Event e: this.eventHistory) {
-				startTimes += "," + sdf.format(e.startTime);
+                String mark = e.getMark() ? "m" : "";
+				startTimes += "," + sdf.format(e.startTime) + mark;
 			}
 		
 		//else type1 state durations and start times.
 		} else if(this.type == 1) {
 			String durations = "Durations:";
 			for (Event e: this.eventHistory) {
-				startTimes += "," + sdf.format(e.startTime);
-				durations += "," + e.duration;
+                String mark = e.getMark() ? "m" : "";
+				startTimes += "," + sdf.format(e.startTime) + mark;
+				durations += "," + e.duration + mark;
 			}
 			durations += "/n";
 			out += durations;

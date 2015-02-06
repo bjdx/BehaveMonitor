@@ -164,7 +164,8 @@ public class Session implements Parcelable {
             out += b.bName + "\n";
             String starts = "Start Times\n";
             for (Event e : b.eventHistory) {
-                starts += timeDiff(startTime, e.startTime) + ",";
+                String mark = e.getMark() ? "m" : "";
+                starts += timeDiff(startTime, e.startTime) + mark + ",";
             }
             out += starts + "\n";
         }
@@ -176,8 +177,9 @@ public class Session implements Parcelable {
             String starts = "Start Times\n";
             String duration = "Durations\n";
             for (Event e : b.eventHistory) {
-                starts += timeDiff(startTime, e.startTime) + ",";
-                duration += e.duration + ",";
+                String mark = e.getMark() ? "m" : "";
+                starts += timeDiff(startTime, e.startTime) + mark + ",";
+                duration += e.duration + mark + ",";
             }
             out += starts + "\n";
             out += duration + "\n";

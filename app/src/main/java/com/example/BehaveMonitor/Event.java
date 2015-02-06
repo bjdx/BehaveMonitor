@@ -12,7 +12,7 @@ public class Event implements Parcelable{
 
 	Date startTime;
 	String duration = "";
-
+    boolean marked = false;
 	
 	Event() {
 		startTime = new Date();
@@ -31,6 +31,14 @@ public class Event implements Parcelable{
         return duration;
     }
 
+    public void toggleMark() {
+        marked = !marked;
+    }
+
+    public boolean getMark() {
+        return marked;
+    }
+
     public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
 
         public Event createFromParcel(Parcel in) {
@@ -41,8 +49,7 @@ public class Event implements Parcelable{
             return new Event[size];
         }
     };
-	
-	
+
 	//Calculates the duration of a state event. Stores it in the format SS.sss
 	public void end() {
 		long diff = System.currentTimeMillis() - startTime.getTime();

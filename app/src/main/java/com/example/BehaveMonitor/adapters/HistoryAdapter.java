@@ -8,22 +8,27 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.BehaveMonitor.Event;
 import com.example.BehaveMonitor.R;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class HistoryAdapter extends BaseAdapter {
 
     private LayoutInflater inflater;
-    private List<String> events;
+    private List<Event> events;
+    private List<String> eventNames;
 
-    public HistoryAdapter(Context context, List<String> events) {
+    public HistoryAdapter(Context context, List<String> eventNames) {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.events = events;
+        events = new LinkedList<>();
+        this.eventNames = eventNames;
     }
 
-    public void addEvent(String event) {
+    public void addEvent(Event event, String name) {
         events.add(0, event);
+        eventNames.add(0, name);
         notifyDataSetChanged();
     }
 
@@ -34,12 +39,12 @@ public class HistoryAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return events.size();
+        return eventNames.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return events.get(position);
+        return eventNames.get(position);
     }
 
     @Override
@@ -49,7 +54,7 @@ public class HistoryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
+        final ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
             convertView = inflater.inflate(R.layout.session_history_element, parent, false);
@@ -62,8 +67,24 @@ public class HistoryAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        String event = events.get(position);
-        viewHolder.name.setText(event);
+        final Event event = events.get(position);
+        String eventName = eventNames.get(position);
+        viewHolder.name.setText(eventName);
+
+        String mark = event.getMark() ? "Unmark" : "Mark";
+        viewHolder.amendBtn.setText(mark);
+
+        viewHolder.amendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                event.toggleMark();
+                if (event.getMark()) {
+                    viewHolder.amendBtn.setText("Unmark");
+                } else {
+                    viewHolder.amendBtn.setText("Mark");
+                }
+            }
+        });
 
         return convertView;
     }

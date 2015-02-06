@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.BehaveMonitor.Behaviour;
+import com.example.BehaveMonitor.Event;
 import com.example.BehaveMonitor.R;
 
 import java.util.Date;
@@ -121,19 +122,21 @@ public class ButtonAdapter extends BaseAdapter {
         addToHistory(activeBehaviour, true);
         //reset the button to its name
         activeButton.setText(activeBehaviour.getName());
-        activeButton.setTextColor(Color.parseColor("#000000"));
+        activeButton.setTextColor(Color.parseColor("#ffffff"));
 
         activeButton = null;
         activeBehaviour = null;
     }
 
     private void addToHistory(Behaviour behaviour, boolean state) {
+        Event event = behaviour.getLastEvent();
+
         String message = behaviour.getName();
         if (state) {
-            message += "          " + behaviour.getLastEvent().getDuration() + "s";
+            message += "          " + event.getDuration() + "s";
         }
 
-        historyAdapter.addEvent(message);
+        historyAdapter.addEvent(event, message);
     }
 
     private void UpdateButtonTime() {

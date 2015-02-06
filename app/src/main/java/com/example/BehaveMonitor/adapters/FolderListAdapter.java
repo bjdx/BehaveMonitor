@@ -66,6 +66,9 @@ public class FolderListAdapter extends BaseAdapter {
             viewHolder.folderName = (TextView) convertView.findViewById(R.id.list_folder_name);
             viewHolder.numberSessions = (TextView) convertView.findViewById(R.id.list_sessions_amount);
             viewHolder.deleteButton = (ImageButton) convertView.findViewById(R.id.list_delete_btn);
+//            Drawable drawable = context.getResources().getDrawable(R.drawable.ic_action_discard_black);
+//            drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
+//            viewHolder.deleteButton.setImageDrawable(drawable);
 
             convertView.setTag(viewHolder);
         } else {

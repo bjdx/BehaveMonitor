@@ -27,6 +27,10 @@ public class Event implements Parcelable{
         return startTime;
     }
 
+    public String getDuration() {
+        return duration;
+    }
+
     public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
 
         public Event createFromParcel(Parcel in) {

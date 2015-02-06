@@ -21,6 +21,7 @@
         android:padding="2dp" >
 
         <Spinner
+            style="@android:style/Widget.Holo.Spinner"
             android:id="@+id/template_spinner"
             android:layout_width="0dp"
             android:layout_height="match_parent"

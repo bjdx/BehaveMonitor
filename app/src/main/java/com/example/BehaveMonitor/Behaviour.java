@@ -81,7 +81,7 @@ public class Behaviour implements Parcelable {
 
     //returns the last event added to the event history.
     public Event getLastEvent() {
-        if(!eventHistory.isEmpty()) return eventHistory.get(eventHistory.size()-1);
+        if(!eventHistory.isEmpty()) return eventHistory.get(eventHistory.size() - 1);
         else return null;
     }
 

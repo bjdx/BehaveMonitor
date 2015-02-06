@@ -1,5 +1,7 @@
 package com.example.BehaveMonitor;
 
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -74,6 +76,12 @@ public class HomeActivity extends ActionBarActivity
 //                displayFragment(redirect);
 //            }
         }
+
+        Drawable drawable = getResources().getDrawable(R.drawable.ic_action_discard_black);
+        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
+
+        drawable = getResources().getDrawable(R.drawable.ic_action_new_black);
+        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
     }
 
     /**

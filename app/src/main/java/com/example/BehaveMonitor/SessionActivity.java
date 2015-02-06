@@ -9,13 +9,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.BehaveMonitor.adapters.ButtonAdapter;
+import com.example.BehaveMonitor.adapters.HistoryAdapter;
 
 import java.io.File;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,6 +34,7 @@ public class SessionActivity extends Activity {
 
     private String activeFolder;
     private ButtonAdapter adapter;
+    private HistoryAdapter historyAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +125,7 @@ public class SessionActivity extends Activity {
         sessionTimeTV = (TextView) findViewById(R.id.session_time);
         addSessionTimerTask();
 
+        setupListView();
         setupGridView();
 
         //get the main layout
@@ -167,9 +172,15 @@ public class SessionActivity extends Activity {
 //        findViewById(R.id.end_session_btn).setVisibility(View.VISIBLE);
     }
 
+    public void setupListView() {
+        ListView list = (ListView) findViewById(R.id.session_history_list);
+        historyAdapter = new HistoryAdapter(this, new LinkedList<String>());
+        list.setAdapter(historyAdapter);
+    }
+
     public void setupGridView() {
         GridView grid = (GridView) findViewById(R.id.session_behaviour_grid);
-        adapter = new ButtonAdapter(this, activeSession.getTemplate().behaviours, bTimer, myHandler);
+        adapter = new ButtonAdapter(this, historyAdapter, activeSession.getTemplate().behaviours, bTimer, myHandler);
         grid.setAdapter(adapter);
     }
 

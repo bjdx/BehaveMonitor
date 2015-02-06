@@ -22,27 +22,26 @@ public class ButtonAdapter extends BaseAdapter {
 
     private Context context;
     private LayoutInflater inflater;
-//    private List<String> behaviourNames;
-    private List<Behaviour> behaviours;
 
-    private Button activeButton;
-    private Behaviour activeBehaviour;
+    private HistoryAdapter historyAdapter;
+    private List<Behaviour> behaviours;
 
     final Handler myHandler;
     private Timer timer;
 
-    public ButtonAdapter(Context context, List<Behaviour> behaviours, Timer timer, Handler handler) {
+    private Button activeButton;
+    private Behaviour activeBehaviour;
+
+    public ButtonAdapter(Context context, HistoryAdapter historyAdapter, List<Behaviour> behaviours, Timer timer, Handler handler) {
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        this.historyAdapter = historyAdapter;
         this.behaviours = behaviours;
 
         this.timer = timer;
         this.myHandler = handler;
     }
-
-//    public List<Behaviour> getBehaviours() {
-//        return behaviours;
-//    }
 
     public void endSession() {
         if (activeBehaviour != null) deactivateBehaviour();
@@ -81,7 +80,7 @@ public class ButtonAdapter extends BaseAdapter {
             public void onClick(View v) {
                 if (behaviour.getType() == 0) { // An event, simply activate it.
                     behaviour.newEvent();
-                    makeSomeToast(behaviour.getName() +  " event added");
+                    addToHistory(behaviour, false);
                 } else {
                     if (activeButton == null) {
                         activateBehaviour(behaviour, button);
@@ -119,12 +118,22 @@ public class ButtonAdapter extends BaseAdapter {
         timer.purge();
 
         activeBehaviour.endCurrentEvent();
+        addToHistory(activeBehaviour, true);
         //reset the button to its name
         activeButton.setText(activeBehaviour.getName());
         activeButton.setTextColor(Color.parseColor("#000000"));
 
         activeButton = null;
         activeBehaviour = null;
+    }
+
+    private void addToHistory(Behaviour behaviour, boolean state) {
+        String message = behaviour.getName();
+        if (state) {
+            message += "          " + behaviour.getLastEvent().getDuration() + "s";
+        }
+
+        historyAdapter.addEvent(message);
     }
 
     private void UpdateButtonTime() {
@@ -135,9 +144,6 @@ public class ButtonAdapter extends BaseAdapter {
         @Override
         public void run() {
             if (activeButton != null) {
-                //Sets the time to: behaviourName
-                //                    SS.sss
-
                 //Gets the time the behaviour started from the current event on that behaviour.
                 activeButton.setText(activeBehaviour.getName() + "\n" + timeDiff(activeBehaviour.getCurrentEvent().getStartTime(), new Date()));
             }

@@ -1,0 +1,8 @@
+Chicken App todo:
+
+- Add behaviour dialog (Kinda done)
+- OnBackPressed events
+- Save Sessions to file (Need to account for case where SD storage is unavailable)
+- Handling dropping out of a session (maybe save to tmp file then ask to resume on restart.)
+- Template creation page
+- Template manage page

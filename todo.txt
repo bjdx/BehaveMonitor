@@ -6,3 +6,4 @@ Chicken App todo:
 - Handling dropping out of a session (maybe save to tmp file then ask to resume on restart.)
 - Template creation page
 - Template manage page
+- Session history page

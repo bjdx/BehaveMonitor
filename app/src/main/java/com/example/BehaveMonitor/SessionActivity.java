@@ -1,7 +1,9 @@
 package com.example.BehaveMonitor;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -127,49 +129,6 @@ public class SessionActivity extends Activity {
 
         setupListView();
         setupGridView();
-
-        //get the main layout
-//        LinearLayout sml = (LinearLayout) findViewById(R.id.session_main_layout);
-
-        //Add current session time to the top of the screen
-//        TextView tv = new TextView(this);
-//        tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-//        tv.setGravity(Gravity.CENTER);
-//        sessionTimeTV = tv;
-//        addSessionTimerTask();
-//        sml.addView(sessionTimeTV);
-
-//        int index = 0;
-//        LinearLayout currentLevel = null;
-//
-//        //Go through the Behaviours and create the button layout
-//        for(Behaviour b : activeSession.getTemplate().behaviours) {
-//            //if its the first behaviour in a block of three create a new layout.
-//            if(index % 3 == 0) {
-//                //check to see its not the first behaviour (currentLevel hasn't been created).
-//                if(currentLevel != null) sml.addView(currentLevel);
-//                currentLevel = new LinearLayout(this);
-//                currentLevel.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-//                Button button = createBehaviourButton(b);
-//                currentLevel.addView(button);
-//            } else {
-//                Button button = createBehaviourButton(b);
-//                if(currentLevel != null) currentLevel.addView(button);
-//            }
-//
-//            index++;
-//        }
-//
-//        //If there is less than 3 buttons in the final row, it won't have been added so add it.
-//        if(index % 3 != 1 && currentLevel != null) {
-//            sml.addView(currentLevel);
-//        }
-
-
-        //THIS IS WHERE THE LOG NEEDS TO GO ------------------------------------------------------------<<<<
-
-        //THIS IS WHERE THE END SESSION BUTTON NEEDS TO GO----------------------------------------------<<<<
-//        findViewById(R.id.end_session_btn).setVisibility(View.VISIBLE);
     }
 
     public void setupListView() {
@@ -184,124 +143,40 @@ public class SessionActivity extends Activity {
         grid.setAdapter(adapter);
     }
 
-    // create the button for the sessions layout
-//    public Button createBehaviourButton(final Behaviour b) {
-//        Button button = new Button(this);
-//        button.setWidth(149);
-//        //set the buttons name to the behaviour name
-//        button.setText(b.bName);
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Button button = (Button) v;
-//
-//                //Add a new event to the behaviour
-//
-//
-//                //If its a state activate it
-//                //If its an event behaviour just add a new Event.
-//                if (b.type == 1) {
-//                    //No active behaviour start a new one
-//                    if(activeButton == null) {
-//                        activateBehaviour(b,button);
-//
-//                    //there is a current event - must be deactivated.
-//                    } else {
-//                        //If the behaviour is active end it
-//                        if(activeBehaviour.bName.equals(b.bName)) {
-//                            deactivateBehaviour();
-//
-//                        //If its a new behaviour, end the old one and start the new one.
-//                        } else {
-//                            deactivateBehaviour();
-//                            activateBehaviour(b,button);
-//
-//                        }
-//                    }
-//                } else {
-//                    b.newEvent();
-//                    makeSomeToast(b.bName +" Event added.");
-//                }
-//            }
-//        });
-//        return button;
-//    }
-//
-//    private void activateBehaviour(Behaviour b, Button button) {
-//        b.newEvent();
-//        activeBehaviour = b;
-//        button.setTextColor(Color.parseColor("#99CC00"));
-//        activeButton = button;
-//        //Add the update button task to the timer.
-//        bTimer.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                UpdateButtonTime();
-//            }
-//        }, 0, 100);
-//    }
-//
-//    private void deactivateBehaviour() {
-//        //removes any button update tasks.
-//        bTimer.purge();
-//
-//        activeBehaviour.endCurrentEvent();
-//        //reset the button to its name
-//        activeButton.setText(activeBehaviour.bName);
-//        activeButton.setTextColor(Color.parseColor("#000000"));
-//        //makeSomeToast(b.bName + " " + b.getLastEvent().duration);
-//        activeButton = null;
-//        activeBehaviour = null;
-//    }
-//
-//    private void UpdateButtonTime() {
-//        myHandler.post(updateButtonTime);
-//    }
-//
-//    final Runnable updateButtonTime = new Runnable() {
-//        @Override
-//        public void run() {
-//            if (activeButton != null) {
-//                //Sets the time to: behaviourName
-//                //                    SS.sss
-//
-//               //Gets the time the behaviour started from the current event on that behaviour.
-//                activeButton.setText(activeBehaviour.bName + "\n" + activeSession.timeDiff(activeBehaviour.currentEvent.startTime,new Date()));
-//            }
-//        }
-//    };
-
     public void endSession(View view) {
-        adapter.endSession();
-        activeSession.endSession();
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("End Session?");
+        dialog.setMessage("Are you sure you want to end the session?");
 
-        boolean saved = FileHandler.saveSession(activeFolder, activeSession);
-        if (saved) {
-            makeSomeToast("File saved.");
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.putExtra("activeFolderString", new File(FileHandler.getSessionsDirectory(), activeFolder).getAbsolutePath());
+        dialog.setNegativeButton("Cancel", null);
+        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                adapter.endSession();
+                activeSession.endSession();
 
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivity(intent);
-        } else {
-            makeSomeToast("Error when saving.");
-        }
+                boolean saved = FileHandler.saveSession(activeFolder, activeSession);
+                if (saved) {
+                    makeSomeToast("File saved.");
+                    Intent intent = new Intent(SessionActivity.this, HomeActivity.class);
+                    intent.putExtra("activeFolderString", new File(FileHandler.getSessionsDirectory(), activeFolder).getAbsolutePath());
+
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(intent);
+                } else {
+                    makeSomeToast("Error when saving.");
+                }
+            }
+        });
+
+        dialog.show();
     }
 
     @Override
     public void onBackPressed() {
         endSession(null);
-
-        Intent intent = new Intent(this, HomeActivity.class);
-        intent.putExtra("activeFolderString", new File(FileHandler.getSessionsDirectory(), activeFolder).getAbsolutePath());
-        intent.putExtra("activeTemplateString", activeSession.getTemplate().toString());
-
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        startActivity(intent);
     }
 
     private void makeSomeToast(final String message) {

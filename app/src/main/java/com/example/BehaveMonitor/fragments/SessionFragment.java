@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.BehaveMonitor.DBHelper;
 import com.example.BehaveMonitor.FileHandler;
 import com.example.BehaveMonitor.HomeActivity;
 import com.example.BehaveMonitor.R;
@@ -30,6 +31,7 @@ import java.io.File;
 public class SessionFragment extends Fragment {
 
     private View rootView;
+    private DBHelper db;
 
     private String sessionName;
     private String sessionLocation;
@@ -50,6 +52,8 @@ public class SessionFragment extends Fragment {
 
         rootView.findViewById(R.id.session_name).clearFocus();
 
+        db = DBHelper.getInstance(getActivity());
+
         HomeActivity homeActivity = (HomeActivity) getActivity();
         activeFolderName = homeActivity.getFolderName();
         activeTemplateName = homeActivity.getTemplateName();
@@ -61,17 +65,6 @@ public class SessionFragment extends Fragment {
         setCreateButton();
 
         return rootView;
-//		View rootView = inflater.inflate(R.layout.fragment_folder, container,
-//				false);
-//
-//        HomeActivity mA = (HomeActivity) getActivity();
-//        activeFolder = mA.getFolderName();
-//
-//		setDeleteButton(rootView);
-//		setSpinner(rootView);
-//		setNewButton(rootView);
-//		setActiveFolderButton(rootView);
-//		return rootView;
 	}
 
 	private void setNewButtons() {
@@ -123,45 +116,6 @@ public class SessionFragment extends Fragment {
         startActivity(intent);
     }
 
-//	public void setDeleteButton(final View rootView) {
-//		ImageButton button = (ImageButton) rootView
-//				.findViewById(R.id.delete_folder);
-//		Log.w("button", button.toString());
-//		button.setOnClickListener(new View.OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//
-//				deleteFolder(getActivity(), rootView);
-//			}
-//
-//		});
-//	}
-//
-//	public void deleteFolder(final Context context, final View rootView) {
-//		AlertDialog.Builder alert = new AlertDialog.Builder(context);
-//
-//		alert.setTitle("Delete Current Folder");
-//		alert.setMessage("Are you sure you want to delete this folder? (Data inside the folder will be lost!)");
-//
-//		alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//			public void onClick(DialogInterface dialog, int whichButton) {
-//				Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_spinner);
-//				String folderName = spinner.getSelectedItem().toString();
-//				FileHandler.deleteFolder(folderName);
-//                setFolderSpinner();
-//			}
-//		});
-//
-//		alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-//			public void onClick(DialogInterface dialog, int whichButton) {
-//				// Canceled.
-//			}
-//		});
-//
-//		alert.show();
-//	}
-
 	private void setFolderSpinner() {
 		String[] folders = FileHandler.getFolders();
 		Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_spinner);
@@ -181,6 +135,7 @@ public class SessionFragment extends Fragment {
                     spinner.setSelection(i);
                     i = -2;
                 }
+
                 i++;
             }
         }
@@ -210,6 +165,7 @@ public class SessionFragment extends Fragment {
                     spinner.setSelection(i);
                     i = -2;
                 }
+
                 i++;
             }
         }
@@ -280,8 +236,6 @@ public class SessionFragment extends Fragment {
             activeTemplate = new Template(template);
             activeTemplateName = templateName;
             return true;
-//            HomeActivity homeActivity = (HomeActivity) getActivity();
-//            homeActivity.setActiveTmp(new Template(template));
         } else {
             makeSomeToast("Error reading template.");
         }
@@ -295,6 +249,8 @@ public class SessionFragment extends Fragment {
      * starts Activity.
      */
     public void createSession() {
+        db.setFolderTemplate(activeFolderName, activeTemplate.toString());
+
         Session newSession = new Session(sessionName, sessionLocation, activeFolder.getAbsolutePath());
         newSession.setTemplate(activeTemplate);
 

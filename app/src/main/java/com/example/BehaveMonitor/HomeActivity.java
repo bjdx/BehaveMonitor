@@ -35,8 +35,8 @@ public class HomeActivity extends ActionBarActivity
      */
     private int fragmentDisplayed = -1;
 
-    private File activeFolder;
-    private Template activeTemplate;
+    private File activeFolder = null;
+    private Template activeTemplate = null;
     private Session activeSession;
 
     @Override
@@ -45,6 +45,7 @@ public class HomeActivity extends ActionBarActivity
         setContentView(R.layout.activity_home);
 
         FileHandler.setRootDirectory();
+        DBHelper db = DBHelper.getInstance(this);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -60,21 +61,25 @@ public class HomeActivity extends ActionBarActivity
         if (savedInstanceState != null) {
             String path = savedInstanceState.getString("activeFolderString");
             String tString = savedInstanceState.getString("activeTemplateString");
-//            String sName = savedInstanceState.getString("activeSessionName");
-//            String sLoc = savedInstanceState.getString("activeSessionLoc");
             if (path != null) activeFolder = new File(path);
             if (tString != null) activeTemplate = new Template(tString);
         }
 
+        if (activeFolder == null) {
+            activeFolder = new File(FileHandler.getSessionsDirectory(), db.getFolder());
+        }
+
+        if (activeTemplate == null) {
+            String templateString = db.getTemplate();
+            if (templateString != null) {
+                activeTemplate = new Template(templateString);
+            }
+        }
+
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-//            int redirect = bundle.getInt("redirect", -1);
             String tString = bundle.getString("activeTemplateString");
-
             if (tString != null) activeTemplate = new Template(tString);
-//            if (redirect != -1) {
-//                displayFragment(redirect);
-//            }
         }
 
         Drawable drawable = getResources().getDrawable(R.drawable.ic_action_discard_black);

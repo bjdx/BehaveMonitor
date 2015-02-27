@@ -22,7 +22,7 @@ public class FileHandler {
     private static String rootDir = null;
 
     public static void setRootDirectory() {
-        rootDir = new File(Environment.getExternalStorageDirectory(), "Behaviour Monitor").getAbsolutePath();
+        rootDir = new File(Environment.getExternalStorageDirectory(), "Chicken Scratch").getAbsolutePath();
     }
 
     public static File getSessionsDirectory() {

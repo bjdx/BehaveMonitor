@@ -30,13 +30,13 @@ public class SessionActivity extends Activity {
     Session activeSession;
     TextView sessionTimeTV = null;
     final Handler myHandler = new Handler();
-//    Behaviour activeBehaviour = null;
-//    Button activeButton = null;
     Timer bTimer = null;
 
     private String activeFolder;
     private ButtonAdapter adapter;
     private HistoryAdapter historyAdapter;
+
+    private boolean sessionStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +129,8 @@ public class SessionActivity extends Activity {
 
         setupListView();
         setupGridView();
+
+        sessionStarted = true;
     }
 
     public void setupListView() {
@@ -176,7 +178,17 @@ public class SessionActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        endSession(null);
+        if (sessionStarted) {
+            endSession(null);
+        } else {
+            Intent intent = new Intent(SessionActivity.this, HomeActivity.class);
+            intent.putExtra("activeFolderString", new File(FileHandler.getSessionsDirectory(), activeFolder).getAbsolutePath());
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+        }
     }
 
     private void makeSomeToast(final String message) {

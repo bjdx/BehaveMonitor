@@ -171,6 +171,9 @@ public class FileHandler {
 
     public static void saveTemplate(Context context, final Template newTemp) {
         final File file = new File(getTemplateDirectory(), newTemp.name + ".template");
+        if (file.exists()) {
+            file.delete();
+        }
 
         saveTemplateFile(file, newTemp);
     }

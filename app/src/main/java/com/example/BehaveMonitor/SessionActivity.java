@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -19,8 +20,12 @@ import com.example.BehaveMonitor.adapters.ButtonAdapter;
 import com.example.BehaveMonitor.adapters.HistoryAdapter;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -142,7 +147,7 @@ public class SessionActivity extends Activity {
 
     public void setupGridView() {
         GridView grid = (GridView) findViewById(R.id.session_behaviour_grid);
-        adapter = new ButtonAdapter(this, historyAdapter, activeSession.getTemplate().behaviours, bTimer, myHandler, this);
+        adapter = new ButtonAdapter(this, historyAdapter, activeSession.getTemplate().behaviours, new Timer(), myHandler, this);
         grid.setAdapter(adapter);
     }
 
@@ -174,18 +179,21 @@ public class SessionActivity extends Activity {
                 adapter.endSession();
                 activeSession.endSession();
 
-                boolean saved = FileHandler.saveSession(activeFolder, activeSession);
-                if (saved) {
-                    makeSomeToast("File saved.");
-                    Intent intent = new Intent(SessionActivity.this, HomeActivity.class);
-                    intent.putExtra("activeFolderString", new File(FileHandler.getSessionsDirectory(), activeFolder).getAbsolutePath());
+                List<Integer[]> markedEvents = new ArrayList<>();
+                List<Behaviour> behaviours = activeSession.getBehaviours();
+                for (int i = 0; i < behaviours.size(); i++) {
+                    List<Event> eventHistory = behaviours.get(i).eventHistory;
+                    for (int j = 0; j < eventHistory.size(); j++) {
+                        if (eventHistory.get(j).getMark()) {
+                            markedEvents.add(new Integer[] {i, j});
+                        }
+                    }
+                }
 
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(intent);
+                if (markedEvents.size() > 0) {
+                    showNotesQuestionDialog(behaviours, markedEvents);
                 } else {
-                    makeSomeToast("Error when saving.");
+                    saveSession();
                 }
             }
         });
@@ -193,18 +201,188 @@ public class SessionActivity extends Activity {
         dialog.show();
     }
 
+    private void showNotesQuestionDialog(final List<Behaviour> behaviours, final List<Integer[]> events) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Add notes or save now?");
+        dialog.setNeutralButton("Save Now", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                saveSession();
+            }
+        });
+
+        dialog.setPositiveButton("Add Notes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showNotesDialog(behaviours, events, 0);
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void showNotesDialog(List<Behaviour> behaviours, List<Integer[]> events, int position) {
+        Integer[] indices = events.get(position);
+        Behaviour behaviour = behaviours.get(indices[0]);
+        Event event = behaviour.eventHistory.get(indices[1]);
+        if (behaviour.getType() == BehaviourType.EVENT) {
+            showEventDialog(behaviours, events, behaviour.bName, event, position);
+        } else {
+            showStateDialog(behaviours, events, behaviour.bName, event, position);
+        }
+    }
+
+    private void showEventDialog(final List<Behaviour> behaviours, final List<Integer[]> events, String behaviourName, final Event event, final int position) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.dialog_note_event, null);
+        dialog.setView(view);
+
+        TextView titleText = (TextView) view.findViewById(R.id.dialog_note_event_title);
+        titleText.setText("Add Note  (" + (position + 1) + "/" + events.size() + ")");
+
+        TextView nameText = (TextView) view.findViewById(R.id.dialog_note_event_name);
+        nameText.setText(behaviourName);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SS", Locale.UK);
+        TextView startText = (TextView) view.findViewById(R.id.dialog_note_event_start);
+        startText.setText(sdf.format(event.getStartTime()));
+
+        final EditText noteText = (EditText) view.findViewById(R.id.dialog_note_event_text);
+        if (event.getNote().length() > 0) {
+            noteText.setText(event.getNote());
+        }
+
+        if (position != 0) {
+            dialog.setNegativeButton("Previous", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    event.setNote(noteText.getText().toString());
+                    showNotesDialog(behaviours, events, position - 1);
+                }
+            });
+        } else {
+            if (position != events.size() - 1) {
+                dialog.setNegativeButton("Finish", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        event.setNote(noteText.getText().toString());
+                        saveSession();
+                    }
+                });
+            }
+        }
+
+        if (position != events.size() - 1) {
+            dialog.setPositiveButton("Next", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    event.setNote(noteText.getText().toString());
+                    showNotesDialog(behaviours, events, position + 1);
+                }
+            });
+        } else {
+            dialog.setPositiveButton("Finish", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    event.setNote(noteText.getText().toString());
+                    saveSession();
+                }
+            });
+        }
+
+        dialog.show();
+    }
+
+    private void showStateDialog(final List<Behaviour> behaviours, final List<Integer[]> events, String behaviourName, final Event event, final int position) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.dialog_note_state, null);
+        dialog.setView(view);
+
+        TextView titleText = (TextView) view.findViewById(R.id.dialog_note_state_title);
+        titleText.setText("Add Note  (" + (position + 1) + "/" + events.size() + ")");
+
+        TextView nameText = (TextView) view.findViewById(R.id.dialog_note_state_name);
+        nameText.setText(behaviourName);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SS", Locale.UK);
+        TextView startText = (TextView) view.findViewById(R.id.dialog_note_state_start);
+        startText.setText(sdf.format(event.getStartTime()));
+
+        TextView durationText = (TextView) view.findViewById(R.id.dialog_note_state_duration);
+        durationText.setText(event.getDuration() + "s");
+
+        final EditText noteText = (EditText) view.findViewById(R.id.dialog_note_state_text);
+        if (event.getNote().length() > 0) {
+            noteText.setText(event.getNote());
+        }
+
+        if (position != 0) {
+            dialog.setNegativeButton("Previous", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    event.setNote(noteText.getText().toString());
+                    showNotesDialog(behaviours, events, position - 1);
+                }
+            });
+        } else {
+            if (position != events.size() - 1) {
+                dialog.setNegativeButton("Finish", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        event.setNote(noteText.getText().toString());
+                        saveSession();
+                    }
+                });
+            }
+        }
+
+        if (position != events.size() - 1) {
+            dialog.setPositiveButton("Next", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    event.setNote(noteText.getText().toString());
+                    showNotesDialog(behaviours, events, position + 1);
+                }
+            });
+        } else {
+            dialog.setPositiveButton("Finish", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    event.setNote(noteText.getText().toString());
+                    saveSession();
+                }
+            });
+        }
+
+        dialog.show();
+    }
+
+    private void saveSession() {
+        boolean saved = FileHandler.saveSession(activeFolder, activeSession);
+        if (saved) {
+            makeSomeToast("File saved.");
+            backToHome();
+        } else {
+            makeSomeToast("Error when saving.");
+        }
+    }
+
+    private void backToHome() {
+        Intent intent = new Intent(SessionActivity.this, HomeActivity.class);
+        intent.putExtra("activeFolderString", new File(FileHandler.getSessionsDirectory(), activeFolder).getAbsolutePath());
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intent);
+    }
+
     @Override
     public void onBackPressed() {
         if (sessionStarted) {
             endSession(null);
         } else {
-            Intent intent = new Intent(SessionActivity.this, HomeActivity.class);
-            intent.putExtra("activeFolderString", new File(FileHandler.getSessionsDirectory(), activeFolder).getAbsolutePath());
-
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivity(intent);
+            backToHome();
         }
     }
 

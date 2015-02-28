@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -106,6 +107,10 @@ public class Session implements Parcelable {
         return template;
     }
 
+    public List<Behaviour> getBehaviours() {
+        return this.template.behaviours;
+    }
+
 //    public String getPath() {
 //        return path;
 //    }
@@ -151,7 +156,7 @@ public class Session implements Parcelable {
         ArrayList<Behaviour> eBe = new ArrayList<>();
         ArrayList<Behaviour> sBe = new ArrayList<>();
         for (Behaviour b : this.template.behaviours) {
-            if (b.type == 0) {
+            if (b.type == BehaviourType.EVENT) {
                 eBe.add(b);
             } else {
                 sBe.add(b);
@@ -163,11 +168,15 @@ public class Session implements Parcelable {
         for (Behaviour b : eBe) {
             out += b.bName + "\n";
             String starts = "Start Times,";
+            String notes = "Notes,";
             for (Event e : b.eventHistory) {
                 String mark = e.getMark() ? "m" : "";
                 starts += timeDiff(startTime, e.startTime) + mark + ",";
+                notes += e.getNote() + ",";
             }
+
             out += starts + "\n";
+            out += notes + "\n";
         }
 
         out += "\nState Behaviours\n\n";
@@ -176,13 +185,17 @@ public class Session implements Parcelable {
             out += b.bName + "\n";
             String starts = "Start Times,";
             String duration = "Durations,";
+            String notes = "Notes,";
             for (Event e : b.eventHistory) {
                 String mark = e.getMark() ? "m" : "";
                 starts += timeDiff(startTime, e.startTime) + mark + ",";
                 duration += e.duration + mark + ",";
+                notes += e.getNote() + ",";
             }
+
             out += starts + "\n";
             out += duration + "\n";
+            out += notes + "\n";
         }
         return out;
     }

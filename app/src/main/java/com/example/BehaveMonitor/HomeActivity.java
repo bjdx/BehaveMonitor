@@ -172,8 +172,8 @@ public class HomeActivity extends ActionBarActivity
 
     @Override
     public void onBackPressed() {
-        if (fragmentDisplayed > 0) {
-            displayFragment(fragmentDisplayed - 1);
+        if (fragmentDisplayed != 0) {
+            displayFragment(0);
         } else {
             super.onBackPressed();
         }

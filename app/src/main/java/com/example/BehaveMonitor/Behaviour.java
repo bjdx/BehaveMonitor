@@ -58,11 +58,11 @@ public class Behaviour implements Parcelable {
     }
 
     public void newEvent() {
-		if(this.type==0) {
+		if (this.type == BehaviourType.EVENT) {
 			Event event = new Event();
 			event.duration = "";
 			eventHistory.add(event);
-		} else if(this.type == 1) {
+		} else if (this.type == BehaviourType.STATE) {
 			currentEvent = new Event();
 		} else {
 			Log.e("Event type error", "the eType was not a 1 or a 0");
@@ -81,7 +81,7 @@ public class Behaviour implements Parcelable {
 
     //returns the last event added to the event history.
     public Event getLastEvent() {
-        if(!eventHistory.isEmpty()) return eventHistory.get(eventHistory.size() - 1);
+        if (!eventHistory.isEmpty()) return eventHistory.get(eventHistory.size() - 1);
         else return null;
     }
 
@@ -93,14 +93,14 @@ public class Behaviour implements Parcelable {
 		
 		//If type0 Event just the start time
 		String startTimes = "Start Times:";
-		if(this.type==0) {
+		if (this.type == BehaviourType.EVENT) {
 			for (Event e: this.eventHistory) {
                 String mark = e.getMark() ? "m" : "";
 				startTimes += "," + sdf.format(e.startTime) + mark;
 			}
 		
 		//else type1 state durations and start times.
-		} else if(this.type == 1) {
+		} else if (this.type == BehaviourType.STATE) {
 			String durations = "Durations:";
 			for (Event e: this.eventHistory) {
                 String mark = e.getMark() ? "m" : "";

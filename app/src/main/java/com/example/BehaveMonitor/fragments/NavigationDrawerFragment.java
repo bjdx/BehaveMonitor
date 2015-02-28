@@ -109,8 +109,8 @@ public class NavigationDrawerFragment extends Fragment {
         });
 
         ObjectDrawerItem[] objectDrawerItems = new ObjectDrawerItem[] {
-                new ObjectDrawerItem(R.drawable.ic_action_collection, mNavigationDrawerItemTitles[0]),
-                new ObjectDrawerItem(R.drawable.ic_action_copy, mNavigationDrawerItemTitles[1]),
+                new ObjectDrawerItem(R.drawable.ic_action_copy, mNavigationDrawerItemTitles[0]),
+                new ObjectDrawerItem(R.drawable.ic_action_collection, mNavigationDrawerItemTitles[1]),
                 new ObjectDrawerItem(R.drawable.ic_action_labels, mNavigationDrawerItemTitles[2])
         };
         DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(getActivity(),  R.layout.listview_item_row, objectDrawerItems);

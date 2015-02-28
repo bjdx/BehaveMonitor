@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.example.BehaveMonitor.Behaviour;
 import com.example.BehaveMonitor.Event;
 import com.example.BehaveMonitor.R;
+import com.example.BehaveMonitor.SessionActivity;
 
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,7 @@ public class ButtonAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater inflater;
 
+    private SessionActivity sessionActivity;
     private HistoryAdapter historyAdapter;
     private List<Behaviour> behaviours;
 
@@ -33,10 +35,13 @@ public class ButtonAdapter extends BaseAdapter {
     private Button activeButton;
     private Behaviour activeBehaviour;
 
-    public ButtonAdapter(Context context, HistoryAdapter historyAdapter, List<Behaviour> behaviours, Timer timer, Handler handler) {
+    private boolean started = false;
+
+    public ButtonAdapter(Context context, HistoryAdapter historyAdapter, List<Behaviour> behaviours, Timer timer, Handler handler, SessionActivity sessionActivity) {
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        this.sessionActivity = sessionActivity;
         this.historyAdapter = historyAdapter;
         this.behaviours = behaviours;
 
@@ -79,6 +84,12 @@ public class ButtonAdapter extends BaseAdapter {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!started && !sessionActivity.isStarted()) {
+                    sessionActivity.startSession();
+                }
+
+                started = true;
+
                 if (behaviour.getType() == 0) { // An event, simply activate it.
                     behaviour.newEvent();
                     addToHistory(behaviour, false);

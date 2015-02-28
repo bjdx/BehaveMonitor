@@ -76,14 +76,23 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Start Session"
+                android:text="Setup Session"
                 android:background="@drawable/button_style"
                 android:textColor="@color/black"
-                android:id="@+id/start_session" />
+                android:id="@+id/setup_session" />
 
         </LinearLayout>
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/start_session_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/button_style"
+        android:textColor="@color/black"
+        android:text="Start Session" />
 
     <Button
         android:id="@+id/end_session_btn"
@@ -93,7 +102,8 @@
         android:background="@drawable/button_style"
         android:textColor="@color/black"
         android:text="End Session"
-        android:onClick="endSession" />
+        android:onClick="endSession"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -114,7 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/white"
-            android:text="00:00:00" />
+            android:text="Not Started" />
 
     </LinearLayout>
 

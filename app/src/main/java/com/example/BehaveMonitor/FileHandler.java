@@ -129,7 +129,7 @@ public class FileHandler {
     }
 
     public static boolean saveSession(String folder, Session session) {
-        String name = session.getName() + ".csv";
+        String name = session.getName() + "_" + session.getLocation() + ".csv";
         File file = new File(getSessionsDirectory(), folder + File.separator + name);
 
         try {
@@ -172,31 +172,7 @@ public class FileHandler {
     public static void saveTemplate(Context context, final Template newTemp) {
         final File file = new File(getTemplateDirectory(), newTemp.name + ".template");
 
-        //Check if the template already exists.
-//        if(file.exists()) {
-//            AlertDialog.Builder alert = new AlertDialog.Builder(context);
-//
-//            alert.setTitle("Overwrite Template");
-//            alert.setMessage("Warning a template with this name already exists, do you want to overwrite it?");
-//
-//            //If yes overwrite
-//            alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                public void onClick(DialogInterface dialog, int whichButton) {
-//                    saveTemplateFile(file, newTemp);
-//                }
-//            });
-//
-//            alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                public void onClick(DialogInterface dialog, int whichButton) {
-//                    // Canceled.
-//                }
-//            });
-//
-//            alert.show();
-//
-//        } else {
-            saveTemplateFile(file, newTemp);
-//        }
+        saveTemplateFile(file, newTemp);
     }
 
     private static void saveTemplateFile(File file, Template newTemp) {
@@ -209,8 +185,6 @@ public class FileHandler {
             fos.write(string.getBytes());
             fos.flush();
             fos.close();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -263,6 +237,4 @@ public class FileHandler {
             }
         }
     }
-
-
 }

@@ -48,16 +48,17 @@ public class SessionActivity extends Activity {
         activeFolder = b.getString("activeFolderString");
 
 //        if(activeSession != null) Log.e("Active Session is null","Parcel didnt work"+activeSession.name);
-        setupTimer();
+//        setupTimer();
         loadSessionInfo();
+        setSetupButton();
         setStartButton();
     }
 
-    private void setupTimer() {
-        bTimer = new Timer();
-//        final int delay = 100;
-
-    }
+//    private void setupTimer() {
+//        bTimer = new Timer();
+////        final int delay = 100;
+//
+//    }
 
     private void loadSessionInfo() {
         //Sets the text of the textview to correct Session details
@@ -81,20 +82,27 @@ public class SessionActivity extends Activity {
 
     }
 
-    public void setStartButton() {
-        Button button = (Button) findViewById(R.id.start_session);
+    public void setSetupButton() {
+        Button button = (Button) findViewById(R.id.setup_session);
         button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setupSession();
+            }
+        });
+    }
 
+    public void setStartButton() {
+        Button button = (Button) findViewById(R.id.start_session_btn);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startSession();
             }
         });
-
     }
 
     private void UpdateGUI() {
-        //tv.setText(String.valueOf(i)); //This causes a runtime error.
         myHandler.post(updateTime);
     }
 
@@ -107,9 +115,9 @@ public class SessionActivity extends Activity {
 
 
     private void addSessionTimerTask() {
-        final Timer myTimer = new Timer();
+        bTimer = new Timer();
         final int delay = 100;
-        myTimer.schedule(new TimerTask() {
+        bTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 UpdateGUI();
@@ -118,19 +126,12 @@ public class SessionActivity extends Activity {
     }
 
     //Called to reconfigure the screen for button display and hides the session information
-    public void startSession() {
+    public void setupSession() {
         //hide the session info layout
         findViewById(R.id.info_layout).setVisibility(View.GONE);
 
-        activeSession.startSession();
-
-        sessionTimeTV = (TextView) findViewById(R.id.session_time);
-        addSessionTimerTask();
-
         setupListView();
         setupGridView();
-
-        sessionStarted = true;
     }
 
     public void setupListView() {
@@ -141,8 +142,24 @@ public class SessionActivity extends Activity {
 
     public void setupGridView() {
         GridView grid = (GridView) findViewById(R.id.session_behaviour_grid);
-        adapter = new ButtonAdapter(this, historyAdapter, activeSession.getTemplate().behaviours, bTimer, myHandler);
+        adapter = new ButtonAdapter(this, historyAdapter, activeSession.getTemplate().behaviours, bTimer, myHandler, this);
         grid.setAdapter(adapter);
+    }
+
+    public boolean isStarted() {
+        return sessionStarted;
+    }
+
+    public void startSession() {
+        activeSession.startSession();
+
+        sessionTimeTV = (TextView) findViewById(R.id.session_time);
+        addSessionTimerTask();
+
+        findViewById(R.id.start_session_btn).setVisibility(View.GONE);
+        findViewById(R.id.end_session_btn).setVisibility(View.VISIBLE);
+
+        sessionStarted = true;
     }
 
     public void endSession(View view) {

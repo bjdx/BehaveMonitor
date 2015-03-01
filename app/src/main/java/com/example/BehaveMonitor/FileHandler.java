@@ -123,13 +123,30 @@ public class FileHandler {
      * @param session the session name to check for
      * @return true if the session name is unique within the folder, false otherwise.
      */
-    public static boolean checkSessionName(String activeFolder, String session) {
-        File file = new File(getSessionsDirectory(), activeFolder + File.separator + session + ".txt");
+    public static boolean checkSessionName(String activeFolder, String session, String location) {
+        File file = new File(getSessionsDirectory(), activeFolder + File.separator + session + "_" + location + ".csv");
         return !file.exists();
     }
 
-    public static boolean saveSession(String folder, Session session) {
-        String name = session.getName() + "_" + session.getLocation() + ".csv";
+    public static String getVersionName(String folder, String name) {
+        File file = new File(getSessionsDirectory(), folder + File.separator + name + ".csv");
+        if (!file.exists()) {
+            return name;
+        }
+
+        int i = 1;
+        while (true) {
+            String number = i < 10 ? "0" + i : "" + i;
+            file = new File(getSessionsDirectory(), folder + File.separator + name + " (v" + number + ").csv");
+            if (file.exists()) {
+                i++;
+            } else {
+                return file.getName();
+            }
+        }
+    }
+
+    public static boolean saveSession(String folder, Session session, String name) {
         File file = new File(getSessionsDirectory(), folder + File.separator + name);
 
         try {

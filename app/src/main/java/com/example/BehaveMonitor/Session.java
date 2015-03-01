@@ -60,7 +60,7 @@ public class Session implements Parcelable {
     //Date and time the session was started
     private Date startTime = new Date();
     //Date and time the session was started
-    private Date endTime = new Date();
+    private Date endTime = null;
     //The location of the session
     private String location;
     //The behaviour template the session used
@@ -82,8 +82,12 @@ public class Session implements Parcelable {
 //        if (tmpTime != null)
         this.startTime = new Date(tmpTime);
         tmpTime = in.readLong();
-//        if (tmpTime != null)
-        this.endTime = new Date(tmpTime);
+        if (tmpTime != 0) {
+            this.endTime = new Date(tmpTime);
+        } else {
+            this.endTime = null;
+        }
+
         this.location = in.readString();
 
         // readParcelable need class loader
@@ -146,7 +150,7 @@ public class Session implements Parcelable {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
         out += "Start Date," + sdf.format(startTime.getTime()) + "\n";
-        out += "End Date," + sdf.format(endTime.getTime()) + "\n";
+        out += "End Date," + ((endTime != null) ? sdf.format(endTime.getTime()) : "Autosave at " + sdf.format(new Date())) + "\n";
 
         out += "Session Location," + this.location + "\n";
 
@@ -254,7 +258,7 @@ public class Session implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeLong(startTime.getTime());
-        dest.writeLong(endTime.getTime());
+        dest.writeLong(endTime == null ? 0 : endTime.getTime());
         dest.writeString(location);
         dest.writeParcelable(template,flags);
         dest.writeString(path);

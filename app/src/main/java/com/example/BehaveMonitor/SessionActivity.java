@@ -41,6 +41,7 @@ public class SessionActivity extends Activity {
     private ButtonAdapter adapter;
     private HistoryAdapter historyAdapter;
 
+    private String filename = "";
     private boolean sessionStarted = false;
 
     @Override
@@ -85,6 +86,7 @@ public class SessionActivity extends Activity {
             i++;
         }
 
+        filename = FileHandler.getVersionName(activeFolder, activeSession.getName() + "_" + activeSession.getLocation());
     }
 
     public void setSetupButton() {
@@ -130,6 +132,42 @@ public class SessionActivity extends Activity {
         }, 0, delay);
     }
 
+    private void addAutosaveTimerTask() {
+        if (bTimer == null) {
+            bTimer = new Timer();
+        }
+
+        bTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                autosave();
+            }
+        }, 60000, 60000);
+    }
+
+    private void autosave() {
+        boolean saved = FileHandler.saveSession(activeFolder, activeSession, filename);
+        if (saved) {
+            myHandler.post(autosaveSuccess);
+        } else {
+            myHandler.post(autosaveFail);
+        }
+    }
+
+    final Runnable autosaveSuccess = new Runnable() {
+        @Override
+        public void run() {
+            makeSomeToast("Autosaved");
+        }
+    };
+
+    final Runnable autosaveFail = new Runnable() {
+        @Override
+        public void run() {
+            makeSomeToast("Autosave failed");
+        }
+    };
+
     //Called to reconfigure the screen for button display and hides the session information
     public void setupSession() {
         //hide the session info layout
@@ -160,6 +198,7 @@ public class SessionActivity extends Activity {
 
         sessionTimeTV = (TextView) findViewById(R.id.session_time);
         addSessionTimerTask();
+        addAutosaveTimerTask();
 
         findViewById(R.id.start_session_btn).setVisibility(View.GONE);
         findViewById(R.id.end_session_btn).setVisibility(View.VISIBLE);
@@ -178,6 +217,8 @@ public class SessionActivity extends Activity {
             public void onClick(DialogInterface dialog, int which) {
                 adapter.endSession();
                 activeSession.endSession();
+                bTimer.cancel();
+                bTimer.purge();
 
                 List<Integer[]> markedEvents = new ArrayList<>();
                 List<Behaviour> behaviours = activeSession.getBehaviours();
@@ -358,7 +399,7 @@ public class SessionActivity extends Activity {
     }
 
     private void saveSession() {
-        boolean saved = FileHandler.saveSession(activeFolder, activeSession);
+        boolean saved = FileHandler.saveSession(activeFolder, activeSession, filename);
         if (saved) {
             makeSomeToast("File saved.");
             backToHome();

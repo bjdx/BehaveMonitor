@@ -205,14 +205,13 @@ public class SessionFragment extends Fragment {
             return false;
         }
 
-        if (!FileHandler.checkSessionName(activeFolderName, sessionName)) {
-            makeSomeToast("A session of this name already exists in the selected folder.");
-            return false;
-        }
-
         if ("".equals(sessionLocation)) {
             makeSomeToast("Must enter a location");
             return false;
+        }
+
+        if (!FileHandler.checkSessionName(activeFolderName, sessionName, sessionLocation)) {
+            makeSomeToast("Session name already exists, will be saved with a version number");
         }
 
         return true;

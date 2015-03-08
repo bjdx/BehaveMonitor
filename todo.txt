@@ -1,7 +1,7 @@
 Chicken App todo:
 
-- Validate foldername (no special characters, give warning message)
-- Check just created folders are the default selected (after making a folder it picks the default folder BUG)
+- Validate foldername (no special characters, give warning message) *PRIORITY*
+- Check just created folders are the default selected (after making a folder it picks the default folder BUG) *PRIORITY*
 - Add options for multiple Observations in single session (possibly refactor Templates to Observations) then hold a list of 
   Observations on the Session object.
 - Add session statistics, including:

@@ -27,6 +27,8 @@ import com.example.BehaveMonitor.Template;
 import com.example.BehaveMonitor.TemplateActivity;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SessionFragment extends Fragment {
 
@@ -95,7 +97,8 @@ public class SessionFragment extends Fragment {
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String folderName = input.getText().toString();
-                if (!"".equals(folderName)) {
+                folderName = folderName.trim();
+                if (validateFolderName(folderName)) {
                     FileHandler.createNewFolder(folderName);
                     activeFolderName = folderName;
                     setFolderSpinner();
@@ -111,6 +114,15 @@ public class SessionFragment extends Fragment {
 		alert.show();
 	}
 
+    //Returns true if the foldername is valid
+    private boolean validateFolderName(String foldername) {
+        if (foldername.equals("")) return false;
+        String foldernamePattern = "[a-zA-Z0-9_ ]+";
+        Pattern pattern = Pattern.compile(foldernamePattern);
+        Matcher matcher = pattern.matcher(foldername);
+        return matcher.matches();
+    }
+
     private void newTemplate(final Context context) {
         Intent intent = new Intent(context, TemplateActivity.class);
         startActivity(intent);
@@ -118,6 +130,11 @@ public class SessionFragment extends Fragment {
 
 	private void setFolderSpinner() {
 		String[] folders = FileHandler.getFolders();
+        if (folders == null) {
+            FileHandler.checkFoldersExist();
+            folders = FileHandler.getFolders();
+        }
+
 		Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_spinner);
 
 		// Create an ArrayAdapter using the string array and a default spinner layout

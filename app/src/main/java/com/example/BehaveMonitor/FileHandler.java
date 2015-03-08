@@ -49,13 +49,15 @@ public class FileHandler {
         file.mkdirs(); // Creates the specified folder if it doesn't already exist. Will also create any missing directories.
 
         file = new File(getSessionsDirectory(), "Default");
-        file.mkdirs();
+        if(!file.mkdirs()){
+            Log.e("Failed to create Default session folder.","Folder Create Error");
+        }
     }
 
     public static String[] getFolders() {
         File projDir = getSessionsDirectory();
         String[] folders = projDir.list();
-        if (folders.length == 0) {
+        if (folders == null || folders.length == 0) {
             Log.e("Behave", "No folders found!");
         }
 

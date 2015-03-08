@@ -201,7 +201,7 @@ public class TemplateActivity extends Activity {
 
         final EditText bName = (EditText) dialogView.findViewById(R.id.dialog_behaviour_name);
         final Spinner spinner = (Spinner) dialogView.findViewById(R.id.behaviour_type_spinner);
-        String[] spinnerArray = new String[]{"Event","State"};
+        String[] spinnerArray = new String[]{"State","Event"};
 		ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
 		spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(spinnerArrayAdapter);

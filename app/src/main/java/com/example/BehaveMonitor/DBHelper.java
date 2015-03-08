@@ -90,6 +90,16 @@ public class DBHelper extends SQLiteOpenHelper {
         db.update("Preferences", contentValues, null, null);
     }
 
+    public void setFolder(String folder) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put("_id", 1);
+        contentValues.put("LastFolder", folder);
+
+        db.update("Preferences", contentValues, null, null);
+    }
+
     public void resetDatabase() {
         SQLiteDatabase db = this.getWritableDatabase();
 

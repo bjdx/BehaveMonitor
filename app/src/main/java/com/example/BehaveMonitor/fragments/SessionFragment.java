@@ -82,6 +82,7 @@ public class SessionFragment extends Fragment {
         newTemplateButton.setOnClickListener(new View.OnClickListener() {
             @Override
              public void onClick(View v) {
+                db.setFolder(activeFolderName);
                 newTemplate(getActivity());
             }
         });

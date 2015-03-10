@@ -1,14 +1,12 @@
 Chicken App todo:
 
-- Validate foldername (no special characters, give warning message) *PRIORITY*
-- Check just created folders are the default selected (after making a folder it picks the default folder BUG) *PRIORITY*
 - Add options for multiple Observations in single session (possibly refactor Templates to Observations) then hold a list of 
   Observations on the Session object.
 - Add session statistics, including:
-      - Average & Range Duration (in observation)
-      - Average & Range Duration (in all observations)
-      - Total number of events in each observation
-      - Most common followup behaviour for each behaviour (optional)
+    - Average & Range Duration (in observation)
+    - Average & Range Duration (in all observations)
+    - Total number of events in each observation
+    - Most common followup behaviour for each behaviour (optional)
 
 - Template manage page (including edit)
 - Session history page

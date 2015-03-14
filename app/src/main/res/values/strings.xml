@@ -10,6 +10,7 @@
         <item>Create Session</item>
         <item>Manage Folders</item>
         <item>Manage Templates</item>
+        <item>Session History</item>
     </string-array>
 
     <string name="drawer_open">Options</string>

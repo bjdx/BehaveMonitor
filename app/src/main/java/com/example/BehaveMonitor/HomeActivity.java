@@ -12,6 +12,7 @@ import android.util.Log;
 import com.example.BehaveMonitor.fragments.FolderFragment;
 import com.example.BehaveMonitor.fragments.NavigationDrawerFragment;
 import com.example.BehaveMonitor.fragments.SessionFragment;
+import com.example.BehaveMonitor.fragments.SessionHistoryFragment;
 import com.example.BehaveMonitor.fragments.TemplateFragment;
 
 import java.io.File;
@@ -150,6 +151,8 @@ public class HomeActivity extends ActionBarActivity
             case 2:
                 fragment = new TemplateFragment();
                 break;
+            case 3:
+                fragment = new SessionHistoryFragment();
             default:
                 break;
         }

@@ -33,10 +33,6 @@ public class FileHandler {
         return new File(rootDir, "Templates");
     }
 
-//    public static String getTemplateDirectoryPath() {
-//        return new File(rootDir, "Templates").getAbsolutePath();
-//    }
-
     /**
      * Checks the required folders have been created.
      */
@@ -50,7 +46,7 @@ public class FileHandler {
 
         file = new File(getSessionsDirectory(), "Default");
         if(!file.mkdirs()){
-            Log.e("Failed to create Default session folder.","Folder Create Error");
+            Log.e("Behave", "Failed to create Default session folder.");
         }
     }
 
@@ -81,6 +77,37 @@ public class FileHandler {
         File projDir = new File(getSessionsDirectory(), folderName);
         if (!projDir.mkdirs()) {
             Log.e("ERROR", "Failed to create directory!");
+        }
+    }
+
+    public static List<File> getSessions() {
+        List<File> sessions = new ArrayList<>();
+        File sessionsDirectory = getSessionsDirectory();
+        return findSessions(sessions, sessionsDirectory);
+    }
+
+    public static List<File> findSessions(List<File> sessions, File file) {
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                File[] contents = file.listFiles();
+                for (File content : contents) {
+                    if (content.isDirectory()) {
+                        sessions = findSessions(sessions, content);
+                    } else {
+                        sessions.add(content);
+                    }
+                }
+            } else {
+                sessions.add(file);
+            }
+        }
+
+        return sessions;
+    }
+
+    public static void deleteSession(File session) {
+        if (!session.delete()) {
+            Log.e("Behave", "Failed to delete session: " + session.getName());
         }
     }
 
@@ -149,7 +176,7 @@ public class FileHandler {
     }
 
     public static boolean saveSession(String folder, Session session, String name) {
-        File file = new File(getSessionsDirectory(), folder + File.separator + name);
+        File file = new File(getSessionsDirectory(), folder + File.separator + name + ".csv");
 
         try {
             PrintWriter printWriter = new PrintWriter(file);

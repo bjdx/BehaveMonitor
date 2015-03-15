@@ -24,16 +24,41 @@ import java.util.ArrayList;
 
 
 public class TemplateActivity extends Activity {
-	Template newTemp = new Template();
+
+    private String startTemp; // Used to check for changes
+	private Template newTemp = new Template();
+    private boolean fromFragment = false;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_template);
+
 		setAddBehaviour();
 		setSaveTemplate();
+
+        Template template = getIntent().getParcelableExtra("template");
+        if (template != null) {
+            newTemp = template;
+            updateBehaviours();
+        }
+
+        fromFragment = getIntent().getBooleanExtra("fromFragment", false);
+
+        startTemp = newTemp.toString();
 	}
-	
-	//Sets up the button for adding a behaviour
+
+    private boolean changed() {
+        if (newTemp != null && startTemp != null) {
+            if (newTemp.toString().equals(startTemp)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+	// Sets up the button for adding a behaviour
 	public void setSaveTemplate() {
 		ImageButton button = (ImageButton) findViewById(R.id.save_template);
 		Log.w("button",button.toString());
@@ -41,68 +66,112 @@ public class TemplateActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				//if the template isnt empty save it;
-				if(!newTemp.isEmpty())saveTemplate();
+//				//if the template isnt empty save it;
+//				if (!newTemp.isEmpty()) saveTemplate();
+                if (changed()) {
+                    saveTemplate();
+                }
 			}
 		});
 	}
 	
 	public void saveTemplate() {
+        if ("null;".equals(startTemp)) {
+            showNamingDialog();
+        } else {
+            showOverwriteDialog();
+        }
+	}
 
+    private void showNamingDialog() {
         //Check to save
         final Context context = TemplateActivity.this;
-		AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_save_template, null);
         final EditText input = (EditText) dialogView.findViewById(R.id.dialog_template_name);
-		alert.setView(dialogView);
+        alert.setView(dialogView);
 
         //If yes start save.
-		alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-		public void onClick(DialogInterface dialog, int whichButton) {
-            String template = input.getText().toString();
-            newTemp.name = template;
-            if (FileHandler.templateExists(template)) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-                alert.setTitle("Overwrite Template");
-                alert.setMessage("Warning a template with this name already exists, do you want to overwrite it?");
-
-                //If yes overwrite
-                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        FileHandler.saveTemplate(TemplateActivity.this, newTemp);
-                        backToMain();
-                    }
-                });
-
-                alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Canceled.
-                    }
-                });
-
-                alert.show();
-            } else {
+        alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String template = input.getText().toString();
                 newTemp.name = template;
-                FileHandler.saveTemplate(context, newTemp);
+                if (FileHandler.templateExists(template)) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(context);
+
+                    alert.setTitle("Overwrite Template");
+                    alert.setMessage("A template with this name already exists, do you want to overwrite it?");
+
+                    // If yes overwrite
+                    alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            FileHandler.saveTemplate(TemplateActivity.this, newTemp);
+                            backToMain();
+                        }
+                    });
+
+                    alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // Canceled.
+                        }
+                    });
+
+                    alert.show();
+                } else {
+                    newTemp.name = template;
+                    FileHandler.saveTemplate(context, newTemp);
+                    backToMain();
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
+    }
+
+    private void showOverwriteDialog() {
+        final Context context = TemplateActivity.this;
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_overwrite_template, null);
+        alert.setView(dialogView);
+
+        //If yes start save.
+        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                FileHandler.saveTemplate(TemplateActivity.this, newTemp);
                 backToMain();
             }
-		  }
-		});
-	
-		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-		  public void onClick(DialogInterface dialog, int whichButton) {
-		    // Canceled.
-		  }
-		});
-	
-		alert.show();
-	}
+        });
+
+        alert.setNeutralButton("Save as..", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showNamingDialog();
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
+    }
 
 	public void backToMain() {
         Intent intent = new Intent(TemplateActivity.this, HomeActivity.class);
-        intent.putExtra("redirect", 1);
+        if (fromFragment) {
+            intent.putExtra("redirect", 2);
+        }
+
         intent.putExtra("activeTemplateString", newTemp.toString());
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -112,7 +181,7 @@ public class TemplateActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (newTemp.isEmpty() || newTemp.behaviours.size() == 0) {
+        if (!changed()) {
             backToMain();
             return;
         }
@@ -142,11 +211,10 @@ public class TemplateActivity extends Activity {
 	//cycles through the behaviours in newTemp and adds them to the layout
 	public void updateBehaviours() {
 		LinearLayout bLayout = (LinearLayout) findViewById(R.id.behaviour_layout);
-		if(bLayout.getChildCount() > 0) bLayout.removeAllViews();
+		if (bLayout.getChildCount() > 0) bLayout.removeAllViews();
 		ArrayList<Behaviour> behaviours = newTemp.behaviours;
 		int numOfBs = newTemp.behaviours.size();
-		
-		
+
 		if (numOfBs > 0) {
 			//go through behaviours adding them to the layout.
 			for(int i = 0; i < numOfBs; i++) {
@@ -262,7 +330,6 @@ public class TemplateActivity extends Activity {
 			newTemp.behaviours.get(index).bName = bName.getText().toString();
 			newTemp.behaviours.get(index).type = spinner.getSelectedItemPosition();
 
-			//incase the names changeS
 	    	updateBehaviours();
 		}
 		   

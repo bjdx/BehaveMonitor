@@ -198,7 +198,7 @@ public class FileHandler {
         } else {
             String[] tmpNames = new String[files.length];
             for (int i = 0; i < files.length; i++) {
-                String[] parts = files[i].split("\\.");
+                String[] parts = files[i].split("\\.(?=[^\\.]+$)");
                 if (parts.length > 1) {
                     if (parts[1].equals("template")) {
                         tmpNames[i] = parts[0];

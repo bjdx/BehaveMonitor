@@ -88,6 +88,14 @@ public class HomeActivity extends ActionBarActivity
 
         drawable = getResources().getDrawable(R.drawable.ic_action_new_black);
         drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
+
+        drawable = getResources().getDrawable(R.drawable.ic_action_edit);
+        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
+
+        int redirect = getIntent().getIntExtra("redirect", 0);
+        if (redirect != 0) {
+            displayFragment(redirect);
+        }
     }
 
     /**

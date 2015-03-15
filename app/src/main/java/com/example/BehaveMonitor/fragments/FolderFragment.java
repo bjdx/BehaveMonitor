@@ -27,11 +27,9 @@ public class FolderFragment extends Fragment {
 	public FolderFragment() { }
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		rootView = inflater.inflate(R.layout.fragment_folder, container,
-				false);
+		rootView = inflater.inflate(R.layout.fragment_folder, container, false);
 
         setList();
 		setNewButton();

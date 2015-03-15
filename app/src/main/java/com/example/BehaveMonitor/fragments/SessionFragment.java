@@ -126,6 +126,7 @@ public class SessionFragment extends Fragment {
 
     private void newTemplate(final Context context) {
         Intent intent = new Intent(context, TemplateActivity.class);
+        intent.putExtra("fromFragment", false);
         startActivity(intent);
     }
 

@@ -80,7 +80,10 @@ public class Session implements Parcelable {
     public Session(Parcel in) {
         this.name = in.readString();
         Long tmpTime = in.readLong();
-        this.startTime.add(new Date(tmpTime));
+        if (tmpTime != 0) {
+            this.startTime.add(new Date(tmpTime));
+        }
+
         tmpTime = in.readLong();
         if (tmpTime != 0) {
             this.endTime.add(new Date(tmpTime));
@@ -265,8 +268,8 @@ public class Session implements Parcelable {
      */
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeLong(startTime.get(0).getTime());
-        dest.writeLong(endTime == null ? 0 : endTime.get(0).getTime());
+        dest.writeLong(startTime == null || startTime.size() == 0 ? 0 : startTime.get(0).getTime());
+        dest.writeLong(endTime == null || startTime.size() == 0 ? 0 : endTime.get(0).getTime());
         dest.writeString(location);
         dest.writeParcelable(template,flags);
         dest.writeString(path);

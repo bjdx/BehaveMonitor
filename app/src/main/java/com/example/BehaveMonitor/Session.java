@@ -7,12 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
-/**
- * Created by BJD on 06/12/2014.
- */
-
 
 //Session Storage Format:
 /*
@@ -58,9 +54,9 @@ public class Session implements Parcelable {
     //Name of the session
     private String name;
     //Date and time the session was started
-    private Date startTime = new Date();
+    private List<Date> startTime = new ArrayList<>();
     //Date and time the session was started
-    private Date endTime = null;
+    private List<Date> endTime = new ArrayList<>();
     //The location of the session
     private String location;
     //The behaviour template the session used
@@ -69,7 +65,12 @@ public class Session implements Parcelable {
     private String path;
 
 
-    //Constructor initialising the name and location
+    /**
+     * Constructor initialising the name, location and path
+     * @param name name of the session
+     * @param location location of the session
+     * @param path path to the folder selected
+     */
     public Session(String name, String location, String path) {
         this.name = name;
         this.location = location;
@@ -79,13 +80,10 @@ public class Session implements Parcelable {
     public Session(Parcel in) {
         this.name = in.readString();
         Long tmpTime = in.readLong();
-//        if (tmpTime != null)
-        this.startTime = new Date(tmpTime);
+        this.startTime.add(new Date(tmpTime));
         tmpTime = in.readLong();
         if (tmpTime != 0) {
-            this.endTime = new Date(tmpTime);
-        } else {
-            this.endTime = null;
+            this.endTime.add(new Date(tmpTime));
         }
 
         this.location = in.readString();
@@ -130,12 +128,12 @@ public class Session implements Parcelable {
 
     //Sets the date and time of when the session began
     public void startSession() {
-        this.startTime = new Date();
+        this.startTime.add(new Date());
     }
 
     //Sets then date and time of when the session ended
     public void endSession() {
-        this.endTime = new Date();
+        this.endTime.add(new Date());
     }
 
     /**
@@ -148,11 +146,21 @@ public class Session implements Parcelable {
     public String toString() {
         String out = "Session Name," + this.name + "\n";
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
-        out += "Start Date," + sdf.format(startTime.getTime()) + "\n";
-        out += "End Date," + ((endTime != null) ? sdf.format(endTime.getTime()) : "Autosave at " + sdf.format(new Date())) + "\n";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss", Locale.UK);
+        out += "Start Date,";
+        String endString = "\nEnd Date,";
 
-        out += "Session Location," + this.location + "\n";
+        for (int i = 0; i < startTime.size(); i++) {
+            out += sdf.format(startTime.get(i).getTime()) + ",";
+            endString += endTime.size() > i ? "Autosave at " + sdf.format(new Date()) + "," : sdf.format(endTime.get(i).getTime()) + ",";
+        }
+
+        out += endString;
+
+
+//        out += "End Date," + ((endTime != null) ? sdf.format(endTime.getTime()) : "Autosave at " + sdf.format(new Date())) + "\n";
+
+        out += "\nSession Location," + this.location + "\n";
 
         out += "Template Name," + this.template.name + "\n";
 
@@ -175,7 +183,7 @@ public class Session implements Parcelable {
             String notes = "Notes,";
             for (Event e : b.eventHistory) {
                 String mark = e.getMark() ? "m" : "";
-                starts += timeDiff(startTime, e.startTime) + mark + ",";
+                starts += timeDiff(startTime.get(0), e.startTime) + mark + ",";
                 notes += e.getNote() + ",";
             }
 
@@ -192,7 +200,7 @@ public class Session implements Parcelable {
             String notes = "Notes,";
             for (Event e : b.eventHistory) {
                 String mark = e.getMark() ? "m" : "";
-                starts += timeDiff(startTime, e.startTime) + mark + ",";
+                starts += timeDiff(startTime.get(0), e.startTime) + mark + ",";
                 duration += e.duration + mark + ",";
                 notes += e.getNote() + ",";
             }
@@ -235,7 +243,7 @@ public class Session implements Parcelable {
 
     //Returns a string of hours mins and secs since now Date.
     public String getRelativeHMS(Date now) {
-        long millis = now.getTime() - this.startTime.getTime();
+        long millis = now.getTime() - this.startTime.get(0).getTime();
         return String.format("%02d:%02d:%02d",
                     TimeUnit.MILLISECONDS.toHours(millis),
                     TimeUnit.MILLISECONDS.toMinutes(millis) -
@@ -257,8 +265,8 @@ public class Session implements Parcelable {
      */
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeLong(startTime.getTime());
-        dest.writeLong(endTime == null ? 0 : endTime.getTime());
+        dest.writeLong(startTime.get(0).getTime());
+        dest.writeLong(endTime == null ? 0 : endTime.get(0).getTime());
         dest.writeString(location);
         dest.writeParcelable(template,flags);
         dest.writeString(path);

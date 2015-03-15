@@ -6,33 +6,32 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-/**
- * Created by BJD on 06/12/2014.
- */
 public class Template implements Parcelable {
     String name;
-    ArrayList<Behaviour> behaviours = new ArrayList<Behaviour>();
+    ArrayList<Behaviour> behaviours = new ArrayList<>();
 
-
-    Template(){};
+    public Template(){}
 
     public Template(Parcel in) {
-        //BUILD FROM PARCEL
+        // BUILD FROM PARCEL
         name = in.readString();
-        behaviours = new ArrayList<Behaviour>();
-        in.readTypedList(behaviours,Behaviour.CREATOR);
+        behaviours = new ArrayList<>();
+        in.readTypedList(behaviours, Behaviour.CREATOR);
     }
 
-    //This parses a template from a stirng
+    /**
+     * Creates a template from a string
+     * @param string the string representation of a template
+     */
     public Template(String string) {
     	String[] namePart = string.split(";");
-    	if(namePart.length>1) {
+    	if (namePart.length > 1) {
 	    	name = namePart[0];
 	    	String[] behaviours = namePart[1].split(":");
-	    	if(behaviours.length>0) {
-		    	for(String b:behaviours) {
+	    	if (behaviours.length > 0) {
+		    	for (String b : behaviours) {
 		    		String[] bParts = b.split(",");
-		    		if(bParts.length>1) {
+		    		if (bParts.length > 1) {
 			    		Behaviour be = new Behaviour();
 			    		be.bName = bParts[0];
 			    		be.type = Integer.parseInt(bParts[1]);
@@ -49,25 +48,26 @@ public class Template implements Parcelable {
     	}
     }
     
-    //Outputs the templates name and all behaviours and types for saving.
+    // Outputs the templates name and all behaviours and types for saving.
     public String toString() {
-    	String out = name+";";
+    	String out = name + ";";
     	for(Behaviour b : behaviours) {
-    		out += b.bName+",";
-    		out += b.type+":";
+    		out += b.bName + ",";
+    		out += b.type + ":";
     	}
     	
 		return out;
-    	
     }
-    
+
+    /**
+     * Determines if the template has any behaviours added
+     * @return true if the template has no behaviours, false otherwise
+     */
     public boolean isEmpty() {
     	return behaviours.isEmpty();
     }
 
-
-
-    //Stuff to make it parcelable.
+    // Stuff to make it parcelable.
 
     @Override
     public int describeContents() {

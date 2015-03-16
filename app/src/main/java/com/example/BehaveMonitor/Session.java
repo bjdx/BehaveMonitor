@@ -155,16 +155,11 @@ public class Session implements Parcelable {
 
         for (int i = 0; i < startTime.size(); i++) {
             out += sdf.format(startTime.get(i).getTime()) + ",";
-            endString += endTime.size() > i ? "Autosave at " + sdf.format(new Date()) + "," : sdf.format(endTime.get(i).getTime()) + ",";
+            endString += endTime.size() <= i ? "Autosave at " + sdf.format(new Date()) + "," : sdf.format(endTime.get(i).getTime()) + ",";
         }
 
         out += endString;
-
-
-//        out += "End Date," + ((endTime != null) ? sdf.format(endTime.getTime()) : "Autosave at " + sdf.format(new Date())) + "\n";
-
         out += "\nSession Location," + this.location + "\n";
-
         out += "Template Name," + this.template.name + "\n";
 
         //Split behaviour types.

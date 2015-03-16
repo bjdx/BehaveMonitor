@@ -8,9 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.BehaveMonitor.Behaviour;
+import com.example.BehaveMonitor.BehaviourType;
 import com.example.BehaveMonitor.Event;
 import com.example.BehaveMonitor.R;
 import com.example.BehaveMonitor.SessionActivity;
@@ -22,7 +22,7 @@ import java.util.TimerTask;
 
 public class ButtonAdapter extends BaseAdapter {
 
-    private Context context;
+//    private Context context;
     private LayoutInflater inflater;
 
     private SessionActivity sessionActivity;
@@ -38,7 +38,7 @@ public class ButtonAdapter extends BaseAdapter {
     private boolean started = false;
 
     public ButtonAdapter(Context context, HistoryAdapter historyAdapter, List<Behaviour> behaviours, Timer timer, Handler handler, SessionActivity sessionActivity) {
-        this.context = context;
+//        this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         this.sessionActivity = sessionActivity;
@@ -90,7 +90,7 @@ public class ButtonAdapter extends BaseAdapter {
 
                 started = true;
 
-                if (behaviour.getType() == 0) { // An event, simply activate it.
+                if (behaviour.getType() == BehaviourType.EVENT) { // An event, simply activate it.
                     behaviour.newEvent();
                     addToHistory(behaviour, false);
                 } else {
@@ -193,8 +193,8 @@ public class ButtonAdapter extends BaseAdapter {
         return out;
     }
 
-    private void makeSomeToast(final String message) {
-        final Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
-        toast.show();
-    }
+//    private void makeSomeToast(final String message) {
+//        final Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
+//        toast.show();
+//    }
 }

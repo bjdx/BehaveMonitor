@@ -106,7 +106,7 @@ public class TemplateListAdapter extends BaseAdapter {
         context.startActivity(intent);
     }
 
-    private void deleteTemplate(int position) {
+    private void deleteTemplate(final int position) {
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
         final String templateName = templates.get(position);
@@ -116,6 +116,7 @@ public class TemplateListAdapter extends BaseAdapter {
         alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 FileHandler.deleteTemplate(templateName);
+                templates.remove(position);
                 notifyDataSetChanged();
             }
         });

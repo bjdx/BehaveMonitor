@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -95,9 +96,31 @@ public class TemplateActivity extends Activity {
         //If yes start save.
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
+
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        final AlertDialog dialog = alert.create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 String template = input.getText().toString();
+                if (template.contains(",")) {
+                    makeSomeToast("Invalid template name");
+                    return;
+                }
+
                 newTemp.name = template;
                 if (FileHandler.templateExists(template)) {
+                    dialog.dismiss();
                     AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
                     alert.setTitle("Overwrite Template");
@@ -119,20 +142,13 @@ public class TemplateActivity extends Activity {
 
                     alert.show();
                 } else {
+                    dialog.dismiss();
                     newTemp.name = template;
                     FileHandler.saveTemplate(context, newTemp);
                     backToMain();
                 }
             }
         });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-
-        alert.show();
     }
 
     private void showOverwriteDialog() {
@@ -276,24 +292,31 @@ public class TemplateActivity extends Activity {
 
         alert.setView(dialogView);
 
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-		public void onClick(DialogInterface dialog, int whichButton) {
-			Behaviour b = new Behaviour();
-			b.bName = bName.getText().toString();
-			b.type = spinner.getSelectedItemPosition();
-			newTemp.behaviours.add(b);
-			updateBehaviours();
-		}
-		   
-		});
+		alert.setPositiveButton("Ok", null);
 	
 		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 		  public void onClick(DialogInterface dialog, int whichButton) {
 		    // Canceled.
 		  }
 		});
-	
-		alert.show();
+
+        final AlertDialog dialog = alert.create();
+		dialog.show();
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String name = bName.getText().toString();
+                if (!name.contains(",") && !name.contains(";") && !name.contains(":")) {
+                    Behaviour b = new Behaviour();
+                    b.bName = name;
+                    b.type = spinner.getSelectedItemPosition();
+                    newTemp.behaviours.add(b);
+                    updateBehaviours();
+                    dialog.dismiss();
+                } else {
+                    makeSomeToast("Invalid behaviour name");
+                }
+            }
+        });
 	}
 	
 	//Brings up the dialog box with added remove button as well as info about behaviour.
@@ -306,7 +329,7 @@ public class TemplateActivity extends Activity {
 
         final EditText bName = (EditText) dialogView.findViewById(R.id.dialog_behaviour_name);
         final Spinner spinner = (Spinner) dialogView.findViewById(R.id.behaviour_type_spinner);
-        String[] spinnerArray = new String[]{"Event","State"};
+        String[] spinnerArray = new String[]{"State","Event"};
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
@@ -325,23 +348,39 @@ public class TemplateActivity extends Activity {
 			}
         });
 
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-		public void onClick(DialogInterface dialog, int whichButton) {
-			newTemp.behaviours.get(index).bName = bName.getText().toString();
-			newTemp.behaviours.get(index).type = spinner.getSelectedItemPosition();
-
-	    	updateBehaviours();
-		}
-		   
-		});
+		alert.setPositiveButton("Ok", null);
 	
 		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 		  public void onClick(DialogInterface dialog, int whichButton) {
 		    // Canceled.
 		  }
 		});
-	
-		alert.show();
+
+        final AlertDialog dialog = alert.create();
+		dialog.show();
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = bName.getText().toString();
+                if (!name.contains(",") && !name.contains(";") && !name.contains(":")) {
+                    newTemp.behaviours.get(index).bName = name;
+                    newTemp.behaviours.get(index).type = spinner.getSelectedItemPosition();
+
+                    updateBehaviours();
+                    dialog.dismiss();
+                } else {
+                    makeSomeToast("Invalid behaviour name");
+                }
+            }
+        });
 	}
+
+    private void makeSomeToast(final String message) {
+        final Context context = getApplicationContext();
+        final int duration = Toast.LENGTH_SHORT;
+
+        final Toast toast = Toast.makeText(context, message, duration);
+        toast.show();
+    }
 }
 	

@@ -21,8 +21,11 @@ public class FileHandler {
 
     private static String rootDir = null;
 
-    public static void setRootDirectory() {
+    private static Context context;
+
+    public static void setRootDirectory(Context c) {
         rootDir = new File(Environment.getExternalStorageDirectory(), "Chicken Scratch").getAbsolutePath();
+        context = c;
     }
 
     public static File getSessionsDirectory() {
@@ -36,9 +39,9 @@ public class FileHandler {
     /**
      * Checks the required folders have been created.
      */
-    public static void checkFoldersExist() {
+    public static void checkFoldersExist(Context context) {
         if (rootDir == null) {
-            setRootDirectory();
+            setRootDirectory(context);
         }
 
         File file = getTemplateDirectory();
@@ -77,6 +80,9 @@ public class FileHandler {
         File projDir = new File(getSessionsDirectory(), folderName);
         if (!projDir.mkdirs()) {
             Log.e("ERROR", "Failed to create directory!");
+        } else {
+            DBHelper db = DBHelper.getInstance(context);
+            db.setFolder(folderName);
         }
     }
 
@@ -115,11 +121,8 @@ public class FileHandler {
         File projDir = new File(getSessionsDirectory(), folder);
         deleteDirectory(projDir);
 
-//        if (projDir.exists()) {
-//            if (!projDir.delete()) {
-//                Log.e("Behave", "Failed to delete session folder!");
-//            }
-//        }
+        DBHelper db = DBHelper.getInstance(context);
+        db.removeFolder(folder);
 
         if ("Default".equals(folder)) { // If default folder, remake folder
             File file = new File(getSessionsDirectory(), "Default");
@@ -247,6 +250,10 @@ public class FileHandler {
             String tmpIN = new String(data,"UTF-8");
             Log.d("Behave","Read Back Template: "+ tmpIN);
             Log.d("Behave","Template Saved Correctly: "+tmpIN.equals(string));
+
+            DBHelper db = DBHelper.getInstance(context);
+            db.setTemplate(newTemp.toString());
+
         } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -283,6 +290,9 @@ public class FileHandler {
         if (projDir.exists()) {
             if (!projDir.delete()) {
                 Log.e("ERROR", "Failed to delete template!");
+            } else {
+                DBHelper db = DBHelper.getInstance(context);
+                db.removeTemplate(template);
             }
         }
     }

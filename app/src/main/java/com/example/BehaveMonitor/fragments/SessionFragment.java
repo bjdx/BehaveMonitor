@@ -133,7 +133,7 @@ public class SessionFragment extends Fragment {
 	private void setFolderSpinner() {
 		String[] folders = FileHandler.getFolders();
         if (folders == null) {
-            FileHandler.checkFoldersExist();
+            FileHandler.checkFoldersExist(getActivity());
             folders = FileHandler.getFolders();
         }
 

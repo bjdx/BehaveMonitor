@@ -29,6 +29,11 @@ public class FolderListAdapter extends BaseAdapter {
         this.sessionCounts = sessionCounts;
     }
 
+    public void addItem(String folderName) {
+        folders.add(folderName);
+        sessionCounts.add(0);
+    }
+
     private class ViewHolder {
         TextView folderName, numberSessions;
         ImageButton deleteButton;

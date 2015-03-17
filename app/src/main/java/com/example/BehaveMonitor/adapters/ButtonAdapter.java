@@ -115,6 +115,7 @@ public class ButtonAdapter extends BaseAdapter {
         b.newEvent();
         activeBehaviour = b;
         button.setTextColor(Color.parseColor("#99CC00"));
+//        button.setTextColor(Color.parseColor("#2E7A33"));
         activeButton = button;
         //Add the update button task to the timer.
         timer.schedule(new TimerTask() {

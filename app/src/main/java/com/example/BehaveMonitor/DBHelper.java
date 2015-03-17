@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper sInstance = null;
@@ -52,7 +53,9 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("_id", 1);
         contentValues.put("LastFolder", "Default");
         long result = db.insert("Preferences", null, contentValues);
-        result = result;
+        if (result == -1) {
+            Log.e("Behave", "Failed to insert initial standings!");
+        }
     }
 
     public String getFolder() {
@@ -98,6 +101,62 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("LastFolder", folder);
 
         db.update("Preferences", contentValues, null, null);
+    }
+
+    public void setTemplate(String template) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put("_id", 1);
+        contentValues.put("LastTemplate", template);
+
+        db.update("Preferences", contentValues, null, null);
+    }
+
+    /**
+     * Deletes the folder entry in the database if it is the current folder selected.
+     * @param folder the template name to remove
+     */
+    public void removeFolder(String folder) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query("Preferences", new String[] {"LastFolder"}, null, null, null, null, null);
+
+        if (cursor.moveToNext()) {
+            String current = cursor.getString(0);
+            if (folder.equals(current)) {
+                ContentValues contentValues = new ContentValues();
+
+                contentValues.put("_id", 1);
+                contentValues.put("LastFolder", "Default");
+
+                db.update("Preferences", contentValues, null, null);
+            }
+        }
+
+        cursor.close();
+    }
+
+    /**
+     * Deletes the template entry in the database if it is the current template selected.
+     * @param template the template name to remove
+     */
+    public void removeTemplate(String template) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query("Preferences", new String[] {"LastTemplate"}, null, null, null, null, null);
+
+        if (cursor.moveToNext()) {
+            String current = cursor.getString(0);
+            if (template.equals(current)) {
+                ContentValues contentValues = new ContentValues();
+
+                contentValues.put("_id", 1);
+                contentValues.put("LastTemplate", (String) null);
+
+                db.update("Preferences", contentValues, null, null);
+            }
+        }
+
+        cursor.close();
     }
 
     public void resetDatabase() {

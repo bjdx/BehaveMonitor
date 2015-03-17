@@ -3,12 +3,11 @@ package com.example.BehaveMonitor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.text.SimpleDateFormat;
+import org.joda.time.DateTime;
+import org.joda.time.Seconds;
+
 import java.util.Date;
 
-/**
- * Created by BJD on 06/12/2014.
- */
 public class Event implements Parcelable{
 
 	Date startTime;
@@ -68,10 +67,21 @@ public class Event implements Parcelable{
 
 	//Calculates the duration of a state event. Stores it in the format SS.sss
 	public void end() {
-		long diff = System.currentTimeMillis() - startTime.getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("s.SSS");
-        Date datediff = new Date(diff);
-        duration = sdf.format(datediff);
+
+//		long diff = System.currentTimeMillis() - startTime.getTime();
+        DateTime current = new DateTime(), eventTime = new DateTime(startTime);
+
+        int seconds = Seconds.secondsBetween(eventTime, current).getSeconds();
+        int millis = current.getMillisOfDay() - eventTime.getMillisOfDay();
+
+        duration = seconds + "." + (millis - (1000 * seconds));
+
+
+//        current = current.minus(new DateTime(startTime).getMillis());
+//        long millis = .getMillis();
+//        SimpleDateFormat sdfSeconds = new SimpleDateFormat("s.SSS");
+//        Date datediff = new Date(diff);
+//        duration = sdfSeconds.format(datediff);
 //        int seconds = (int)diff / 1000;
 //        diff -= seconds * 1000;
 //

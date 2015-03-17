@@ -45,7 +45,7 @@ public class HomeActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        FileHandler.setRootDirectory();
+        FileHandler.setRootDirectory(this);
         DBHelper db = DBHelper.getInstance(this);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -57,7 +57,7 @@ public class HomeActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        FileHandler.checkFoldersExist();
+        FileHandler.checkFoldersExist(this);
 
         if (savedInstanceState != null) {
             String path = savedInstanceState.getString("activeFolderString");
@@ -102,16 +102,19 @@ public class HomeActivity extends ActionBarActivity
      * @return The name of the active folder, or "" if no folder has been selected.
      */
     public String getFolderName() {
-        if(activeFolder == null) return "";
-        return activeFolder.getName();
+        DBHelper db = DBHelper.getInstance(this);
+        String folder = db.getFolder();
+        return folder == null ? "" : folder;
     }
 
     /**
      * @return The name of the active template, or "" if no template has been selected.
      */
     public String getTemplateName() {
-        if (activeTemplate == null) return "";
-        return activeTemplate.name;
+        DBHelper db = DBHelper.getInstance(this);
+        Template template = new Template(db.getTemplate());
+
+        return template == null ? "" : template.name;
     }
 
     public void setActiveFolder(File file) {

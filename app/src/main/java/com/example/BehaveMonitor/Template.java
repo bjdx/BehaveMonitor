@@ -24,6 +24,10 @@ public class Template implements Parcelable {
      * @param string the string representation of a template
      */
     public Template(String string) {
+        if (string == null) {
+            return;
+        }
+
     	String[] namePart = string.split(";");
     	if (namePart.length > 1) {
 	    	name = namePart[0];

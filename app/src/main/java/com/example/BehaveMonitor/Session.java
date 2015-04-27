@@ -186,10 +186,10 @@ public class Session implements Parcelable {
             }
 
             out += starts + "\n";
-            out += notes + "\n";
+            out += notes + "\n\n";
         }
 
-        out += "\nState Behaviours\n\n";
+        out += "State Behaviours\n\n";
 
         for (Behaviour b : sBe) {
             out += b.bName + "\n";
@@ -205,7 +205,7 @@ public class Session implements Parcelable {
 
             out += starts + "\n";
             out += duration + "\n";
-            out += notes + "\n";
+            out += notes + "\n\n";
         }
         return out;
     }

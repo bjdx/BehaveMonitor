@@ -3,7 +3,20 @@
 
     <string name="app_name">Chicken Scratch</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+
+    <!-- Headings -->
+    <string name="head_new_template">New Template</string>
+    <string name="head_edit_template">Edit Template</string>
+
+    <!-- Sub-headings -->
+    <string name="sub_template">Below are the behaviours in this template. Use the buttons to add behaviours, as well as save and discard changes to the template.</string>
+
+    <!-- Content descriptions for image buttons -->
+    <string name="description_new_behaviour_button">Add new behaviour</string>
+    <string name="description_save_template_button">Save template</string>
+    <string name="description_delete_behaviour_button">Delete behaviour</string>
+
+
 
     <!-- Nav Drawer Menu Items -->
     <string-array name="navigation_drawer_items_array">

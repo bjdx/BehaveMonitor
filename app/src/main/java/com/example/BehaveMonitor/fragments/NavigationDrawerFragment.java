@@ -114,6 +114,7 @@ public class NavigationDrawerFragment extends Fragment {
                 new ObjectDrawerItem(R.drawable.ic_action_labels, mNavigationDrawerItemTitles[2]),
                 new ObjectDrawerItem(R.drawable.ic_action_collection, mNavigationDrawerItemTitles[3])
         };
+
         DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(getActivity(),  R.layout.listview_item_row, objectDrawerItems);
         mDrawerListView.setAdapter(adapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);

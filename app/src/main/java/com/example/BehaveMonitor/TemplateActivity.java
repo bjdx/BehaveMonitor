@@ -9,15 +9,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.example.BehaveMonitor.adapters.BehaviourListAdapter;
 
 //Templates are saved as .template files.
 //Templates are stored in the format "TemplateName;BehaviourName1,BehaviourType1:BehaviourName2,BehaviourType2... "
@@ -25,6 +26,8 @@ import java.util.ArrayList;
 
 
 public class TemplateActivity extends Activity {
+
+    private BehaviourListAdapter adapter;
 
     private String startTemp; // Used to check for changes
 	private Template newTemp = new Template();
@@ -35,17 +38,17 @@ public class TemplateActivity extends Activity {
 
 		setContentView(R.layout.activity_template);
 
-		setAddBehaviour();
-		setSaveTemplate();
-
         Template template = getIntent().getParcelableExtra("template");
         if (template != null) {
             newTemp = template;
-            updateBehaviours();
+//            updateBehaviours();
         }
 
-        fromFragment = getIntent().getBooleanExtra("fromFragment", false);
+		initAddBehaviour();
+        initList();
+		initSaveTemplate();
 
+        fromFragment = getIntent().getBooleanExtra("fromFragment", false);
         startTemp = newTemp.toString();
 	}
 
@@ -59,16 +62,30 @@ public class TemplateActivity extends Activity {
         return true;
     }
 
-	// Sets up the button for adding a behaviour
-	public void setSaveTemplate() {
-		ImageButton button = (ImageButton) findViewById(R.id.save_template);
-		Log.w("button",button.toString());
-		button.setOnClickListener(new View.OnClickListener() {
+    /**
+     * Initialises the list view
+     */
+    private void initList() {
+        adapter = new BehaviourListAdapter(this, newTemp.behaviours);
 
+        ListView list = (ListView) findViewById(R.id.template_list);
+        list.setAdapter(adapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("Behave", "Item clicked " + position);
+                editBehaviour(TemplateActivity.this, position);
+            }
+        });
+    }
+
+	// Sets up the button for adding a behaviour
+	private void initSaveTemplate() {
+		ImageButton button = (ImageButton) findViewById(R.id.save_template);
+		button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-//				//if the template isnt empty save it;
-//				if (!newTemp.isEmpty()) saveTemplate();
+				// Only save the template if it has changed.
                 if (changed()) {
                     saveTemplate();
                 }
@@ -76,7 +93,7 @@ public class TemplateActivity extends Activity {
 		});
 	}
 	
-	public void saveTemplate() {
+	private void saveTemplate() {
         if ("null;".equals(startTemp)) {
             showNamingDialog();
         } else {
@@ -85,7 +102,6 @@ public class TemplateActivity extends Activity {
 	}
 
     private void showNamingDialog() {
-        //Check to save
         final Context context = TemplateActivity.this;
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
@@ -93,10 +109,9 @@ public class TemplateActivity extends Activity {
         final EditText input = (EditText) dialogView.findViewById(R.id.dialog_template_name);
         alert.setView(dialogView);
 
-        //If yes start save.
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-
+                // Deliberately left blank as we override the button later.
             }
         });
 
@@ -121,12 +136,11 @@ public class TemplateActivity extends Activity {
                 newTemp.name = template;
                 if (FileHandler.templateExists(template)) {
                     dialog.dismiss();
-                    AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
+                    AlertDialog.Builder alert = new AlertDialog.Builder(context);
                     alert.setTitle("Overwrite Template");
                     alert.setMessage("A template with this name already exists, do you want to overwrite it?");
 
-                    // If yes overwrite
                     alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             FileHandler.saveTemplate(TemplateActivity.this, newTemp);
@@ -158,7 +172,6 @@ public class TemplateActivity extends Activity {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_overwrite_template, null);
         alert.setView(dialogView);
 
-        //If yes start save.
         alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 FileHandler.saveTemplate(TemplateActivity.this, newTemp);
@@ -182,7 +195,7 @@ public class TemplateActivity extends Activity {
         alert.show();
     }
 
-	public void backToMain() {
+	private void backToMain() {
         Intent intent = new Intent(TemplateActivity.this, HomeActivity.class);
         if (fromFragment) {
             intent.putExtra("redirect", 2);
@@ -203,8 +216,8 @@ public class TemplateActivity extends Activity {
         }
 
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
         alert.setTitle("Save before exit?");
+
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -225,58 +238,55 @@ public class TemplateActivity extends Activity {
 
     //re-add behaviours to layout
 	//cycles through the behaviours in newTemp and adds them to the layout
-	public void updateBehaviours() {
-		LinearLayout bLayout = (LinearLayout) findViewById(R.id.behaviour_layout);
-		if (bLayout.getChildCount() > 0) bLayout.removeAllViews();
-		ArrayList<Behaviour> behaviours = newTemp.behaviours;
-		int numOfBs = newTemp.behaviours.size();
-
-		if (numOfBs > 0) {
-			//go through behaviours adding them to the layout.
-			for(int i = 0; i < numOfBs; i++) {
-				TextView tv = new TextView(TemplateActivity.this);
-				tv.setText(behaviours.get(i).bName);
-				tv.setPadding(5, 2, 5, 2);
-				tv.setTextSize(getResources().getDimension(R.dimen.textsize));
-//				if(i%2==0){
-//					int dark = Color.parseColor("#B3E5FC");
-//					tv.setBackgroundColor(dark);
-//				} else {
-//					int light = Color.parseColor("#E1F5FE");
-//					tv.setBackgroundColor(light);
-//				}
-
-				final int ii = i;
-				OnClickListener ocl = new OnClickListener() {
-				    @Override
-				    public void onClick(View v) {
-				    	editBehaviour(TemplateActivity.this, ii );
-				    }
-				};
-				
-				tv.setOnClickListener(ocl);
-				bLayout.addView(tv);
-			}
-		}
-		
-	}
+//	private void updateBehaviours() {
+//		LinearLayout bLayout = (LinearLayout) findViewById(R.id.behaviour_layout);
+//		if (bLayout.getChildCount() > 0) bLayout.removeAllViews();
+//		ArrayList<Behaviour> behaviours = newTemp.behaviours;
+//		int numOfBs = newTemp.behaviours.size();
+//
+//		if (numOfBs > 0) {
+//			//go through behaviours adding them to the layout.
+//			for(int i = 0; i < numOfBs; i++) {
+//				TextView tv = new TextView(TemplateActivity.this);
+//				tv.setText(behaviours.get(i).bName);
+//				tv.setPadding(5, 2, 5, 2);
+//				tv.setTextSize(getResources().getDimension(R.dimen.textsize));
+////				if(i%2==0){
+////					int dark = Color.parseColor("#B3E5FC");
+////					tv.setBackgroundColor(dark);
+////				} else {
+////					int light = Color.parseColor("#E1F5FE");
+////					tv.setBackgroundColor(light);
+////				}
+//
+//				final int ii = i;
+//				OnClickListener ocl = new OnClickListener() {
+//				    @Override
+//				    public void onClick(View v) {
+//				    	editBehaviour(TemplateActivity.this, ii );
+//				    }
+//				};
+//
+//				tv.setOnClickListener(ocl);
+//				bLayout.addView(tv);
+//			}
+//		}
+//
+//	}
 
 	//Sets up the button for adding a behaviour
-	public void setAddBehaviour() {
+	private void initAddBehaviour() {
 		ImageButton button = (ImageButton) findViewById(R.id.new_behaviour);
 		Log.w("button",button.toString());
 		button.setOnClickListener(new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				newBehaviour(TemplateActivity.this);
 			}
-			
-		
 		});
 	}
 	
-	public void newBehaviour(final Context context) {
+	private void newBehaviour(final Context context) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(context);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_behaviour, null);
 
@@ -310,7 +320,9 @@ public class TemplateActivity extends Activity {
                     b.bName = name;
                     b.type = spinner.getSelectedItemPosition();
                     newTemp.behaviours.add(b);
-                    updateBehaviours();
+//                    updateBehaviours();
+//                    adapter.addBehaviour(b);
+
                     dialog.dismiss();
                 } else {
                     makeSomeToast("Invalid behaviour name");
@@ -344,7 +356,7 @@ public class TemplateActivity extends Activity {
 		alert.setNeutralButton("Remove", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 		    	newTemp.behaviours.remove(index);
-		    	updateBehaviours();
+		    	adapter.refresh();
 			}
         });
 
@@ -366,7 +378,8 @@ public class TemplateActivity extends Activity {
                     newTemp.behaviours.get(index).bName = name;
                     newTemp.behaviours.get(index).type = spinner.getSelectedItemPosition();
 
-                    updateBehaviours();
+//                    adapter.replace()
+                    adapter.refresh();
                     dialog.dismiss();
                 } else {
                     makeSomeToast("Invalid behaviour name");

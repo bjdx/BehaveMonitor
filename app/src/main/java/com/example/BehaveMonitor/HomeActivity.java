@@ -92,6 +92,9 @@ public class HomeActivity extends ActionBarActivity
         drawable = getResources().getDrawable(R.drawable.ic_action_edit);
         drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
 
+        drawable = getResources().getDrawable(R.drawable.ic_action_save);
+        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
+
         int redirect = getIntent().getIntExtra("redirect", 0);
         if (redirect != 0) {
             displayFragment(redirect);
@@ -114,7 +117,7 @@ public class HomeActivity extends ActionBarActivity
         DBHelper db = DBHelper.getInstance(this);
         Template template = new Template(db.getTemplate());
 
-        return template == null ? "" : template.name;
+        return "null;".equals(template.toString()) ? "" : template.name;
     }
 
     public void setActiveFolder(File file) {

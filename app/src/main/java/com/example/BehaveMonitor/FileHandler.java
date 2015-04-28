@@ -104,7 +104,12 @@ public class FileHandler {
                     if (content.isDirectory()) {
                         sessions = findSessions(sessions, content);
                     } else {
-                        sessions.add(content);
+                        String[] parts = content.getName().split("\\.(?=[^\\.]+$)");
+                        if (parts.length > 1) {
+                            if (parts[1].equals("csv")) {
+                                sessions.add(content);
+                            }
+                        }
                     }
                 }
             } else {
@@ -203,17 +208,17 @@ public class FileHandler {
             Log.e("Behave", "No templates exist.");
             return null;
         } else {
-            String[] tmpNames = new String[files.length];
-            for (int i = 0; i < files.length; i++) {
-                String[] parts = files[i].split("\\.(?=[^\\.]+$)");
+            List<String> fileNames = new ArrayList<>();
+            for (String file : files) {
+                String[] parts = file.split("\\.(?=[^\\.]+$)");
                 if (parts.length > 1) {
                     if (parts[1].equals("template")) {
-                        tmpNames[i] = parts[0];
+                        fileNames.add(parts[0]);
                     }
                 }
             }
 
-            return tmpNames;
+            return fileNames.toArray(new String[fileNames.size()]);
         }
     }
 

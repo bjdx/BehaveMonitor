@@ -17,36 +17,36 @@ import android.widget.TextView;
 
 import com.example.BehaveMonitor.FileHandler;
 import com.example.BehaveMonitor.R;
-import com.example.BehaveMonitor.Template;
-import com.example.BehaveMonitor.TemplateActivity;
+import com.example.BehaveMonitor.Observation;
+import com.example.BehaveMonitor.ObservationActivity;
 
 import java.util.List;
 
-public class TemplateListAdapter extends BaseAdapter {
+public class ObservationListAdapter extends BaseAdapter {
 
     private Context context;
     private LayoutInflater inflater;
-    private List<String> templates;
+    private List<String> observations;
 
-    public TemplateListAdapter(Context context, List<String> templates) {
+    public ObservationListAdapter(Context context, List<String> observations) {
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.templates = templates;
+        this.observations = observations;
     }
 
     private class ViewHolder {
-        TextView templateName;
+        TextView observationName;
         ImageButton deleteButton, editButton;
     }
 
     @Override
     public int getCount() {
-        return templates.size();
+        return observations.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return templates.get(position);
+        return observations.get(position);
     }
 
     @Override
@@ -66,42 +66,42 @@ public class TemplateListAdapter extends BaseAdapter {
         if (convertView == null) {
             viewHolder = new ViewHolder();
 
-            convertView = inflater.inflate(R.layout.template_list_item, parent, false);
+            convertView = inflater.inflate(R.layout.observation_list_item, parent, false);
 
-            viewHolder.templateName = (TextView) convertView.findViewById(R.id.list_template_name);
-            viewHolder.editButton = (ImageButton) convertView.findViewById(R.id.list_template_edit_button);
-            viewHolder.deleteButton = (ImageButton) convertView.findViewById(R.id.list_template_delete_btn);
+            viewHolder.observationName = (TextView) convertView.findViewById(R.id.list_observation_name);
+            viewHolder.editButton = (ImageButton) convertView.findViewById(R.id.list_observation_edit_button);
+            viewHolder.deleteButton = (ImageButton) convertView.findViewById(R.id.list_observation_delete_btn);
 
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        String template = templates.get(position);
-        viewHolder.templateName.setText(template);
+        String observation = observations.get(position);
+        viewHolder.observationName.setText(observation);
         viewHolder.editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTemplate(position);
+                editObservation(position);
             }
         });
 
         viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteTemplate(position);
+                deleteObservation(position);
             }
         });
 
         return convertView;
     }
 
-    private void editTemplate(int position) {
-        String templateName = templates.get(position);
-        Template template = new Template(FileHandler.readTemplate(templateName));
+    private void editObservation(int position) {
+        String observationName = observations.get(position);
+        Observation observation = new Observation(FileHandler.readObservation(observationName));
 
-        Intent intent = new Intent(context, TemplateActivity.class);
-        intent.putExtra("template", template);
+        Intent intent = new Intent(context, ObservationActivity.class);
+        intent.putExtra("observation", observation);
         intent.putExtra("fromFragment", true);
 
 //        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -110,17 +110,17 @@ public class TemplateListAdapter extends BaseAdapter {
         context.startActivity(intent);
     }
 
-    private void deleteTemplate(final int position) {
+    private void deleteObservation(final int position) {
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
-        final String templateName = templates.get(position);
-        alert.setTitle("Delete " + templateName + "?");
-        alert.setMessage("Are you sure you want to delete this template? (Template will be lost forever!)");
+        final String observationName = observations.get(position);
+        alert.setTitle("Delete " + observationName + "?");
+        alert.setMessage("Are you sure you want to delete this observation? (Observation will be lost forever!)");
 
         alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                FileHandler.deleteTemplate(templateName);
-                templates.remove(position);
+                FileHandler.deleteObservation(observationName);
+                observations.remove(position);
                 notifyDataSetChanged();
             }
         });

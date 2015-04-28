@@ -20,7 +20,7 @@ Session Name,@name
 Start Time,##.##.##
 End Time,##.##.##
 Session Location,@location
-Template Name,@template.name
+Observation Name,@observation.name
 
 Event Behaviours
 
@@ -63,8 +63,8 @@ public class Session implements Parcelable {
     private List<Date> endTime = new ArrayList<>();
     //The location of the session
     private String location;
-    //The behaviour template the session used
-    private Template template;
+    //The behaviour observation the session used
+    private Observation observation;
     //The path to the folder the session will be saved to
     private String path;
 
@@ -96,7 +96,7 @@ public class Session implements Parcelable {
         this.location = in.readString();
 
         // readParcelable need class loader
-        this.template = in.readParcelable(Template.class.getClassLoader());
+        this.observation = in.readParcelable(Observation.class.getClassLoader());
         this.path = in.readString();
     }
 
@@ -112,12 +112,12 @@ public class Session implements Parcelable {
         return location;
     }
 
-    public Template getTemplate() {
-        return template;
+    public Observation getObservation() {
+        return observation;
     }
 
     public List<Behaviour> getBehaviours() {
-        return this.template.behaviours;
+        return this.observation.behaviours;
     }
 
 //    public String getPath() {
@@ -128,9 +128,9 @@ public class Session implements Parcelable {
 //        this.path = path;
 //    }
 
-    //Method for setting the behaviour template.
-    public void setTemplate(Template template) {
-        this.template = template;
+    //Method for setting the behaviour observation.
+    public void setObservation(Observation observation) {
+        this.observation = observation;
     }
 
     //Sets the date and time of when the session began
@@ -164,12 +164,12 @@ public class Session implements Parcelable {
 
         out += endString;
         out += "\nSession Location," + this.location + "\n";
-        out += "Template Name," + this.template.name + "\n";
+        out += "Observation Name," + this.observation.name + "\n";
 
         //Split behaviour types.
         ArrayList<Behaviour> eBe = new ArrayList<>();
         ArrayList<Behaviour> sBe = new ArrayList<>();
-        for (Behaviour b : this.template.behaviours) {
+        for (Behaviour b : this.observation.behaviours) {
             if (b.type == BehaviourType.EVENT) {
                 eBe.add(b);
             } else {
@@ -273,7 +273,7 @@ public class Session implements Parcelable {
         dest.writeLong(startTime == null || startTime.size() == 0 ? 0 : startTime.get(0).getTime());
         dest.writeLong(endTime == null || startTime.size() == 0 ? 0 : endTime.get(0).getTime());
         dest.writeString(location);
-        dest.writeParcelable(template,flags);
+        dest.writeParcelable(observation,flags);
         dest.writeString(path);
     }
 

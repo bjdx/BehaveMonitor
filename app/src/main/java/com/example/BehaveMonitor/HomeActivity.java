@@ -15,9 +15,9 @@ import android.util.Log;
 
 import com.example.BehaveMonitor.fragments.FolderFragment;
 import com.example.BehaveMonitor.fragments.NavigationDrawerFragment;
+import com.example.BehaveMonitor.fragments.ObservationFragment;
 import com.example.BehaveMonitor.fragments.SessionFragment;
 import com.example.BehaveMonitor.fragments.SessionHistoryFragment;
-import com.example.BehaveMonitor.fragments.TemplateFragment;
 
 import java.io.File;
 
@@ -41,7 +41,7 @@ public class HomeActivity extends ActionBarActivity
     private int fragmentDisplayed = -1;
 
     private File activeFolder = null;
-    private Template activeTemplate = null;
+    private Observation activeObservation = null;
     private Session activeSession;
 
     @Override
@@ -65,26 +65,26 @@ public class HomeActivity extends ActionBarActivity
 
         if (savedInstanceState != null) {
             String path = savedInstanceState.getString("activeFolderString");
-            String tString = savedInstanceState.getString("activeTemplateString");
+            String tString = savedInstanceState.getString("activeObservationString");
             if (path != null) activeFolder = new File(path);
-            if (tString != null) activeTemplate = new Template(tString);
+            if (tString != null) activeObservation = new Observation(tString);
         }
 
         if (activeFolder == null) {
             activeFolder = new File(FileHandler.getSessionsDirectory(), db.getFolder());
         }
 
-        if (activeTemplate == null) {
-            String templateString = db.getTemplate();
-            if (templateString != null) {
-                activeTemplate = new Template(templateString);
+        if (activeObservation == null) {
+            String observationString = db.getObservation();
+            if (observationString != null) {
+                activeObservation = new Observation(observationString);
             }
         }
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            String tString = bundle.getString("activeTemplateString");
-            if (tString != null) activeTemplate = new Template(tString);
+            String tString = bundle.getString("activeObservationString");
+            if (tString != null) activeObservation = new Observation(tString);
         }
 
         Drawable drawable = getResources().getDrawable(R.drawable.ic_action_discard_black);
@@ -115,21 +115,21 @@ public class HomeActivity extends ActionBarActivity
     }
 
     /**
-     * @return The name of the active template, or "" if no template has been selected.
+     * @return The name of the active observation, or "" if no observation has been selected.
      */
-    public String getTemplateName() {
+    public String getObservationName() {
         DBHelper db = DBHelper.getInstance(this);
-        Template template = new Template(db.getTemplate());
+        Observation observation = new Observation(db.getObservation());
 
-        return "null;".equals(template.toString()) ? "" : template.name;
+        return "null;".equals(observation.toString()) ? "" : observation.name;
     }
 
     public void setActiveFolder(File file) {
         activeFolder = file;
     }
 
-    public void setActiveTmp(Template tmp) {
-        activeTemplate = tmp;
+    public void setActiveTmp(Observation tmp) {
+        activeObservation = tmp;
     }
 
     public void setActiveSession(Session session) {
@@ -142,7 +142,7 @@ public class HomeActivity extends ActionBarActivity
 
     public Session makeSession(String name, String loc) {
         activeSession = new Session(name, loc, activeFolder.getAbsolutePath());
-        activeSession.setTemplate(activeTemplate);
+        activeSession.setObservation(activeObservation);
         return activeSession;
     }
 
@@ -167,7 +167,7 @@ public class HomeActivity extends ActionBarActivity
                 fragment = new FolderFragment();
                 break;
             case 2:
-                fragment = new TemplateFragment();
+                fragment = new ObservationFragment();
                 break;
             case 3:
                 fragment = new SessionHistoryFragment();

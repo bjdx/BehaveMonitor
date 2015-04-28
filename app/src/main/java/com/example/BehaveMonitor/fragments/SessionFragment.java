@@ -24,11 +24,11 @@ import android.widget.Toast;
 import com.example.BehaveMonitor.DBHelper;
 import com.example.BehaveMonitor.FileHandler;
 import com.example.BehaveMonitor.HomeActivity;
+import com.example.BehaveMonitor.Observation;
+import com.example.BehaveMonitor.ObservationActivity;
 import com.example.BehaveMonitor.R;
 import com.example.BehaveMonitor.Session;
 import com.example.BehaveMonitor.SessionActivity;
-import com.example.BehaveMonitor.Template;
-import com.example.BehaveMonitor.TemplateActivity;
 
 import java.io.File;
 import java.util.regex.Matcher;
@@ -45,8 +45,8 @@ public class SessionFragment extends Fragment {
     private File activeFolder;
     private String activeFolderName;
 
-    private Template activeTemplate;
-    private String activeTemplateName;
+    private Observation activeObservation;
+    private String activeObservationName;
 
 	public SessionFragment() { }
 
@@ -62,10 +62,10 @@ public class SessionFragment extends Fragment {
 
         HomeActivity homeActivity = (HomeActivity) getActivity();
         activeFolderName = homeActivity.getFolderName();
-        activeTemplateName = homeActivity.getTemplateName();
+        activeObservationName = homeActivity.getObservationName();
 
         setFolderSpinner();
-        setTemplateSpinner();
+        setObservationSpinner();
         setNewButtons();
 
         setCreateButton();
@@ -82,12 +82,12 @@ public class SessionFragment extends Fragment {
 			}
 		});
 
-        ImageButton newTemplateButton = (ImageButton) rootView.findViewById(R.id.new_template);
-        newTemplateButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton newObservationButton = (ImageButton) rootView.findViewById(R.id.new_observation);
+        newObservationButton.setOnClickListener(new View.OnClickListener() {
             @Override
              public void onClick(View v) {
                 db.setFolder(activeFolderName);
-                newTemplate(getActivity());
+                newObservation(getActivity());
             }
         });
 	}
@@ -128,8 +128,8 @@ public class SessionFragment extends Fragment {
         return matcher.matches();
     }
 
-    private void newTemplate(final Context context) {
-        Intent intent = new Intent(context, TemplateActivity.class);
+    private void newObservation(final Context context) {
+        Intent intent = new Intent(context, ObservationActivity.class);
         intent.putExtra("fromFragment", false);
         startActivity(intent);
     }
@@ -164,27 +164,27 @@ public class SessionFragment extends Fragment {
         }
 	}
 
-    private Spinner setTemplateSpinner() {
-        String[] templates = FileHandler.getTemplateNames();
-        if (templates == null || templates.length == 0) {
-            templates = new String[]{"No templates exist."};
+    private Spinner setObservationSpinner() {
+        String[] observations = FileHandler.getObservationNames();
+        if (observations == null || observations.length == 0) {
+            observations = new String[]{"No observations exist."};
         } else {
-            for (String s : templates) {
+            for (String s : observations) {
                 Log.e("Behave", "Folder name: " + s);
             }
         }
 
-        Spinner spinner = (Spinner) rootView.findViewById(R.id.template_spinner);
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.observation_spinner);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, templates);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, observations);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        if (!"".equals(activeTemplateName)) {
+        if (!"".equals(activeObservationName)) {
             int i = 0;
-            while (i < templates.length && i != -1) {
-                if (templates[i].equals(activeTemplateName)) {
+            while (i < observations.length && i != -1) {
+                if (observations[i].equals(activeObservationName)) {
                     spinner.setSelection(i);
                     i = -2;
                 }
@@ -203,7 +203,7 @@ public class SessionFragment extends Fragment {
             public void onClick(View v) {
                 setActiveFolder();
                 if (validate()) {
-                    if (loadSelectedTemplate()) {
+                    if (loadSelectedObservation()) {
                         createSession();
                     }
                 }
@@ -215,11 +215,11 @@ public class SessionFragment extends Fragment {
         sessionName = ((EditText) rootView.findViewById(R.id.session_name)).getText().toString();
         sessionLocation = ((EditText) rootView.findViewById(R.id.session_location)).getText().toString();
 
-        Spinner spinner = (Spinner) rootView.findViewById(R.id.template_spinner);
-        activeTemplateName = spinner.getSelectedItem().toString();
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.observation_spinner);
+        activeObservationName = spinner.getSelectedItem().toString();
 
-        if ("No templates exist.".equals(activeTemplateName)) {
-            makeSomeToast("Must select a template");
+        if ("No observations exist.".equals(activeObservationName)) {
+            makeSomeToast("Must select an observation");
             return false;
         }
 
@@ -248,18 +248,18 @@ public class SessionFragment extends Fragment {
         activeFolderName = activeFolder.getName();
     }
 
-    private boolean loadSelectedTemplate() {
-        Spinner spinner = (Spinner) rootView.findViewById(R.id.template_spinner);
-        String templateName = spinner.getSelectedItem().toString();
+    private boolean loadSelectedObservation() {
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.observation_spinner);
+        String observationName = spinner.getSelectedItem().toString();
 
-        String template = FileHandler.readTemplate(templateName);
+        String observation = FileHandler.readObservation(observationName);
 
-        if (!"".equals(template)) {
-            activeTemplate = new Template(template);
-            activeTemplateName = templateName;
+        if (!"".equals(observation)) {
+            activeObservation = new Observation(observation);
+            activeObservationName = observationName;
             return true;
         } else {
-            makeSomeToast("Error reading template.");
+            makeSomeToast("Error reading observation.");
         }
 
         return false;
@@ -271,10 +271,10 @@ public class SessionFragment extends Fragment {
      * starts Activity.
      */
     public void createSession() {
-        db.setFolderTemplate(activeFolderName, activeTemplate.toString());
+        db.setFolderObservation(activeFolderName, activeObservation.toString());
 
         Session newSession = new Session(sessionName, sessionLocation, activeFolder.getAbsolutePath());
-        newSession.setTemplate(activeTemplate);
+        newSession.setObservation(activeObservation);
 
         Intent intent = new Intent(getActivity(), SessionActivity.class);
         intent.putExtra("activeFolderString", activeFolderName);
@@ -296,14 +296,14 @@ public class SessionFragment extends Fragment {
     }
 
 //    /**
-//     * Takes a path to a file and checks if the file is a template.
+//     * Takes a path to a file and checks if the file is a observation.
 //     * @param filePath the path to the file to check
-//     * @return true if the filePath has the extension .template
+//     * @return true if the filePath has the extension .observation
 //     */
-//    public boolean checkTemplateExtension(String filePath) {
+//    public boolean checkObservationExtension(String filePath) {
 //        String[] parts = filePath.split("\\.");
 //        if (parts.length == 0) return false;
-//        return parts[parts.length - 1].equals(".template");
+//        return parts[parts.length - 1].equals(".observation");
 //    }
 
 //	public void setActiveFolderButton(final View rootView) {

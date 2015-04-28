@@ -8,23 +8,23 @@
     android:gravity="center" >
 
     <TextView
-        android:id="@+id/template_header"
+        android:id="@+id/observation_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:text="@string/head_edit_template"
+        android:text="@string/head_edit_observation"
         android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/template_info"
+        android:id="@+id/observation_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
-        android:text="@string/sub_template"
+        android:text="@string/sub_observation"
         android:textSize="16sp" />
 
     <ListView
-        android:id="@+id/template_list"
+        android:id="@+id/observation_list"
         android:background="@drawable/back"
         android:layout_width="match_parent"
         android:layout_marginRight="6dp"
@@ -58,7 +58,7 @@
             android:contentDescription="@string/description_new_behaviour_button" />
 
         <ImageButton
-            android:id="@+id/save_template"
+            android:id="@+id/save_observation"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginRight="8dp"
@@ -66,7 +66,7 @@
             android:padding="2dp"
             android:background="@drawable/button_style"
             android:src="@drawable/ic_action_save"
-            android:contentDescription="@string/description_save_template_button" />
+            android:contentDescription="@string/description_save_observation_button" />
 
     </LinearLayout>
 

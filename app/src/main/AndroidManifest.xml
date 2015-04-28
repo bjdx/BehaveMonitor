@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TemplateActivity"
+            android:name=".ObservationActivity"
             android:label="@string/app_name"
             android:parentActivityName=".HomeActivity"
             android:screenOrientation="portrait" >

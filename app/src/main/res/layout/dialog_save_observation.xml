@@ -9,12 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:gravity="center"
-        android:text="Save Template"
+        android:text="Save Observation"
         android:textSize="22sp"
         android:textColor="@android:color/holo_blue_dark" />
 
     <EditText
-        android:id="@+id/dialog_template_name"
+        android:id="@+id/dialog_observation_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -23,6 +23,6 @@
         android:layout_marginRight="4dp"
         android:layout_marginStart="4dp"
         android:layout_marginLeft="4dp"
-        android:hint="Template Name" />
+        android:hint="Observation Name" />
 
 </LinearLayout>

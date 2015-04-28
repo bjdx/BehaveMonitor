@@ -74,25 +74,25 @@ public class DBHelper extends SQLiteOpenHelper {
         return folder;
     }
 
-    public String getTemplate() {
+    public String getObservation() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query("Preferences", new String[] {"LastTemplate"}, null, null, null, null, null);
-        String template = null;
+        String observation = null;
         if (cursor.moveToFirst()) {
-            template = cursor.getString(0);
+            observation = cursor.getString(0);
         }
 
         cursor.close();
-        return template;
+        return observation;
     }
 
-    public void setFolderTemplate(String folder, String template) {
+    public void setFolderObservation(String folder, String observation) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
         contentValues.put("_id", 1);
         contentValues.put("LastFolder", folder);
-        contentValues.put("LastTemplate", template);
+        contentValues.put("LastTemplate", observation);
 
         db.update("Preferences", contentValues, null, null);
     }
@@ -107,19 +107,19 @@ public class DBHelper extends SQLiteOpenHelper {
         db.update("Preferences", contentValues, null, null);
     }
 
-    public void setTemplate(String template) {
+    public void setObservation(String observation) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
         contentValues.put("_id", 1);
-        contentValues.put("LastTemplate", template);
+        contentValues.put("LastTemplate", observation);
 
         db.update("Preferences", contentValues, null, null);
     }
 
     /**
      * Deletes the folder entry in the database if it is the current folder selected.
-     * @param folder the template name to remove
+     * @param folder the observation name to remove
      */
     public void removeFolder(String folder) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -141,16 +141,16 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Deletes the template entry in the database if it is the current template selected.
-     * @param template the template name to remove
+     * Deletes the observation entry in the database if it is the current observation selected.
+     * @param observation the observation name to remove
      */
-    public void removeTemplate(String template) {
+    public void removeObservation(String observation) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.query("Preferences", new String[] {"LastTemplate"}, null, null, null, null, null);
 
         if (cursor.moveToNext()) {
             String current = cursor.getString(0);
-            if (template.equals(current)) {
+            if (observation.equals(current)) {
                 ContentValues contentValues = new ContentValues();
 
                 contentValues.put("_id", 1);

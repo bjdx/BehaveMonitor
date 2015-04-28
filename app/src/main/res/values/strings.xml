@@ -18,8 +18,6 @@
     <string name="description_save_observation_button">Save observation</string>
     <string name="description_delete_behaviour_button">Delete behaviour</string>
 
-
-
     <!-- Nav Drawer Menu Items -->
     <string-array name="navigation_drawer_items_array">
         <item>Create Session</item>

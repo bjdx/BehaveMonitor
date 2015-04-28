@@ -22,7 +22,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginEnd="10dp"
         android:background="@drawable/button_style"
-        android:src="@drawable/ic_action_discard_black"/>
+        android:src="@drawable/ic_action_discard"/>
 
     <Button
         android:id="@+id/list_sessions_continue_btn"

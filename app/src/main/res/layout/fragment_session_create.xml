@@ -41,7 +41,7 @@
                 android:layout_height="40dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/button_style"
-                android:src="@drawable/ic_action_new_black" />
+                android:src="@drawable/ic_action_new" />
 
         </LinearLayout>
 
@@ -74,7 +74,7 @@
                 android:layout_height="40dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/button_style"
-                android:src="@drawable/ic_action_new_black" />
+                android:src="@drawable/ic_action_new" />
 
         </LinearLayout>
 

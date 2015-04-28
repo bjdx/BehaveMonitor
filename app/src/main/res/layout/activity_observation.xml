@@ -54,7 +54,7 @@
             android:layout_marginEnd="8dp"
             android:padding="2dp"
             android:background="@drawable/button_style"
-            android:src="@drawable/ic_action_new_black"
+            android:src="@drawable/ic_action_new"
             android:contentDescription="@string/description_new_behaviour_button" />
 
         <ImageButton

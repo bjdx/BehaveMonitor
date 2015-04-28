@@ -4,8 +4,6 @@
 
 package com.example.BehaveMonitor;
 
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -87,17 +85,17 @@ public class HomeActivity extends ActionBarActivity
             if (tString != null) activeObservation = new Observation(tString);
         }
 
-        Drawable drawable = getResources().getDrawable(R.drawable.ic_action_discard_black);
-        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
-
-        drawable = getResources().getDrawable(R.drawable.ic_action_new_black);
-        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
-
-        drawable = getResources().getDrawable(R.drawable.ic_action_edit);
-        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
-
-        drawable = getResources().getDrawable(R.drawable.ic_action_save);
-        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
+//        Drawable drawable = getResources().getDrawable(R.drawable.ic_action_discard_black);
+//        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
+//
+//        drawable = getResources().getDrawable(R.drawable.ic_action_new_black);
+//        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
+//
+//        drawable = getResources().getDrawable(R.drawable.ic_action_edit);
+//        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
+//
+//        drawable = getResources().getDrawable(R.drawable.ic_action_save);
+//        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
 
         int redirect = getIntent().getIntExtra("redirect", 0);
         if (redirect != 0) {

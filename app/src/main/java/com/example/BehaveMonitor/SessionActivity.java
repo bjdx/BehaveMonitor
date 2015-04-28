@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+// Copyright (c) 2015 Barney Dennis & Gareth Lewis.
+//------------------------------------------------------------------------------
+
 package com.example.BehaveMonitor;
 
 import android.app.Activity;
@@ -22,7 +26,6 @@ import com.example.BehaveMonitor.adapters.HistoryAdapter;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -116,14 +119,14 @@ public class SessionActivity extends Activity {
     final Runnable updateTime = new Runnable() {
         @Override
         public void run() {
-            sessionTimeTV.setText(activeSession.getRelativeHMS(new Date()));
+            sessionTimeTV.setText(activeSession.getRelativeHMS());
         }
     };
 
 
     private void addSessionTimerTask() {
         bTimer = new Timer();
-        final int delay = 100;
+        final int delay = 1000; // Run once a second, since the time is not recorded to a higher precision, there is no point running more frequently.
         bTimer.schedule(new TimerTask() {
             @Override
             public void run() {

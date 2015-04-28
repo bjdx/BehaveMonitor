@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+// Copyright (c) 2015 Barney Dennis & Gareth Lewis.
+//------------------------------------------------------------------------------
+
 package com.example.BehaveMonitor;
 
 import android.os.Parcel;
@@ -239,9 +243,12 @@ public class Session implements Parcelable {
         return out;
     }
 
-    //Returns a string of hours mins and secs since now Date.
-    public String getRelativeHMS(Date now) {
-        long millis = now.getTime() - this.startTime.get(0).getTime();
+    /**
+     * Returns a string of hours mins and secs since now Date.
+     * @return an HH:MM:SS formatted time string.
+     */
+    public String getRelativeHMS() {
+        long millis = new Date().getTime() - this.startTime.get(0).getTime();
         return String.format("%02d:%02d:%02d",
                     TimeUnit.MILLISECONDS.toHours(millis),
                     TimeUnit.MILLISECONDS.toMinutes(millis) -

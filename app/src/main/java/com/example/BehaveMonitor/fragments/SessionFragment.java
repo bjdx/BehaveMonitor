@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+// Copyright (c) 2015 Barney Dennis & Gareth Lewis.
+//------------------------------------------------------------------------------
+
 package com.example.BehaveMonitor.fragments;
 
 import android.app.AlertDialog;

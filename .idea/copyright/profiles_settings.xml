@@ -1,3 +1,11 @@
 <component name="CopyrightManager">
-  <settings default="" />
+  <settings default="Chicken Scratch">
+    <module2copyright>
+      <element module="Project Files" copyright="Chicken Scratch" />
+    </module2copyright>
+    <LanguageOptions name="__TEMPLATE__">
+      <option name="block" value="false" />
+      <option name="filler" value="-" />
+    </LanguageOptions>
+  </settings>
 </component>

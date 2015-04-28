@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Chicken Scratch Non-Xml" pattern="src[app]:com.example.BehaveMonitor.*||src[app]:com.example.BehaveMonitor.adapters.*||src[app]:com.example.BehaveMonitor.fragments.*" />
+</component>

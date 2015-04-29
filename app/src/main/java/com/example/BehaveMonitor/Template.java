@@ -10,13 +10,13 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-public class Observation implements Parcelable {
+public class Template implements Parcelable {
     String name;
     ArrayList<Behaviour> behaviours = new ArrayList<>();
 
-    public Observation(){}
+    public Template(){}
 
-    public Observation(Parcel in) {
+    public Template(Parcel in) {
         // BUILD FROM PARCEL
         name = in.readString();
         behaviours = new ArrayList<>();
@@ -24,10 +24,10 @@ public class Observation implements Parcelable {
     }
 
     /**
-     * Creates an observation from a string
-     * @param string the string representation of an observation
+     * Creates an template from a string
+     * @param string the string representation of an template
      */
-    public Observation(String string) {
+    public Template(String string) {
         if (string == null) {
             return;
         }
@@ -45,18 +45,18 @@ public class Observation implements Parcelable {
 			    		be.type = Integer.parseInt(bParts[1]);
 			    		this.behaviours.add(be);
 		    		} else {
-		    			Log.e("Observation missing data:", "Behaviour name or type.");
+		    			Log.e("Template missing data:", "Behaviour name or type.");
 		    		}
 		    	}
 	    	} else {
-    			Log.e("Observation missing data:", "No behaviours in observation.");
+    			Log.e("Template missing data:", "No behaviours in template.");
 	    	}
     	} else {
-			Log.e("Observation missing data:", "Name or behaviour.");
+			Log.e("Template missing data:", "Name or behaviour.");
     	}
     }
     
-    // Outputs the observations name and all behaviours and types for saving.
+    // Outputs the template name and all behaviours and types for saving.
     public String toString() {
     	String out = name + ";";
     	for(Behaviour b : behaviours) {
@@ -68,8 +68,8 @@ public class Observation implements Parcelable {
     }
 
     /**
-     * Determines if the observation has any behaviours added
-     * @return true if the observation has no behaviours, false otherwise
+     * Determines if the template has any behaviours added
+     * @return true if the template has no behaviours, false otherwise
      */
     public boolean isEmpty() {
     	return behaviours.isEmpty();
@@ -88,14 +88,14 @@ public class Observation implements Parcelable {
         dest.writeTypedList(behaviours);
     }
 
-    public static final Parcelable.Creator<Observation> CREATOR = new Parcelable.Creator<Observation>() {
+    public static final Parcelable.Creator<Template> CREATOR = new Parcelable.Creator<Template>() {
 
-        public Observation createFromParcel(Parcel in) {
-            return new Observation(in);
+        public Template createFromParcel(Parcel in) {
+            return new Template(in);
         }
 
-        public Observation[] newArray(int size) {
-            return new Observation[size];
+        public Template[] newArray(int size) {
+            return new Template[size];
         }
     };
 

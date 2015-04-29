@@ -24,33 +24,33 @@ import android.widget.Toast;
 
 import com.example.BehaveMonitor.adapters.BehaviourListAdapter;
 
-//Observations are saved as .template files.
-//Observations are stored in the format "ObservationName;BehaviourName1,BehaviourType1:BehaviourName2,BehaviourType2... "
+//Templates are saved as .template files.
+//Templates are stored in the format "TemplateName;BehaviourName1,BehaviourType1:BehaviourName2,BehaviourType2... "
 
 
 
-public class ObservationActivity extends Activity {
+public class TemplateActivity extends Activity {
 
     private BehaviourListAdapter adapter;
 
     private String startTemp; // Used to check for changes
-	private Observation newTemp = new Observation();
+	private Template newTemp = new Template();
     private boolean fromFragment = false;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_observation);
+		setContentView(R.layout.activity_template);
 
-        Observation observation = getIntent().getParcelableExtra("observation");
-        if (observation != null) {
-            newTemp = observation;
+        Template template = getIntent().getParcelableExtra("template");
+        if (template != null) {
+            newTemp = template;
 //            updateBehaviours();
         }
 
 		initAddBehaviour();
         initList();
-		initSaveObservation();
+		initSaveTemplate();
 
         fromFragment = getIntent().getBooleanExtra("fromFragment", false);
         startTemp = newTemp.toString();
@@ -72,32 +72,32 @@ public class ObservationActivity extends Activity {
     private void initList() {
         adapter = new BehaviourListAdapter(this, newTemp.behaviours);
 
-        ListView list = (ListView) findViewById(R.id.observation_list);
+        ListView list = (ListView) findViewById(R.id.template_list);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.e("Behave", "Item clicked " + position);
-                editBehaviour(ObservationActivity.this, position);
+                editBehaviour(TemplateActivity.this, position);
             }
         });
     }
 
 	// Sets up the button for adding a behaviour
-	private void initSaveObservation() {
-		ImageButton button = (ImageButton) findViewById(R.id.save_observation);
+	private void initSaveTemplate() {
+		ImageButton button = (ImageButton) findViewById(R.id.save_template);
 		button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// Only save the observation if it has changed.
+				// Only save the template if it has changed.
                 if (changed()) {
-                    saveObservation();
+                    saveTemplate();
                 }
 			}
 		});
 	}
 	
-	private void saveObservation() {
+	private void saveTemplate() {
         if ("null;".equals(startTemp)) {
             showNamingDialog();
         } else {
@@ -106,11 +106,11 @@ public class ObservationActivity extends Activity {
 	}
 
     private void showNamingDialog() {
-        final Context context = ObservationActivity.this;
+        final Context context = TemplateActivity.this;
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_save_observation, null);
-        final EditText input = (EditText) dialogView.findViewById(R.id.dialog_observation_name);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_save_template, null);
+        final EditText input = (EditText) dialogView.findViewById(R.id.dialog_template_name);
         alert.setView(dialogView);
 
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
@@ -131,23 +131,23 @@ public class ObservationActivity extends Activity {
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String observation = input.getText().toString();
-                if (observation.contains(",")) {
-                    makeSomeToast("Invalid observation name");
+                String template = input.getText().toString();
+                if (template.contains(",")) {
+                    makeSomeToast("Invalid template name");
                     return;
                 }
 
-                newTemp.name = observation;
-                if (FileHandler.observationExists(observation)) {
+                newTemp.name = template;
+                if (FileHandler.templateExists(template)) {
                     dialog.dismiss();
 
                     AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                    alert.setTitle("Overwrite Observation");
-                    alert.setMessage("An observation with this name already exists, do you want to overwrite it?");
+                    alert.setTitle("Overwrite Template");
+                    alert.setMessage("A template with this name already exists, do you want to overwrite it?");
 
                     alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            FileHandler.saveObservation(ObservationActivity.this, newTemp);
+                            FileHandler.saveTemplate(TemplateActivity.this, newTemp);
                             backToMain();
                         }
                     });
@@ -161,8 +161,8 @@ public class ObservationActivity extends Activity {
                     alert.show();
                 } else {
                     dialog.dismiss();
-                    newTemp.name = observation;
-                    FileHandler.saveObservation(context, newTemp);
+                    newTemp.name = template;
+                    FileHandler.saveTemplate(context, newTemp);
                     backToMain();
                 }
             }
@@ -170,15 +170,15 @@ public class ObservationActivity extends Activity {
     }
 
     private void showOverwriteDialog() {
-        final Context context = ObservationActivity.this;
+        final Context context = TemplateActivity.this;
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_overwrite_observation, null);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_overwrite_template, null);
         alert.setView(dialogView);
 
         alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                FileHandler.saveObservation(ObservationActivity.this, newTemp);
+                FileHandler.saveTemplate(TemplateActivity.this, newTemp);
                 backToMain();
             }
         });
@@ -200,12 +200,12 @@ public class ObservationActivity extends Activity {
     }
 
 	private void backToMain() {
-        Intent intent = new Intent(ObservationActivity.this, HomeActivity.class);
+        Intent intent = new Intent(TemplateActivity.this, HomeActivity.class);
         if (fromFragment) {
             intent.putExtra("redirect", 2);
         }
 
-        intent.putExtra("activeObservationString", newTemp.toString());
+        intent.putExtra("activeTemplateString", newTemp.toString());
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -225,7 +225,7 @@ public class ObservationActivity extends Activity {
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                saveObservation();
+                saveTemplate();
             }
         });
 
@@ -251,7 +251,7 @@ public class ObservationActivity extends Activity {
 //		if (numOfBs > 0) {
 //			//go through behaviours adding them to the layout.
 //			for(int i = 0; i < numOfBs; i++) {
-//				TextView tv = new TextView(ObservationActivity.this);
+//				TextView tv = new TextView(TemplateActivity.this);
 //				tv.setText(behaviours.get(i).bName);
 //				tv.setPadding(5, 2, 5, 2);
 //				tv.setTextSize(getResources().getDimension(R.dimen.textsize));
@@ -267,7 +267,7 @@ public class ObservationActivity extends Activity {
 //				OnClickListener ocl = new OnClickListener() {
 //				    @Override
 //				    public void onClick(View v) {
-//				    	editBehaviour(ObservationActivity.this, ii );
+//				    	editBehaviour(TemplateActivity.this, ii );
 //				    }
 //				};
 //
@@ -285,7 +285,7 @@ public class ObservationActivity extends Activity {
 		button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				newBehaviour(ObservationActivity.this);
+				newBehaviour(TemplateActivity.this);
 			}
 		});
 	}

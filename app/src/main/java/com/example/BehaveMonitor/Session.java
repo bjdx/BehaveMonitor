@@ -20,7 +20,7 @@ Session Name,@name
 Start Time,##.##.##
 End Time,##.##.##
 Session Location,@location
-Observation Name,@observation.name
+Template Name,@template.name
 
 Event Behaviours
 
@@ -63,8 +63,8 @@ public class Session implements Parcelable {
     private List<Date> endTime = new ArrayList<>();
     //The location of the session
     private String location;
-    //The behaviour observation the session used
-    private Observation observation;
+    //The behaviour template the session used
+    private Template template;
     //The path to the folder the session will be saved to
     private String path;
 
@@ -96,7 +96,7 @@ public class Session implements Parcelable {
         this.location = in.readString();
 
         // readParcelable need class loader
-        this.observation = in.readParcelable(Observation.class.getClassLoader());
+        this.template = in.readParcelable(Template.class.getClassLoader());
         this.path = in.readString();
     }
 
@@ -112,43 +112,36 @@ public class Session implements Parcelable {
         return location;
     }
 
-    public Observation getObservation() {
-        return observation;
+    public Template getTemplate() {
+        return template;
     }
 
     public List<Behaviour> getBehaviours() {
-        return this.observation.behaviours;
+        return this.template.behaviours;
     }
 
-//    public String getPath() {
-//        return path;
-//    }
-//
-//    public void setPath(String path) {
-//        this.path = path;
-//    }
-
-    //Method for setting the behaviour observation.
-    public void setObservation(Observation observation) {
-        this.observation = observation;
+    /**
+     * Method for setting the behaviour template.
+     * @param template the template to store
+     */
+    public void setTemplate(Template template) {
+        this.template = template;
     }
 
-    //Sets the date and time of when the session began
+    /**
+     * Sets the date and time of when the session began
+     */
     public void startSession() {
         this.startTime.add(new Date());
     }
 
-    //Sets then date and time of when the session ended
+    /**
+     * Sets the end date and time
+     */
     public void endSession() {
         this.endTime.add(new Date());
     }
 
-    /**
-     * This returns the session in an output file friendly format.
-     *
-     * @return
-     * This returns the session in an output file friendly format.
-     */
     @Override
     public String toString() {
         String out = "Session Name," + this.name + "\n";
@@ -164,12 +157,12 @@ public class Session implements Parcelable {
 
         out += endString;
         out += "\nSession Location," + this.location + "\n";
-        out += "Observation Name," + this.observation.name + "\n";
+        out += "Template Name," + this.template.name + "\n";
 
-        //Split behaviour types.
+        // Split behaviour types.
         ArrayList<Behaviour> eBe = new ArrayList<>();
         ArrayList<Behaviour> sBe = new ArrayList<>();
-        for (Behaviour b : this.observation.behaviours) {
+        for (Behaviour b : this.template.behaviours) {
             if (b.type == BehaviourType.EVENT) {
                 eBe.add(b);
             } else {
@@ -214,7 +207,7 @@ public class Session implements Parcelable {
         return out;
     }
 
-    //Takes two dates and returns the difference in the format SS.sss 3dp.
+    // Takes two dates and returns the difference in the format SS.sss 3dp.
     public String timeDiff(Date sT, Date eT) {
 
         long diff = eT.getTime() - sT.getTime();
@@ -257,7 +250,7 @@ public class Session implements Parcelable {
                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
     }
 
-    //Stuff to make it parcelable.
+    // Stuff to make it parcelable.
     @Override
     public int describeContents() {
         return 0;
@@ -268,12 +261,13 @@ public class Session implements Parcelable {
      * Adds contents of Session to parcel for Parcelisation in order to be entered into the
      * Parcelisation Matrix which allows it to be sent to the other activity...
      */
+    @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeLong(startTime == null || startTime.size() == 0 ? 0 : startTime.get(0).getTime());
         dest.writeLong(endTime == null || startTime.size() == 0 ? 0 : endTime.get(0).getTime());
         dest.writeString(location);
-        dest.writeParcelable(observation,flags);
+        dest.writeParcelable(template,flags);
         dest.writeString(path);
     }
 

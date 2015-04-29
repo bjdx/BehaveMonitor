@@ -7,23 +7,31 @@
     <string name="action_settings">Settings</string>
 
     <!-- Headings -->
-    <string name="head_new_observation">New Observation</string>
-    <string name="head_edit_observation">Edit Observation</string>
+    <string name="head_new_template">New Template</string>
+    <string name="head_edit_template">Edit Template</string>
 
     <!-- Sub-headings -->
-    <string name="sub_observation">Below are the behaviours in this observation. Use the buttons to add behaviours or save the observation.</string>
+    <string name="sub_template">Below are the behaviours in this template. Use the buttons to add behaviours or save the template.</string>
 
     <!-- Content descriptions for image buttons -->
     <string name="description_new_behaviour_button">Add new behaviour</string>
-    <string name="description_save_observation_button">Save observation</string>
+    <string name="description_save_template_button">Save template</string>
     <string name="description_delete_behaviour_button">Delete behaviour</string>
+    <string name="description_new_template_button">Create new template</string>
 
     <!-- Nav Drawer Menu Items -->
     <string-array name="navigation_drawer_items_array">
         <item>Create Session</item>
         <item>Manage Folders</item>
-        <item>Manage Observations</item>
+        <item>Manage Templates</item>
         <item>Session History</item>
+    </string-array>
+
+    <string-array name="picker_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
     </string-array>
 
     <string name="drawer_open">Options</string>

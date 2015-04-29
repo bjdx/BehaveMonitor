@@ -15,24 +15,24 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.BehaveMonitor.FileHandler;
-import com.example.BehaveMonitor.ObservationActivity;
+import com.example.BehaveMonitor.TemplateActivity;
 import com.example.BehaveMonitor.R;
-import com.example.BehaveMonitor.adapters.ObservationListAdapter;
+import com.example.BehaveMonitor.adapters.TemplateManageListAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ObservationFragment extends Fragment {
+public class TemplateFragment extends Fragment {
 
     private View rootView;
 
-	public ObservationFragment() { }
+	public TemplateFragment() { }
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		rootView = inflater.inflate(R.layout.fragment_observation, container, false);
+		rootView = inflater.inflate(R.layout.fragment_template, container, false);
 
         setList();
 		setNewButton();
@@ -40,26 +40,26 @@ public class ObservationFragment extends Fragment {
 	}
 
     private void setList() {
-        List<String> observationNames = new ArrayList<>(Arrays.asList(FileHandler.getObservationNames()));
+        List<String> templateNames = new ArrayList<>(Arrays.asList(FileHandler.getTemplateNames()));
 
-        ListView list = (ListView) rootView.findViewById(R.id.observation_list);
-        ObservationListAdapter adapter = new ObservationListAdapter(getActivity(), observationNames);
+        ListView list = (ListView) rootView.findViewById(R.id.template_list);
+        TemplateManageListAdapter adapter = new TemplateManageListAdapter(getActivity(), templateNames);
 
         list.setAdapter(adapter);
     }
 
 	private void setNewButton() {
-		Button button = (Button) rootView.findViewById(R.id.new_observation);
+		Button button = (Button) rootView.findViewById(R.id.new_template);
 		button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				newObservation(getActivity());
+				newTemplate(getActivity());
 			}
 		});
 	}
 	
-	public void newObservation(final Context context) {
-		Intent intent = new Intent(context, ObservationActivity.class);
+	public void newTemplate(final Context context) {
+		Intent intent = new Intent(context, TemplateActivity.class);
         intent.putExtra("fromFragment", true);
         startActivity(intent);
 	}

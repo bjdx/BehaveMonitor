@@ -76,13 +76,13 @@ public class SessionActivity extends Activity {
         TextView tmpText = (TextView) findViewById(R.id.sTmpText);
         name.setText(name.getText().toString()+"  "+activeSession.getName());
         location.setText(location.getText().toString()+"  "+activeSession.getLocation());
-        tmpText.setText(tmpText.getText().toString()+"  "+activeSession.getObservation().name);
+        tmpText.setText(tmpText.getText().toString()+"  "+activeSession.getTemplate().name);
 
         //Creates list of behaviours
         LinearLayout ll = (LinearLayout) findViewById(R.id.behaveLayout);
-        TextView[] bTV = new TextView[activeSession.getObservation().behaviours.size()];
+        TextView[] bTV = new TextView[activeSession.getTemplate().behaviours.size()];
         int i = 0;
-        for(Behaviour b:activeSession.getObservation().behaviours){
+        for(Behaviour b:activeSession.getTemplate().behaviours){
             bTV[i] = new TextView(this);
             bTV[i].setText(b.bName);
             ll.addView(bTV[i]);
@@ -188,7 +188,7 @@ public class SessionActivity extends Activity {
 
     public void setupGridView() {
         GridView grid = (GridView) findViewById(R.id.session_behaviour_grid);
-        adapter = new ButtonAdapter(this, historyAdapter, activeSession.getObservation().behaviours, new Timer(), myHandler, this);
+        adapter = new ButtonAdapter(this, historyAdapter, activeSession.getTemplate().behaviours, new Timer(), myHandler, this);
         grid.setAdapter(adapter);
     }
 

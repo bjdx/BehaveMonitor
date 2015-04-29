@@ -13,7 +13,7 @@ import android.util.Log;
 
 import com.example.BehaveMonitor.fragments.FolderFragment;
 import com.example.BehaveMonitor.fragments.NavigationDrawerFragment;
-import com.example.BehaveMonitor.fragments.ObservationFragment;
+import com.example.BehaveMonitor.fragments.TemplateFragment;
 import com.example.BehaveMonitor.fragments.SessionFragment;
 import com.example.BehaveMonitor.fragments.SessionHistoryFragment;
 
@@ -39,7 +39,7 @@ public class HomeActivity extends ActionBarActivity
     private int fragmentDisplayed = -1;
 
     private File activeFolder = null;
-    private Observation activeObservation = null;
+    private Template activeTemplate = null;
     private Session activeSession;
 
     @Override
@@ -63,39 +63,27 @@ public class HomeActivity extends ActionBarActivity
 
         if (savedInstanceState != null) {
             String path = savedInstanceState.getString("activeFolderString");
-            String tString = savedInstanceState.getString("activeObservationString");
+            String tString = savedInstanceState.getString("activeTemplateString");
             if (path != null) activeFolder = new File(path);
-            if (tString != null) activeObservation = new Observation(tString);
+            if (tString != null) activeTemplate = new Template(tString);
         }
 
         if (activeFolder == null) {
             activeFolder = new File(FileHandler.getSessionsDirectory(), db.getFolder());
         }
 
-        if (activeObservation == null) {
-            String observationString = db.getObservation();
-            if (observationString != null) {
-                activeObservation = new Observation(observationString);
+        if (activeTemplate == null) {
+            String templateString = db.getTemplate();
+            if (templateString != null) {
+                activeTemplate = new Template(templateString);
             }
         }
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            String tString = bundle.getString("activeObservationString");
-            if (tString != null) activeObservation = new Observation(tString);
+            String tString = bundle.getString("activeTemplateString");
+            if (tString != null) activeTemplate = new Template(tString);
         }
-
-//        Drawable drawable = getResources().getDrawable(R.drawable.ic_action_discard_black);
-//        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
-//
-//        drawable = getResources().getDrawable(R.drawable.ic_action_new_black);
-//        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
-//
-//        drawable = getResources().getDrawable(R.drawable.ic_action_edit);
-//        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
-//
-//        drawable = getResources().getDrawable(R.drawable.ic_action_save);
-//        drawable.setColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY);
 
         int redirect = getIntent().getIntExtra("redirect", 0);
         if (redirect != 0) {
@@ -113,21 +101,21 @@ public class HomeActivity extends ActionBarActivity
     }
 
     /**
-     * @return The name of the active observation, or "" if no observation has been selected.
+     * @return The name of the active template, or "" if no template has been selected.
      */
-    public String getObservationName() {
+    public String getTemplateName() {
         DBHelper db = DBHelper.getInstance(this);
-        Observation observation = new Observation(db.getObservation());
+        Template template = new Template(db.getTemplate());
 
-        return "null;".equals(observation.toString()) ? "" : observation.name;
+        return "null;".equals(template.toString()) ? "" : template.name;
     }
 
     public void setActiveFolder(File file) {
         activeFolder = file;
     }
 
-    public void setActiveTmp(Observation tmp) {
-        activeObservation = tmp;
+    public void setActiveTmp(Template tmp) {
+        activeTemplate = tmp;
     }
 
     public void setActiveSession(Session session) {
@@ -140,7 +128,7 @@ public class HomeActivity extends ActionBarActivity
 
     public Session makeSession(String name, String loc) {
         activeSession = new Session(name, loc, activeFolder.getAbsolutePath());
-        activeSession.setObservation(activeObservation);
+        activeSession.setTemplate(activeTemplate);
         return activeSession;
     }
 
@@ -165,7 +153,7 @@ public class HomeActivity extends ActionBarActivity
                 fragment = new FolderFragment();
                 break;
             case 2:
-                fragment = new ObservationFragment();
+                fragment = new TemplateFragment();
                 break;
             case 3:
                 fragment = new SessionHistoryFragment();

@@ -36,7 +36,7 @@ public class FileHandler {
         return new File(rootDir, "Sessions");
     }
 
-    public static File getObservationDirectory() {
+    public static File getTemplatesDirectory() {
         return new File(rootDir, "Templates");
     }
 
@@ -48,7 +48,7 @@ public class FileHandler {
             setRootDirectory(context);
         }
 
-        File file = getObservationDirectory();
+        File file = getTemplatesDirectory();
         file.mkdirs(); // Creates the specified folder if it doesn't already exist. Will also create any missing directories.
 
         file = new File(getSessionsDirectory(), "Default");
@@ -201,11 +201,11 @@ public class FileHandler {
         return false;
     }
 
-    public static String[] getObservationNames() {
-        File projDir = getObservationDirectory();
+    public static String[] getTemplateNames() {
+        File projDir = getTemplatesDirectory();
         String[] files = projDir.list();
         if (files.length == 0) {
-            Log.e("Behave", "No observations exist.");
+            Log.e("Behave", "No templates exist.");
             return null;
         } else {
             List<String> fileNames = new ArrayList<>();
@@ -222,22 +222,22 @@ public class FileHandler {
         }
     }
 
-    public static boolean observationExists(String observation) {
-        final File file = new File(getObservationDirectory(), observation + ".template");
+    public static boolean templateExists(String template) {
+        final File file = new File(getTemplatesDirectory(), template + ".template");
         return file.exists();
     }
 
-    public static void saveObservation(Context context, final Observation newTemp) {
-        final File file = new File(getObservationDirectory(), newTemp.name + ".template");
+    public static void saveTemplate(Context context, final Template newTemp) {
+        final File file = new File(getTemplatesDirectory(), newTemp.name + ".template");
         if (file.exists()) {
             file.delete();
         }
 
-        saveObservationFile(file, newTemp);
+        saveTemplateFile(file, newTemp);
     }
 
-    private static void saveObservationFile(File file, Observation newTemp) {
-        //Convert observation to string the write it and read it back to check.
+    private static void saveTemplateFile(File file, Template newTemp) {
+        //Convert template to string the write it and read it back to check.
         String string = newTemp.toString();
 
         //Save File
@@ -257,11 +257,11 @@ public class FileHandler {
 
             fis.read(data);
             String tmpIN = new String(data,"UTF-8");
-            Log.d("Behave","Read Back Observation: "+ tmpIN);
-            Log.d("Behave","Observation Saved Correctly: "+tmpIN.equals(string));
+            Log.d("Behave","Read Back Template: "+ tmpIN);
+            Log.d("Behave","Template Saved Correctly: "+tmpIN.equals(string));
 
             DBHelper db = DBHelper.getInstance(context);
-            db.setObservation(newTemp.toString());
+            db.setTemplate(newTemp.toString());
 
         } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -272,8 +272,8 @@ public class FileHandler {
         }
     }
 
-    public static String readObservation(String name) {
-        File file = new File(getObservationDirectory(), name + ".template");
+    public static String readTemplate(String name) {
+        File file = new File(getTemplatesDirectory(), name + ".template");
         final StringBuilder storedString = new StringBuilder();
         try {
             Reader dataIO = new FileReader(file);
@@ -288,20 +288,20 @@ public class FileHandler {
 
             return storedString.toString();
         } catch  (Exception e) {
-            Log.e("Behave", "Error trying to read observation");
+            Log.e("Behave", "Error trying to read template");
         }
 
         return "";
     }
 
-    public static void deleteObservation(String observation) {
-        File projDir = new File(getObservationDirectory(), observation + ".template");
+    public static void deleteTemplate(String template) {
+        File projDir = new File(getTemplatesDirectory(), template + ".template");
         if (projDir.exists()) {
             if (!projDir.delete()) {
-                Log.e("ERROR", "Failed to delete observation!");
+                Log.e("ERROR", "Failed to delete template!");
             } else {
                 DBHelper db = DBHelper.getInstance(context);
-                db.removeObservation(observation);
+                db.removeTemplate(template);
             }
         }
     }

@@ -8,7 +8,7 @@
     android:padding="10dp" >
 
     <ListView
-        android:id="@+id/observation_list"
+        android:id="@+id/template_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -16,12 +16,12 @@
         android:dividerHeight="10dp"/>
 
     <Button
-        android:id="@+id/new_observation"
+        android:id="@+id/new_template"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@drawable/button_style"
         android:layout_marginTop="10dp"
         android:textColor="@color/black"
-        android:text="Create New Observation" />
+        android:text="Create New Template" />
 
 </LinearLayout>

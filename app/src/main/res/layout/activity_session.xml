@@ -94,7 +94,7 @@
         android:layout_marginBottom="10dp"
         android:background="@drawable/button_style"
         android:textColor="@color/black"
-        android:text="Start Session" />
+        android:text="Start Observation" />
 
     <Button
         android:id="@+id/end_session_btn"
@@ -103,7 +103,7 @@
         android:layout_marginBottom="10dp"
         android:background="@drawable/button_style"
         android:textColor="@color/black"
-        android:text="End Session"
+        android:text="End Observation"
         android:onClick="endSession"
         android:visibility="gone" />
 
@@ -112,19 +112,38 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp">
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.33">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="Observation:  "/>
+
+            <TextView
+                android:id="@+id/session_observation_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="1"/>
+
+        </LinearLayout>
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.5"
             android:textColor="@color/white"
             android:gravity="end"
-            android:text="Session time:  "/>
+            android:text="Observation time:  "/>
 
         <TextView
             android:id="@+id/session_time"
-            android:layout_width="0dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:textColor="@color/white"
             android:text="Not Started" />
 
@@ -152,7 +171,7 @@
         android:layout_marginTop="10dp"
         android:textColor="@color/white"
         android:textSize="16sp"
-        android:text="Session History"/>
+        android:text="Observation History"/>
 
     <ListView
         android:id="@+id/session_history_list"

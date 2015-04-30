@@ -55,6 +55,9 @@ public class ButtonAdapter extends BaseAdapter {
 
     public void endSession() {
         if (activeBehaviour != null) deactivateBehaviour();
+
+        timer.cancel();
+        timer.purge();
     }
 
     @Override

@@ -64,10 +64,11 @@ public class Session implements Parcelable {
     //The location of the session
     private String location;
     //The behaviour template the session used
-    private Template template;
+//    private Template template;
     //The path to the folder the session will be saved to
     private String path;
 
+    private Observation observations;
 
     /**
      * Constructor initialising the name, location and path
@@ -96,7 +97,8 @@ public class Session implements Parcelable {
         this.location = in.readString();
 
         // readParcelable need class loader
-        this.template = in.readParcelable(Template.class.getClassLoader());
+//        this.template = in.readParcelable(Template.class.getClassLoader());
+        this.observations = in.readParcelable(Observation.class.getClassLoader());
         this.path = in.readString();
     }
 
@@ -112,21 +114,34 @@ public class Session implements Parcelable {
         return location;
     }
 
-    public Template getTemplate() {
-        return template;
+//    public Template getTemplate() {
+//        return template;
+//    }
+
+    public List<Behaviour> getBehaviours(int observation) {
+        return this.observations.get(observation).behaviours;
+//        return this.template.behaviours;
     }
 
-    public List<Behaviour> getBehaviours() {
-        return this.template.behaviours;
+    public Template getTemplate(int observation) {
+        return this.observations.get(observation);
+    }
+
+    public void setObservations(Observation observations) {
+        this.observations = observations;
+    }
+
+    public int getObservationsCount() {
+        return this.observations.getCount();
     }
 
     /**
      * Method for setting the behaviour template.
      * @param template the template to store
      */
-    public void setTemplate(Template template) {
-        this.template = template;
-    }
+//    public void setTemplate(Template template) {
+//        this.template = template;
+//    }
 
     /**
      * Sets the date and time of when the session began
@@ -142,27 +157,23 @@ public class Session implements Parcelable {
         this.endTime.add(new Date());
     }
 
-    @Override
-    public String toString() {
-        String out = "Session Name," + this.name + "\n";
-
+    public String toString(int observation) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss", Locale.UK);
+        String out = "Session Name," + this.name + "\n";
         out += "Start Date,";
-        String endString = "\nEnd Date,";
+        out += sdf.format(startTime.get(observation - 1).getTime()) + ",";
 
-        for (int i = 0; i < startTime.size(); i++) {
-            out += sdf.format(startTime.get(i).getTime()) + ",";
-            endString += endTime.size() <= i ? "Autosave at " + sdf.format(new Date()) + "," : sdf.format(endTime.get(i).getTime()) + ",";
-        }
+//        String endString = "\nEnd Date,";
+//        endString += endTime.size() <= observation - 1 ? "Autosave at " + sdf.format(new Date()) + "," : sdf.format(endTime.get(observation - 1).getTime()) + ",";
 
-        out += endString;
+        out += "\nEnd Date," + (endTime.size() <= observation - 1 ? "Autosave at " + sdf.format(new Date()) + "," : sdf.format(endTime.get(observation - 1).getTime())) + ",";
         out += "\nSession Location," + this.location + "\n";
-        out += "Template Name," + this.template.name + "\n";
+        out += "Template Name," + this.observations.get(observation).name + "\n";
 
         // Split behaviour types.
         ArrayList<Behaviour> eBe = new ArrayList<>();
         ArrayList<Behaviour> sBe = new ArrayList<>();
-        for (Behaviour b : this.template.behaviours) {
+        for (Behaviour b : this.observations.get(observation).behaviours) {
             if (b.type == BehaviourType.EVENT) {
                 eBe.add(b);
             } else {
@@ -170,40 +181,47 @@ public class Session implements Parcelable {
             }
         }
 
-        out += "\nEvent Behaviours\n\n";
+        if (eBe.size() > 0) {
+            out += "\nEvent Behaviours\n\n";
 
-        for (Behaviour b : eBe) {
-            out += b.bName + "\n";
-            String starts = "Start Times,";
-            String notes = "Notes,";
-            for (Event e : b.eventHistory) {
-                String mark = e.getMark() ? "m" : "";
-                starts += timeDiff(startTime.get(0), e.startTime) + mark + ",";
-                notes += e.getNote() + ",";
+            for (Behaviour b : eBe) {
+                out += b.bName + "\n";
+                String starts = "Start Times,";
+                String notes = "Notes,";
+                for (Event e : b.eventHistory) {
+                    String mark = e.getMark() ? "m" : "";
+                    starts += timeDiff(startTime.get(observation - 1), e.startTime) + mark + ",";
+                    notes += e.getNote() + ",";
+                }
+
+                out += starts + "\n";
+                out += notes + "\n\n";
             }
-
-            out += starts + "\n";
-            out += notes + "\n\n";
+        } else {
+            out += "\n";
         }
 
-        out += "State Behaviours\n\n";
+        if (sBe.size() > 0) {
+            out += "State Behaviours\n\n";
 
-        for (Behaviour b : sBe) {
-            out += b.bName + "\n";
-            String starts = "Start Times,";
-            String duration = "Durations,";
-            String notes = "Notes,";
-            for (Event e : b.eventHistory) {
-                String mark = e.getMark() ? "m" : "";
-                starts += timeDiff(startTime.get(0), e.startTime) + mark + ",";
-                duration += e.duration + mark + ",";
-                notes += e.getNote() + ",";
+            for (Behaviour b : sBe) {
+                out += b.bName + "\n";
+                String starts = "Start Times,";
+                String duration = "Durations,";
+                String notes = "Notes,";
+                for (Event e : b.eventHistory) {
+                    String mark = e.getMark() ? "m" : "";
+                    starts += timeDiff(startTime.get(observation - 1), e.startTime) + mark + ",";
+                    duration += e.duration + mark + ",";
+                    notes += e.getNote() + ",";
+                }
+
+                out += starts + "\n";
+                out += duration + "\n";
+                out += notes + "\n\n";
             }
-
-            out += starts + "\n";
-            out += duration + "\n";
-            out += notes + "\n\n";
         }
+
         return out;
     }
 
@@ -240,8 +258,8 @@ public class Session implements Parcelable {
      * Returns a string of hours mins and secs since now Date.
      * @return an HH:MM:SS formatted time string.
      */
-    public String getRelativeHMS() {
-        long millis = new Date().getTime() - this.startTime.get(0).getTime();
+    public String getRelativeHMS(int observation) {
+        long millis = new Date().getTime() - this.startTime.get(observation - 1).getTime();
         return String.format("%02d:%02d:%02d",
                     TimeUnit.MILLISECONDS.toHours(millis),
                     TimeUnit.MILLISECONDS.toMinutes(millis) -
@@ -267,7 +285,8 @@ public class Session implements Parcelable {
         dest.writeLong(startTime == null || startTime.size() == 0 ? 0 : startTime.get(0).getTime());
         dest.writeLong(endTime == null || startTime.size() == 0 ? 0 : endTime.get(0).getTime());
         dest.writeString(location);
-        dest.writeParcelable(template,flags);
+//        dest.writeParcelable(template, flags);
+        dest.writeParcelable(observations, flags);
         dest.writeString(path);
     }
 

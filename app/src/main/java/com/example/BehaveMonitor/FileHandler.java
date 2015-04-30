@@ -187,17 +187,18 @@ public class FileHandler {
         }
     }
 
-    public static boolean saveSession(String folder, Session session, String name) {
+    public static boolean saveSession(String folder, Session session, String name, int observation) {
         File file = new File(getSessionsDirectory(), folder + File.separator + name + ".csv");
 
         try {
             PrintWriter printWriter = new PrintWriter(file);
-            printWriter.write(session.toString());
+            printWriter.write(session.toString(observation));
             printWriter.close();
             return true;
         } catch (FileNotFoundException e) {
             Log.e("Behave", "Failed to save session, couldn't find file");
         }
+
         return false;
     }
 
@@ -237,10 +238,10 @@ public class FileHandler {
     }
 
     private static void saveTemplateFile(File file, Template newTemp) {
-        //Convert template to string the write it and read it back to check.
+        // Convert template to string the write it and read it back to check.
         String string = newTemp.toString();
 
-        //Save File
+        // Save File
         try {
             FileOutputStream fos = new FileOutputStream(file);
             fos.write(string.getBytes());

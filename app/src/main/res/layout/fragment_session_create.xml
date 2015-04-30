@@ -19,7 +19,7 @@
             android:layout_marginTop="2dp"
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
-            android:text="Folder: "/>
+            android:text="@string/session_create_folder"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,7 +41,8 @@
                 android:layout_height="40dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/button_style"
-                android:src="@drawable/ic_action_new" />
+                android:src="@drawable/ic_action_new"
+                android:contentDescription="@string/description_new_folder_button"/>
 
         </LinearLayout>
 
@@ -51,7 +52,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
-            android:text="How many observations?"/>
+            android:text="@string/session_create_observations"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -65,7 +66,8 @@
                 android:layout_weight="1"
                 android:layout_marginRight="10dp"
                 android:layout_marginEnd="10dp"
-                android:inputType="number" />
+                android:inputType="number"
+                android:text="1"/>
 
             <View
                 android:layout_width="0dp"
@@ -88,7 +90,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
-            android:text="Template: "/>
+            android:text="@string/session_create_template"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -110,18 +112,27 @@
                 android:layout_height="40dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/button_style"
-                android:src="@drawable/ic_action_new" />
+                android:src="@drawable/ic_action_new"
+                android:contentDescription="@string/description_new_template_button"/>
 
         </LinearLayout>
 
         <TextView
             android:id="@+id/name_label"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
-            android:text="Name: " />
+            android:text="@string/session_create_name" />
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="4dp"-->
+            <!--android:layout_marginStart="4dp"-->
+            <!--android:textSize="11sp"-->
+            <!--android:text="If you have more than one observation in this session, a number will be appended to this prefix for the name, otherwise this will be used as the name" />-->
 
         <EditText
             android:id="@+id/session_name"
@@ -133,12 +144,12 @@
         <TextView
             android:id="@+id/location_label"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:gravity="center"
-            android:text="Location:" />
+            android:text="@string/session_create_location" />
 
         <EditText
             android:id="@+id/session_location"
@@ -153,8 +164,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:background="@drawable/button_style"
+            android:textAllCaps="false"
             android:textColor="@color/black"
-            android:text="Create Session" />
+            android:text="@string/session_create_button" />
 
     </LinearLayout>
 

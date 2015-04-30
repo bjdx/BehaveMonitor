@@ -40,10 +40,12 @@ public class SessionActivity extends Activity {
     final Handler myHandler = new Handler();
     Timer bTimer = null;
 
+    private int observation = 1;
     private String activeFolder;
     private ButtonAdapter adapter;
     private HistoryAdapter historyAdapter;
 
+    private String namePrefix = "";
     private String filename = "";
     private boolean sessionStarted = false;
 
@@ -55,41 +57,35 @@ public class SessionActivity extends Activity {
         Bundle b = getIntent().getExtras();
         activeSession = b.getParcelable("Session");
         activeFolder = b.getString("activeFolderString");
+        namePrefix = activeSession.getName().trim();
 
-//        if(activeSession != null) Log.e("Active Session is null","Parcel didnt work"+activeSession.name);
-//        setupTimer();
         loadSessionInfo();
         setSetupButton();
         setStartButton();
     }
 
-//    private void setupTimer() {
-//        bTimer = new Timer();
-////        final int delay = 100;
-//
-//    }
-
     private void loadSessionInfo() {
-        //Sets the text of the textview to correct Session details
+        // Sets the text of the textview to correct Session details
         TextView name = (TextView) findViewById(R.id.sNameText);
         TextView location = (TextView) findViewById(R.id.sLocText);
         TextView tmpText = (TextView) findViewById(R.id.sTmpText);
-        name.setText(name.getText().toString()+"  "+activeSession.getName());
-        location.setText(location.getText().toString()+"  "+activeSession.getLocation());
-        tmpText.setText(tmpText.getText().toString()+"  "+activeSession.getTemplate().name);
+        name.setText(name.getText().toString() + "  " + activeSession.getName());
+        location.setText(location.getText().toString() + "  " + activeSession.getLocation());
+        tmpText.setText(tmpText.getText().toString() + "  " + activeSession.getTemplate(observation).name);
 
-        //Creates list of behaviours
+        // TODO: Replace this.
+        // Creates list of behaviours
         LinearLayout ll = (LinearLayout) findViewById(R.id.behaveLayout);
-        TextView[] bTV = new TextView[activeSession.getTemplate().behaviours.size()];
+        TextView[] bTV = new TextView[activeSession.getTemplate(observation).behaviours.size()];
         int i = 0;
-        for(Behaviour b:activeSession.getTemplate().behaviours){
+        for (Behaviour b : activeSession.getTemplate(observation).behaviours){
             bTV[i] = new TextView(this);
             bTV[i].setText(b.bName);
             ll.addView(bTV[i]);
             i++;
         }
 
-        filename = FileHandler.getVersionName(activeFolder, activeSession.getName() + "_" + activeSession.getLocation());
+//        filename = FileHandler.getVersionName(activeFolder, activeSession.getName() + "_" + activeSession.getLocation());
     }
 
     public void setSetupButton() {
@@ -119,10 +115,9 @@ public class SessionActivity extends Activity {
     final Runnable updateTime = new Runnable() {
         @Override
         public void run() {
-            sessionTimeTV.setText(activeSession.getRelativeHMS());
+            sessionTimeTV.setText(activeSession.getRelativeHMS(observation));
         }
     };
-
 
     private void addSessionTimerTask() {
         bTimer = new Timer();
@@ -149,7 +144,7 @@ public class SessionActivity extends Activity {
     }
 
     private void autosave() {
-        boolean saved = FileHandler.saveSession(activeFolder, activeSession, filename);
+        boolean saved = FileHandler.saveSession(activeFolder, activeSession, filename, observation);
         if (saved) {
             myHandler.post(autosaveSuccess);
         } else {
@@ -171,13 +166,42 @@ public class SessionActivity extends Activity {
         }
     };
 
-    //Called to reconfigure the screen for button display and hides the session information
+    /**
+     * Reconfigures the screen for button display and hides the session information.
+     * Also resets the session for each new observation.
+     */
     public void setupSession() {
-        //hide the session info layout
-        findViewById(R.id.info_layout).setVisibility(View.GONE);
+        // hide the session info layout
+        if (observation == 1) {
+            findViewById(R.id.info_layout).setVisibility(View.GONE);
+        }
+
+        String name = namePrefix;
+        if (activeSession.getObservationsCount() > 1) {
+            name += observation;
+            activeSession.setName(name);
+        }
+
+        filename = FileHandler.getVersionName(activeFolder, name + "_" + activeSession.getLocation());
+
+        if (observation > 1) {
+            resetSession();
+        }
 
         setupListView();
         setupGridView();
+
+        ((TextView) findViewById(R.id.session_observation_number)).setText("" + observation);
+    }
+
+    private void resetSession() {
+        sessionTimeTV.setText("Not Started");
+
+        // Swap the end button for the start button.
+        findViewById(R.id.start_session_btn).setVisibility(View.VISIBLE);
+        findViewById(R.id.end_session_btn).setVisibility(View.GONE);
+
+        sessionStarted = false;
     }
 
     public void setupListView() {
@@ -188,7 +212,7 @@ public class SessionActivity extends Activity {
 
     public void setupGridView() {
         GridView grid = (GridView) findViewById(R.id.session_behaviour_grid);
-        adapter = new ButtonAdapter(this, historyAdapter, activeSession.getTemplate().behaviours, new Timer(), myHandler, this);
+        adapter = new ButtonAdapter(this, historyAdapter, activeSession.getTemplate(observation).behaviours, new Timer(), myHandler, this);
         grid.setAdapter(adapter);
     }
 
@@ -211,8 +235,8 @@ public class SessionActivity extends Activity {
 
     public void endSession(View view) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("End Session?");
-        dialog.setMessage("Are you sure you want to end the session?");
+        dialog.setTitle("Finish observation?");
+        dialog.setMessage("Are you sure you want to end this observation?");
 
         dialog.setNegativeButton("Cancel", null);
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -224,7 +248,7 @@ public class SessionActivity extends Activity {
                 bTimer.purge();
 
                 List<Integer[]> markedEvents = new ArrayList<>();
-                List<Behaviour> behaviours = activeSession.getBehaviours();
+                List<Behaviour> behaviours = activeSession.getBehaviours(observation);
                 for (int i = 0; i < behaviours.size(); i++) {
                     List<Event> eventHistory = behaviours.get(i).eventHistory;
                     for (int j = 0; j < eventHistory.size(); j++) {
@@ -402,10 +426,15 @@ public class SessionActivity extends Activity {
     }
 
     private void saveSession() {
-        boolean saved = FileHandler.saveSession(activeFolder, activeSession, filename);
+        boolean saved = FileHandler.saveSession(activeFolder, activeSession, filename, observation);
         if (saved) {
             makeSomeToast("File saved.");
-            backToHome();
+            if (observation == activeSession.getObservationsCount()) {
+                backToHome();
+            } else {
+                observation++;
+                setupSession();
+            }
         } else {
             makeSomeToast("Error when saving.");
         }

@@ -5,6 +5,4 @@ Chicken App todo:
 - Add session statistics, including:
     -Longest event, Shortest event, Average duration of events, Number of Events (For each behaviour recorded).
     - Most common followup behaviour for each behaviour (optional)
-- Add copyright stuff to code.
-- Template manage page (including edit)
 - Session history page

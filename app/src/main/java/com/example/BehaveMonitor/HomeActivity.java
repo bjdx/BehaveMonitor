@@ -110,31 +110,31 @@ public class HomeActivity extends ActionBarActivity
         return "null;".equals(template.toString()) ? "" : template.name;
     }
 
-    public void setActiveFolder(File file) {
-        activeFolder = file;
-    }
-
-    public void setActiveTmp(Template tmp) {
-        activeTemplate = tmp;
-    }
-
-    public void setActiveSession(Session session) {
-        activeSession = session;
-    }
-
-    public Session getActiveSession(){
-        return activeSession;
-    }
-
-    public Session makeSession(String name, String loc) {
-        activeSession = new Session(name, loc, activeFolder.getAbsolutePath());
-        activeSession.setTemplate(activeTemplate);
-        return activeSession;
-    }
-
-    public String getActivePath() {
-        return activeFolder.getAbsolutePath();
-    }
+//    public void setActiveFolder(File file) {
+//        activeFolder = file;
+//    }
+//
+//    public void setActiveTmp(Template tmp) {
+//        activeTemplate = tmp;
+//    }
+//
+//    public void setActiveSession(Session session) {
+//        activeSession = session;
+//    }
+//
+//    public Session getActiveSession(){
+//        return activeSession;
+//    }
+//
+//    public Session makeSession(String name, String loc) {
+//        activeSession = new Session(name, loc, activeFolder.getAbsolutePath());
+//        activeSession.setTemplate(activeTemplate);
+//        return activeSession;
+//    }
+//
+//    public String getActivePath() {
+//        return activeFolder.getAbsolutePath();
+//    }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {

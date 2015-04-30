@@ -24,11 +24,12 @@ import android.widget.Toast;
 import com.example.BehaveMonitor.DBHelper;
 import com.example.BehaveMonitor.FileHandler;
 import com.example.BehaveMonitor.HomeActivity;
-import com.example.BehaveMonitor.Template;
-import com.example.BehaveMonitor.TemplateActivity;
+import com.example.BehaveMonitor.Observation;
 import com.example.BehaveMonitor.R;
 import com.example.BehaveMonitor.Session;
 import com.example.BehaveMonitor.SessionActivity;
+import com.example.BehaveMonitor.Template;
+import com.example.BehaveMonitor.TemplateActivity;
 
 import java.io.File;
 import java.util.regex.Matcher;
@@ -46,6 +47,7 @@ public class SessionFragment extends Fragment {
     private String activeFolderName;
 
     private int nObservations = 0;
+    private Observation observations;
     private Template activeTemplate;
     private String activeTemplateName;
 
@@ -286,6 +288,12 @@ public class SessionFragment extends Fragment {
         if (!"".equals(template)) {
             activeTemplate = new Template(template);
             activeTemplateName = templateName;
+
+            observations = new Observation();
+            for (int i = 0; i < nObservations; i++) {
+                observations.addTemplate(new Template(template));
+            }
+
             return true;
         } else {
             makeSomeToast("Error reading template.");
@@ -303,7 +311,8 @@ public class SessionFragment extends Fragment {
         db.setFolderTemplate(activeFolderName, activeTemplate.toString());
 
         Session newSession = new Session(sessionName, sessionLocation, activeFolder.getAbsolutePath());
-        newSession.setTemplate(activeTemplate);
+        newSession.setObservations(observations);
+//        newSession.setTemplate(activeTemplate);
 
         Intent intent = new Intent(getActivity(), SessionActivity.class);
         intent.putExtra("activeFolderString", activeFolderName);

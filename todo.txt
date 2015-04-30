@@ -1,8 +1,8 @@
 Chicken App todo:
 
-- Add options for multiple Observations in single session (possibly refactor Templates to Observations) then hold a list of 
-  Observations on the Session object.
+- Add number picker for number of observations per session. Change name label if only one observation.
 - Add session statistics, including:
-    -Longest event, Shortest event, Average duration of events, Number of Events (For each behaviour recorded).
+    - Longest event, Shortest event, Average duration of events, Number of Events (For each behaviour recorded).
     - Most common followup behaviour for each behaviour (optional)
+- On session setup screen, change to use listview for behaviours.
 - Session history page

@@ -113,7 +113,7 @@ public class NavigationDrawerFragment extends Fragment {
         });
 
         ObjectDrawerItem[] objectDrawerItems = new ObjectDrawerItem[] {
-                new ObjectDrawerItem(R.drawable.ic_action_copy, mNavigationDrawerItemTitles[0]),
+                new ObjectDrawerItem(R.drawable.ic_action_session, mNavigationDrawerItemTitles[0]),
                 new ObjectDrawerItem(R.drawable.ic_action_collection, mNavigationDrawerItemTitles[1]),
                 new ObjectDrawerItem(R.drawable.ic_action_template, mNavigationDrawerItemTitles[2]),
                 new ObjectDrawerItem(R.drawable.ic_action_history, mNavigationDrawerItemTitles[3])

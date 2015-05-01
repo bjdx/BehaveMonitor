@@ -30,6 +30,10 @@ public class Observation implements Parcelable {
         return null;
     }
 
+    public Template[] getTemplates() {
+        return templates.toArray(new Template[templates.size()]);
+    }
+
     public int getCount() {
         return this.templates.size();
     }

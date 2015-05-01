@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -445,6 +446,7 @@ public class SessionActivity extends Activity {
         int nObservations = activeSession.getObservationsCount();
         float[][] durationStatistics = new float[activeSession.getTemplate(1).behaviours.size()][nObservations];
         int[][] frequencyStatistics = new int[durationStatistics.length][nObservations];
+        String name = nObservations > 1 ? namePrefix : activeSession.getName();
 
         for (int observation = 0; observation < nObservations; observation++) {
             Template template = activeSession.getTemplate(observation + 1); // getTemplate is 1-indexed
@@ -454,14 +456,17 @@ public class SessionActivity extends Activity {
                 Behaviour behaviour = behaviours[i];
                 if (behaviour.getType() == BehaviourType.STATE) {
                     float avgDuration = 0.0f;
+                    int count = behaviour.eventHistory.size();
                     for (Event event : behaviour.eventHistory) {
                         float duration = Float.parseFloat(event.duration);
                         avgDuration += duration;
                     }
 
-                    avgDuration = avgDuration / (float) behaviour.eventHistory.size();
+                    if (count > 0) {
+                        avgDuration = avgDuration / (float) count;
+                    }
 
-                    frequencyStatistics[i][observation] = behaviour.eventHistory.size();
+                    frequencyStatistics[i][observation] = count;
                     durationStatistics[i][observation] = avgDuration;
                 } else {
                     frequencyStatistics[i][observation] = behaviour.eventHistory.size();
@@ -493,6 +498,9 @@ public class SessionActivity extends Activity {
 //                }
 //            }
         }
+
+        FileHandler.saveStatistics(activeSession, activeFolder, name, frequencyStatistics, durationStatistics);
+        Log.e("Behave", "Statistics calculated.");
     }
 
     private void backToHome() {

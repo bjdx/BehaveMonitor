@@ -187,6 +187,63 @@ public class FileHandler {
         }
     }
 
+    public static void saveStatistics(Session session, String folder, String name, int[][] frequencyStatistics, float[][] durationStatistics) {
+        File file = new File(getSessionsDirectory(), folder + File.separator + session.getLocation() + "_Statistics.csv");
+        Template[] templates = session.getTemplates();
+//        int behaviourCount = templates[0].behaviours.size();
+        int nObservations = frequencyStatistics[0].length;
+        Behaviour[] behaviours = templates[0].behaviours.toArray(new Behaviour[templates[0].behaviours.size()]);
+
+        try {
+            PrintWriter printWriter = new PrintWriter(file);
+
+            String stats = "Session Date,," + session.getStartDate() + "\n\n";
+            stats += "Event Frequency\n\n,";
+            if (nObservations == 1) {
+                stats += name;
+            } else {
+                for (int i = 0; i < nObservations; i++) {
+                    stats += name + (i + 1) + ",";
+                }
+            }
+
+            stats += "\n";
+            for (int i = 0; i < behaviours.length; i++) {
+                stats += behaviours[i].getName() + ",";
+                for (int observation = 0; observation < nObservations; observation++) {
+                    stats += frequencyStatistics[i][observation] + ",";
+                }
+
+                stats += "\n";
+            }
+
+            // Durations table
+            stats += "\nMean Duration\n\n,";
+            if (nObservations == 1) {
+                stats += name;
+            } else {
+                for (int i = 0; i < nObservations; i++) {
+                    stats += name + (i + 1) + ",";
+                }
+            }
+
+            stats += "\n";
+            for (int i = 0; i < behaviours.length; i++) {
+                stats += behaviours[i].getName() + ",";
+                for (int observation = 0; observation < nObservations; observation++) {
+                    stats += durationStatistics[i][observation] < 0f ? "," : durationStatistics[i][observation] + ",";
+                }
+
+                stats += "\n";
+            }
+
+            printWriter.write(stats);
+            printWriter.close();
+        } catch (FileNotFoundException e) {
+            Log.e("Behave", "Failed to save statistics, couldn't find file");
+        }
+    }
+
     public static boolean saveSession(String folder, Session session, String name, int observation) {
         File file = new File(getSessionsDirectory(), folder + File.separator + name + ".csv");
 

@@ -102,6 +102,18 @@ public class Session implements Parcelable {
         this.path = in.readString();
     }
 
+    public Date getStartDate() {
+        if (startTime != null && startTime.size() > 0) {
+            return startTime.get(0);
+        }
+
+        return new Date();
+    }
+
+    public Template[] getTemplates() {
+        return this.observations.getTemplates();
+    }
+
     public String getName() {
         return name;
     }

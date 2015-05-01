@@ -1,6 +1,5 @@
 Chicken App todo:
 
-- Add number picker for number of observations per session. Change name label if only one observation.
 - Add session statistics, including:
     - Longest event, Shortest event, Average duration of events, Number of Events (For each behaviour recorded).
     - Most common followup behaviour for each behaviour (optional)

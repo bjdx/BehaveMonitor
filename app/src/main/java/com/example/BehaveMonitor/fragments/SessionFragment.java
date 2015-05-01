@@ -10,8 +10,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -19,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.BehaveMonitor.DBHelper;
@@ -30,6 +34,8 @@ import com.example.BehaveMonitor.Session;
 import com.example.BehaveMonitor.SessionActivity;
 import com.example.BehaveMonitor.Template;
 import com.example.BehaveMonitor.TemplateActivity;
+
+import org.angmarch.circledpicker.CircledPicker;
 
 import java.io.File;
 import java.util.regex.Matcher;
@@ -46,7 +52,7 @@ public class SessionFragment extends Fragment {
     private File activeFolder;
     private String activeFolderName;
 
-    private int nObservations = 0;
+    private int nObservations = 1;
     private Observation observations;
     private Template activeTemplate;
     private String activeTemplateName;
@@ -54,17 +60,83 @@ public class SessionFragment extends Fragment {
 	public SessionFragment() { }
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	public View onCreateView(final LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_session_create, container, false);
-        rootView.findViewById(R.id.observations_amount).clearFocus();
+        final EditText nObsView = (EditText) rootView.findViewById(R.id.observations_amount);
+        nObsView.clearFocus();
 
         db = DBHelper.getInstance(getActivity());
 
         HomeActivity homeActivity = (HomeActivity) getActivity();
         activeFolderName = homeActivity.getFolderName();
         activeTemplateName = homeActivity.getTemplateName();
+
+        nObsView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+//                int inType = nObsView.getInputType();
+                nObsView.setInputType(InputType.TYPE_NULL);
+                nObsView.onTouchEvent(event);
+//                nObsView.setInputType(inType);
+                return true;
+            }
+        });
+
+        nObsView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                    final View dialogView = inflater.inflate(R.layout.dialog_number_picker, null);
+                    dialog.setView(dialogView);
+
+                    final CircledPicker picker = ((CircledPicker) dialogView.findViewById(R.id.circled_picker));
+                    picker.setValue(nObservations - 1);
+
+                    final TextView nameLabel = (TextView) rootView.findViewById(R.id.name_label);
+
+                    dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            int n = (int) picker.getValue();
+                            nObservations = n + 1;
+                            nObsView.setText("" + nObservations);
+                            nObsView.clearFocus();
+
+                            if (nObservations == 1) {
+                                nameLabel.setText(R.string.session_create_name);
+                            } else {
+                                nameLabel.setText(R.string.session_create_name_prefix);
+                            }
+                        }
+                    });
+
+                    dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            nObsView.clearFocus();
+                        }
+                    });
+
+                    dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                        @Override
+                        public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                                dialog.dismiss();
+                                nObsView.clearFocus();
+                            }
+
+                            return false;
+                        }
+                    });
+
+                    dialog.setCancelable(false);
+                    dialog.show();
+                }
+            }
+        });
 
         setFolderSpinner();
         setTemplateSpinner();

@@ -5,4 +5,7 @@
     <color name="black">#000</color>
     <color name="white">#fff</color>
     <color name="transparent">#00000000</color>
+
+    <color name="defaultLineColor">#1abc9c</color>
+    <color name="defaultSubLineColor">#7f8c8d</color>
 </resources>

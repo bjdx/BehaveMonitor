@@ -33,8 +33,10 @@
     <!-- Create session screen items -->
     <string name="session_create_folder">Folder:</string>
     <string name="session_create_observations">How many observations?</string>
+    <string name="session_create_default_observation_amount">1</string>
     <string name="session_create_template">Template:</string>
-    <string name="session_create_name">Name prefix:</string>
+    <string name="session_create_name">Name:</string>
+    <string name="session_create_name_prefix">Name prefix:</string>
     <string name="session_create_location">Location:</string>
     <string name="session_create_button">Create Session</string>
 

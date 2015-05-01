@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BehaveMonitor.iml" filepath="$PROJECT_DIR$/BehaveMonitor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CircledPicker/CircledPicker.iml" filepath="$PROJECT_DIR$/CircledPicker/CircledPicker.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

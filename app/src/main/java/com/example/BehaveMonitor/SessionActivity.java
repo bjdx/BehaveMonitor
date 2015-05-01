@@ -430,6 +430,7 @@ public class SessionActivity extends Activity {
         if (saved) {
             makeSomeToast("File saved.");
             if (observation == activeSession.getObservationsCount()) {
+                calculateStatistics();
                 backToHome();
             } else {
                 observation++;
@@ -437,6 +438,60 @@ public class SessionActivity extends Activity {
             }
         } else {
             makeSomeToast("Error when saving.");
+        }
+    }
+
+    private void calculateStatistics() {
+        int nObservations = activeSession.getObservationsCount();
+        float[][] durationStatistics = new float[activeSession.getTemplate(1).behaviours.size()][nObservations];
+        int[][] frequencyStatistics = new int[durationStatistics.length][nObservations];
+
+        for (int observation = 0; observation < nObservations; observation++) {
+            Template template = activeSession.getTemplate(observation + 1); // getTemplate is 1-indexed
+            Behaviour[] behaviours = template.behaviours.toArray(new Behaviour[template.behaviours.size()]);
+
+            for (int i = 0; i < behaviours.length; i++) {
+                Behaviour behaviour = behaviours[i];
+                if (behaviour.getType() == BehaviourType.STATE) {
+                    float avgDuration = 0.0f;
+                    for (Event event : behaviour.eventHistory) {
+                        float duration = Float.parseFloat(event.duration);
+                        avgDuration += duration;
+                    }
+
+                    avgDuration = avgDuration / (float) behaviour.eventHistory.size();
+
+                    frequencyStatistics[i][observation] = behaviour.eventHistory.size();
+                    durationStatistics[i][observation] = avgDuration;
+                } else {
+                    frequencyStatistics[i][observation] = behaviour.eventHistory.size();
+                    durationStatistics[i][observation] = -1f;
+                }
+            }
+
+//            for (Behaviour behaviour : template.behaviours) {
+//                if (behaviour.getType() == BehaviourType.STATE) {
+//                    float avgDuration = 0.0f;
+////                    float shortest = Float.MAX_VALUE;
+////                    float longest = Float.MIN_VALUE;
+//
+//                    for (Event event : behaviour.eventHistory) {
+//                        float duration = Float.parseFloat(event.duration);
+//                        avgDuration += duration;
+////                        if (duration < shortest) {
+////                            shortest = duration;
+////                        }
+////
+////                        if (duration > longest) {
+////                            longest = duration;
+////                        }
+//                    }
+//
+//                    avgDuration = avgDuration / (float) behaviour.eventHistory.size();
+//                } else {
+//
+//                }
+//            }
         }
     }
 

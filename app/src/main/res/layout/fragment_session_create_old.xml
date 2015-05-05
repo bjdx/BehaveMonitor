@@ -10,21 +10,23 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:orientation="vertical">
+        android:padding="7dp"
+        android:orientation="vertical"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            android:text="@string/session_create_folder"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:text="Folder: "/>
 
             <Spinner
                 style="@android:style/Widget.Holo.Spinner"
@@ -41,52 +43,57 @@
                 android:layout_height="40dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/button_style"
-                android:src="@drawable/ic_action_new" />
+                android:src="@drawable/ic_action_new"
+                android:contentDescription="@string/description_new_folder_button"/>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:text="How many observations?" />
-
-            <Spinner
-                style="@android:style/Widget.Holo.Spinner"
-                android:id="@+id/observation_number_spinner"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginEnd="68dp"
-                android:layout_marginRight="68dp" />
-
-        </LinearLayout>
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            android:text="@string/session_create_observations"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="10dp"
+            <EditText
+                android:id="@+id/observations_amount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:layout_marginRight="10dp"
-                android:text="Observation: "/>
+                android:layout_marginEnd="10dp"
+                android:inputType="number"
+                android:text="@string/session_create_default_observation_amount" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            android:text="@string/session_create_template"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <Spinner
                 style="@android:style/Widget.Holo.Spinner"
-                android:id="@+id/observation_spinner"
+                android:id="@+id/template_spinner"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -94,62 +101,48 @@
                 android:layout_marginRight="20dp" />
 
             <ImageButton
-                android:id="@+id/new_observation"
+                android:id="@+id/new_template"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/button_style"
-                android:src="@drawable/ic_action_new" />
+                android:src="@drawable/ic_action_new"
+                android:contentDescription="@string/description_new_template_button"/>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/name_label"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:orientation="horizontal">
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            android:text="@string/session_create_name" />
 
-            <TextView
-                android:id="@+id/name_label"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:gravity="center"
-                android:text="Name: " />
+        <EditText
+            android:id="@+id/session_name"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:inputType="text"
+            android:singleLine="true" />
 
-            <EditText
-                android:id="@+id/session_name"
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:inputType="text"
-                android:singleLine="true" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/location_label"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:orientation="horizontal">
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            android:gravity="center"
+            android:text="@string/session_create_location" />
 
-            <TextView
-                android:id="@+id/location_label"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:gravity="center"
-                android:text="Location:" />
-
-            <EditText
-                android:id="@+id/session_location"
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:singleLine="true"
-                android:inputType="text" />
-
-        </LinearLayout>
+        <EditText
+            android:id="@+id/session_location"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:inputType="text" />
 
         <Button
             android:id="@+id/session_create_btn"
@@ -157,8 +150,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:background="@drawable/button_style"
+            android:textAllCaps="false"
             android:textColor="@color/black"
-            android:text="Create Session" />
+            android:text="@string/session_create_button" />
 
     </LinearLayout>
 

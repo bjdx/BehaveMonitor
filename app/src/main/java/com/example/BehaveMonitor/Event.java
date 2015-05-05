@@ -72,7 +72,7 @@ public class Event implements Parcelable{
         duration += diff;
 	}
 
-    //Stuff to make it parcelable.
+    // Stuff to make it parcelable.
 
     @Override
     public int describeContents() {

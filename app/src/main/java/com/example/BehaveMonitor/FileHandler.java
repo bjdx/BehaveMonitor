@@ -59,12 +59,21 @@ public class FileHandler {
 
     public static String[] getFolders() {
         File projDir = getSessionsDirectory();
-        String[] folders = projDir.list();
-        if (folders == null || folders.length == 0) {
+        File[] files = projDir.listFiles();
+        List<String> folders = new ArrayList<>();
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                folders.add(file.getName());
+            }
+        }
+
+//        String[] folders = projDir.list();
+        if (folders.size() == 0) {
             Log.e("Behave", "No folders found!");
         }
 
-        return folders;
+        return folders.toArray(new String[folders.size()]);
     }
 
     public static List<Integer> getSessionCounts() {
@@ -187,17 +196,44 @@ public class FileHandler {
         }
     }
 
-    public static void saveStatistics(Session session, String folder, String name, int[][] frequencyStatistics, float[][] durationStatistics) {
+    public static void saveSingleStatistics(Session session, String folder, int[] frequencyStatistics, float[] durationStatistics) {
+        File file = new File(getSessionsDirectory(), folder + File.separator + session.getLocation() + "_Statistics.csv");
+        Template template = session.getTemplate(1);
+        Behaviour[] behaviours = template.behaviours.toArray(new Behaviour[template.behaviours.size()]);
+
+        try {
+            PrintWriter printWriter = new PrintWriter(file);
+
+            String stats = "Session Date,," + session.getStartDate() + "\n";
+            stats += "Name,," + session.getName() + "\n";
+            stats += "Location,," + session.getLocation() + "\n\n";
+            stats += ",Frequency,Duration\n";
+
+            for (int i = 0; i < behaviours.length; i++) {
+                stats += behaviours[i].getName() + ",";
+                stats += frequencyStatistics[i] + ",";
+                stats += durationStatistics[i] < 0f ? "," : durationStatistics[i] + ",";
+                stats += behaviours[i].isMarked() ? "Marked\n" : "\n";
+            }
+
+            printWriter.write(stats);
+            printWriter.close();
+        } catch (FileNotFoundException e) {
+            Log.e("Behave", "Failed to save statistics, couldn't find file.");
+        }
+    }
+
+    public static void saveMultipleStatistics(Session session, String folder, String name, int[][] frequencyStatistics, float[][] durationStatistics, boolean[][] marks) {
         File file = new File(getSessionsDirectory(), folder + File.separator + session.getLocation() + "_Statistics.csv");
         Template[] templates = session.getTemplates();
-//        int behaviourCount = templates[0].behaviours.size();
-        int nObservations = frequencyStatistics[0].length;
+        int nObservations = frequencyStatistics.length;
         Behaviour[] behaviours = templates[0].behaviours.toArray(new Behaviour[templates[0].behaviours.size()]);
 
         try {
             PrintWriter printWriter = new PrintWriter(file);
 
-            String stats = "Session Date,," + session.getStartDate() + "\n\n";
+            String stats = "Session Date,," + session.getStartDate() + "\n";
+            stats += "Location,," + session.getLocation() + "\n\n";
             stats += "Event Frequency\n\n,";
             if (nObservations == 1) {
                 stats += name;
@@ -211,7 +247,7 @@ public class FileHandler {
             for (int i = 0; i < behaviours.length; i++) {
                 stats += behaviours[i].getName() + ",";
                 for (int observation = 0; observation < nObservations; observation++) {
-                    stats += frequencyStatistics[i][observation] + ",";
+                    stats += frequencyStatistics[observation][i] + (marks[observation][i] ? "m," : ",");
                 }
 
                 stats += "\n";
@@ -231,7 +267,7 @@ public class FileHandler {
             for (int i = 0; i < behaviours.length; i++) {
                 stats += behaviours[i].getName() + ",";
                 for (int observation = 0; observation < nObservations; observation++) {
-                    stats += durationStatistics[i][observation] < 0f ? "," : durationStatistics[i][observation] + ",";
+                    stats += durationStatistics[observation][i] < 0f ? "," : durationStatistics[observation][i] + (marks[observation][i] ? "m," : ",");
                 }
 
                 stats += "\n";
@@ -308,7 +344,7 @@ public class FileHandler {
             e.printStackTrace();
         }
 
-        //Read back file and check against original.
+        // Read back file and check against original.
         try {
             FileInputStream fis = new FileInputStream(file);
             byte[] data = new byte[(int)file.length()];

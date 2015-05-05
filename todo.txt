@@ -1,7 +1,5 @@
 Chicken App todo:
 
-- Add session statistics, including:
-    - Longest event, Shortest event, Average duration of events, Number of Events (For each behaviour recorded).
-    - Most common followup behaviour for each behaviour (optional)
+- Move calculation of statistics to somewhere nicer (possibly create a Statistics object).
 - On session setup screen, change to use listview for behaviours.
 - Session history page

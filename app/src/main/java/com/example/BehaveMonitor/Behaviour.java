@@ -61,6 +61,16 @@ public class Behaviour implements Parcelable {
         return currentEvent;
     }
 
+    public boolean isMarked() {
+        for (Event e : eventHistory) {
+            if (e.getMark()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void newEvent() {
 		if (this.type == BehaviourType.EVENT) {
 			Event event = new Event();

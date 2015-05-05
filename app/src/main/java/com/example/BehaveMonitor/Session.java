@@ -135,6 +135,11 @@ public class Session implements Parcelable {
 //        return this.template.behaviours;
     }
 
+    /**
+     * Gets the template associated with the given observation.
+     * @param observation the 1-indexed observation number.
+     * @return a template.
+     */
     public Template getTemplate(int observation) {
         return this.observations.get(observation);
     }

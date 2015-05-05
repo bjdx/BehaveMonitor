@@ -13,9 +13,9 @@ import android.util.Log;
 
 import com.example.BehaveMonitor.fragments.FolderFragment;
 import com.example.BehaveMonitor.fragments.NavigationDrawerFragment;
-import com.example.BehaveMonitor.fragments.TemplateFragment;
 import com.example.BehaveMonitor.fragments.SessionFragment;
 import com.example.BehaveMonitor.fragments.SessionHistoryFragment;
+import com.example.BehaveMonitor.fragments.TemplateFragment;
 
 import java.io.File;
 
@@ -89,6 +89,10 @@ public class HomeActivity extends ActionBarActivity
         if (redirect != 0) {
             displayFragment(redirect);
         }
+
+//        if (BuildConfig.DEBUG) {
+//            ViewServer.get(this).addWindow(this);
+//        }
     }
 
     /**
@@ -185,4 +189,20 @@ public class HomeActivity extends ActionBarActivity
             super.onBackPressed();
         }
     }
+
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        if (BuildConfig.DEBUG) {
+//            ViewServer.get(this).removeWindow(this);
+//        }
+//    }
+//
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        if (BuildConfig.DEBUG) {
+//            ViewServer.get(this).setFocusedWindow(this);
+//        }
+//    }
 }

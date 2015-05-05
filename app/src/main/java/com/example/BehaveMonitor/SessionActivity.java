@@ -443,9 +443,12 @@ public class SessionActivity extends Activity {
     }
 
     private void calculateStatistics() {
+        // TODO: This isn't the nicest of places to do this. Should also be an option to generate these from session history screen.
+
         int nObservations = activeSession.getObservationsCount();
-        float[][] durationStatistics = new float[activeSession.getTemplate(1).behaviours.size()][nObservations];
-        int[][] frequencyStatistics = new int[durationStatistics.length][nObservations];
+        float[][] durationStatistics = new float[nObservations][activeSession.getTemplate(1).behaviours.size()];
+        int[][] frequencyStatistics = new int[nObservations][durationStatistics[0].length];
+        boolean[][] marked = new boolean[nObservations][durationStatistics[0].length];
         String name = nObservations > 1 ? namePrefix : activeSession.getName();
 
         for (int observation = 0; observation < nObservations; observation++) {
@@ -454,6 +457,8 @@ public class SessionActivity extends Activity {
 
             for (int i = 0; i < behaviours.length; i++) {
                 Behaviour behaviour = behaviours[i];
+                marked[observation][i] = behaviour.isMarked();
+
                 if (behaviour.getType() == BehaviourType.STATE) {
                     float avgDuration = 0.0f;
                     int count = behaviour.eventHistory.size();
@@ -466,40 +471,21 @@ public class SessionActivity extends Activity {
                         avgDuration = avgDuration / (float) count;
                     }
 
-                    frequencyStatistics[i][observation] = count;
-                    durationStatistics[i][observation] = avgDuration;
+                    frequencyStatistics[observation][i] = count;
+                    durationStatistics[observation][i] = avgDuration;
                 } else {
-                    frequencyStatistics[i][observation] = behaviour.eventHistory.size();
-                    durationStatistics[i][observation] = -1f;
+                    frequencyStatistics[observation][i] = behaviour.eventHistory.size();
+                    durationStatistics[observation][i] = -1f;
                 }
             }
-
-//            for (Behaviour behaviour : template.behaviours) {
-//                if (behaviour.getType() == BehaviourType.STATE) {
-//                    float avgDuration = 0.0f;
-////                    float shortest = Float.MAX_VALUE;
-////                    float longest = Float.MIN_VALUE;
-//
-//                    for (Event event : behaviour.eventHistory) {
-//                        float duration = Float.parseFloat(event.duration);
-//                        avgDuration += duration;
-////                        if (duration < shortest) {
-////                            shortest = duration;
-////                        }
-////
-////                        if (duration > longest) {
-////                            longest = duration;
-////                        }
-//                    }
-//
-//                    avgDuration = avgDuration / (float) behaviour.eventHistory.size();
-//                } else {
-//
-//                }
-//            }
         }
 
-        FileHandler.saveStatistics(activeSession, activeFolder, name, frequencyStatistics, durationStatistics);
+        if (nObservations > 1) {
+            FileHandler.saveMultipleStatistics(activeSession, activeFolder, name, frequencyStatistics, durationStatistics, marked);
+        } else {
+            FileHandler.saveSingleStatistics(activeSession, activeFolder, frequencyStatistics[0], durationStatistics[0]);
+        }
+
         Log.e("Behave", "Statistics calculated.");
     }
 

@@ -63,11 +63,10 @@ public class NavigationDrawerFragment extends Fragment {
     private View mFragmentContainerView;
 
     private int mCurrentSelectedPosition = 0;
-    private boolean mFromSavedInstanceState;
+//    private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
     private String[] mNavigationDrawerItemTitles;
-//    private CharSequence mTitle;
 
     public NavigationDrawerFragment() {
     }
@@ -83,11 +82,10 @@ public class NavigationDrawerFragment extends Fragment {
 
         if (savedInstanceState != null) {
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
-            mFromSavedInstanceState = true;
+//            mFromSavedInstanceState = true;
         }
 
         mNavigationDrawerItemTitles = getResources().getStringArray(R.array.navigation_drawer_items_array);
-//        mTitle = mNavigationDrawerItemTitles[mCurrentSelectedPosition];
 
         // Select either the default item (0) or the last selected item.
         selectItem(mCurrentSelectedPosition);
@@ -119,16 +117,16 @@ public class NavigationDrawerFragment extends Fragment {
                 new ObjectDrawerItem(R.drawable.ic_action_history, mNavigationDrawerItemTitles[3])
         };
 
-        DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(getActivity(),  R.layout.listview_item_row, objectDrawerItems);
+        DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(getActivity(),  R.layout.nav_drawer_item, objectDrawerItems);
         mDrawerListView.setAdapter(adapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 
         return mDrawerListView;
     }
 
-    public boolean isDrawerOpen() {
-        return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
-    }
+//    public boolean isDrawerOpen() {
+//        return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
+//    }
 
     /**
      * Users of this fragment must call this method to set up the navigation drawer interactions.
@@ -148,8 +146,6 @@ public class NavigationDrawerFragment extends Fragment {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
         actionBar.setTitle(mNavigationDrawerItemTitles[0]);
-
-//        mNavigationDrawerItemTitles = getResources().getStringArray(R.array.navigation_drawer_items_array);
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the navigation drawer and the action bar app icon.
@@ -263,27 +259,8 @@ public class NavigationDrawerFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
-
-    /**
-     * Per the navigation drawer design guidelines, updates the action bar to show the global app
-     * 'context', rather than just what's in the current screen.
-     */
-//    private void showGlobalContextActionBar() {
-//        ActionBar actionBar = getActionBar();
-//        actionBar.setDisplayShowTitleEnabled(true);
-//        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-//        actionBar.setTitle(R.string.app_name);
-//    }
-
-//    private ActionBar getActionBar() {
-//        return ((ActionBarActivity) getActivity()).getSupportActionBar();
-//    }
 
     /**
      * Callbacks interface that all activities using this fragment must implement.

@@ -31,7 +31,7 @@ public class HomeActivity extends ActionBarActivity
     /**
      * Used to store the last screen title. For use in {link #restoreActionBar()}.
      */
-    private CharSequence mTitle;
+//    private CharSequence mTitle;
 
     /**
      * Used to store the fragment currently being displayed. Defaults to -1 to show the initial fragment.
@@ -40,7 +40,7 @@ public class HomeActivity extends ActionBarActivity
 
     private File activeFolder = null;
     private Template activeTemplate = null;
-    private Session activeSession;
+//    private Session activeSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class HomeActivity extends ActionBarActivity
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
+//        mTitle = getTitle();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -90,6 +90,7 @@ public class HomeActivity extends ActionBarActivity
             displayFragment(redirect);
         }
 
+        // This code (and the code at the end of the file) is required to debug the layouts with the hierarchy viewer. It can cause a crash however so should only be uncommented when desired.
 //        if (BuildConfig.DEBUG) {
 //            ViewServer.get(this).addWindow(this);
 //        }
@@ -113,32 +114,6 @@ public class HomeActivity extends ActionBarActivity
 
         return "null;".equals(template.toString()) ? "" : template.name;
     }
-
-//    public void setActiveFolder(File file) {
-//        activeFolder = file;
-//    }
-//
-//    public void setActiveTmp(Template tmp) {
-//        activeTemplate = tmp;
-//    }
-//
-//    public void setActiveSession(Session session) {
-//        activeSession = session;
-//    }
-//
-//    public Session getActiveSession(){
-//        return activeSession;
-//    }
-//
-//    public Session makeSession(String name, String loc) {
-//        activeSession = new Session(name, loc, activeFolder.getAbsolutePath());
-//        activeSession.setTemplate(activeTemplate);
-//        return activeSession;
-//    }
-//
-//    public String getActivePath() {
-//        return activeFolder.getAbsolutePath();
-//    }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {

@@ -4,23 +4,21 @@
 
 package com.example.BehaveMonitor.adapters;
 
-import com.example.BehaveMonitor.ObjectDrawerItem;
-import com.example.BehaveMonitor.R;
-
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.BehaveMonitor.ObjectDrawerItem;
+import com.example.BehaveMonitor.R;
 
 public class DrawerItemCustomAdapter extends ArrayAdapter<ObjectDrawerItem> {
 
-	Context mContext;
-	int layoutResourceId;
-	ObjectDrawerItem data[] = null;
+    private LayoutInflater inflater;
+	private int layoutResourceId;
+	private ObjectDrawerItem data[] = null;
 
 	/*
 	 * @mContext - app context
@@ -30,47 +28,37 @@ public class DrawerItemCustomAdapter extends ArrayAdapter<ObjectDrawerItem> {
 	 * @data - the ListItem data
 	 */
 	public DrawerItemCustomAdapter(Context mContext, int layoutResourceId, ObjectDrawerItem[] data) {
-
 		super(mContext, layoutResourceId, data);
-		this.layoutResourceId = layoutResourceId;
-		this.mContext = mContext;
-		this.data = data;
-	}
 
-	/*
-	 * @We'll overried the getView method which is called for every ListItem we
-	 * have.
-	 * 
-	 * @There are lots of different caching techniques for Android ListView to
-	 * achieve better performace especially if you are going to have a very long
-	 * ListView.
-	 */
+		this.layoutResourceId = layoutResourceId;
+		this.inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		this.data = data;
+    }
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder viewHolder;
 
-		View listItem = convertView;
+        if (convertView == null) {
+            viewHolder = new ViewHolder();
 
-		// inflate the listview_item_row.xml parent
-		LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-		listItem = inflater.inflate(layoutResourceId, parent, false);
+            convertView = inflater.inflate(layoutResourceId, parent, false);
+            viewHolder.textView = (TextView) convertView.findViewById(R.id.textViewName);
 
-		// get the elements in the layout
-		
-		ImageView imageViewIcon = (ImageView) listItem.findViewById(R.id.imageViewIcon);
-		TextView textViewName = (TextView) listItem.findViewById(R.id.textViewName);
-		 
-		
-		/*
-		 * Set the data for the list item. You can also set tags here if you
-		 * want.
-		 */
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
+
 		ObjectDrawerItem folder = data[position];
 
+        viewHolder.textView.setCompoundDrawablesWithIntrinsicBounds(folder.icon, 0, 0, 0);
+		viewHolder.textView.setText(folder.name);
 		
-		imageViewIcon.setImageResource(folder.icon);
-		textViewName.setText(folder.name);
-		
-		return listItem;
+		return convertView;
 	}
 
+    private class ViewHolder {
+        TextView textView;
+    }
 }

@@ -19,6 +19,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -57,6 +58,8 @@ public class CircledPicker extends View {
     private int mSubLineColor;
     private int mTextColor;
 
+    private float minValue;
+
     public static enum PickerMode {
         HOURS_AND_SECONDS,
         TIME_OF_DAY,
@@ -84,9 +87,12 @@ public class CircledPicker extends View {
 
     public float getAngle(Point target, Point origin) {
         float angle = (float) Math.toDegrees(Math.atan2(target.x - origin.x, target.y - origin.y)) + 180;
-        if(angle < 0) {
-            angle += 360;
+        Log.e("Behave", "" + angle);
+
+        if (angle > (360 - minValue)) {
+             return minValue;
         }
+
         return 360 - angle;
     }
 
@@ -111,6 +117,7 @@ public class CircledPicker extends View {
     }
 
     private void updateCirle(float angle) {
+
         mCurrentSweep = angle;
 
         if(mCurrentSweep - mLastAngle < -VALUE_THRESHOLD
@@ -136,7 +143,7 @@ public class CircledPicker extends View {
         if(mIsFilled) {
             mCurrentSweep = 359.99f;
         } else if(mIsEmpty) {
-            mCurrentSweep = 0;
+            mCurrentSweep = 360f / (mMaxValue / mStep); //0;
         } else {
             mLastAngle = mCurrentSweep;
         }
@@ -264,7 +271,7 @@ public class CircledPicker extends View {
                centerLabel = getPercentString();
                break;
             case NUMERIC:
-               centerLabel = String.valueOf((int) getValue() + 1);
+               centerLabel = String.valueOf((int) getValue());
                break;
         }
 
@@ -342,6 +349,8 @@ public class CircledPicker extends View {
         mAngleAnimator = ValueAnimator.ofFloat(0, 0);
         mPaint = new Paint();
         mPath = new Path();
+
+        minValue = 360f / (mMaxValue / mStep);
 
         typedArray.recycle();
         setClickable(true);

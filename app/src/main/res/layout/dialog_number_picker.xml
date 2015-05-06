@@ -35,9 +35,8 @@
             app:subLineColor="@color/defaultSubLineColor"
             app:textColor="@color/defaultSubLineColor"
             app:pickerMode="numeric"
-            app:maxValue="9"
-            app:step="1">
-        </org.angmarch.circledpicker.CircledPicker>
+            app:maxValue="10"
+            app:step="1" />
 
         <View
             android:layout_width="0dp"

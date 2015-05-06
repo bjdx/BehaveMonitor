@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -88,12 +89,17 @@ public class SessionFragment extends Fragment {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
+                    EditText myEditText = (EditText) rootView.findViewById(R.id.observations_amount);
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+                            Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(myEditText.getWindowToken(), 0);
+
                     AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
                     final View dialogView = inflater.inflate(R.layout.dialog_number_picker, null);
                     dialog.setView(dialogView);
 
                     final CircledPicker picker = ((CircledPicker) dialogView.findViewById(R.id.circled_picker));
-                    picker.setValue(nObservations - 1);
+                    picker.setValue(nObservations);
 
                     final TextView nameLabel = (TextView) rootView.findViewById(R.id.name_label);
 
@@ -101,7 +107,7 @@ public class SessionFragment extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             int n = (int) picker.getValue();
-                            nObservations = n + 1;
+                            nObservations = n;
                             nObsView.setText("" + nObservations);
                             nObsView.clearFocus();
 

@@ -7,15 +7,19 @@ package com.example.BehaveMonitor.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.BehaveMonitor.DBHelper;
 import com.example.BehaveMonitor.FileHandler;
 import com.example.BehaveMonitor.R;
 
@@ -88,7 +92,13 @@ public class SessionHistoryListAdapter extends BaseAdapter {
         viewHolder.continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                continueSession(position);
+                DBHelper dbHelper = DBHelper.getInstance(context);
+                String email = dbHelper.getEmail();
+                if ("".equals(email)) {
+                    showEmailDialog(position);
+                } else {
+                    continueSession(position, email);
+                }
             }
         });
 
@@ -131,7 +141,44 @@ public class SessionHistoryListAdapter extends BaseAdapter {
         alert.show();
     }
 
-    private void continueSession(int position) {
+    private void showEmailDialog(final int position) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        dialog.setTitle("Set email address");
+        dialog.setMessage("Set the default recipient, leave blank to set later. This can be changed in the settings.");
+
+        final EditText input = new EditText(context);
+        dialog.setView(input);
+
+        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String email = input.getText().toString();
+
+                if (!"".equals(email)) {
+                    DBHelper db = DBHelper.getInstance(context);
+                    db.setEmail(email);
+                }
+
+                continueSession(position, email);
+            }
+        });
+
+        dialog.setNegativeButton("Cancel", null);
+        dialog.show();
+    }
+
+    private void continueSession(int position, String email) {
         Log.e("Behave", "Continuing session");
+        File session = sessions.get(position);
+
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        String[] recipients = new String[] {email};
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, recipients);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, session.getName());
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(session));
+        emailIntent.setType("message/rfc822");
+
+        context.startActivity(Intent.createChooser(emailIntent, "Send email..."));
     }
 }

@@ -15,13 +15,14 @@ public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper sInstance = null;
 
     private static final String DATABASE_NAME = "chickens.db";
-    private static int DATABASE_VERSION = 1;
+    private static int DATABASE_VERSION = 2;
 
     private static final String PREFERENCES_CREATE =
             "CREATE Table Preferences (" +
                     "_id integer primary key," +
                     "LastFolder text not null," +
-                    "LastTemplate text null);";
+                    "LastTemplate text null," +
+                    "Email text null);";
 
     public static DBHelper getInstance(Context context) {
         if (sInstance == null) {
@@ -38,17 +39,19 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(PREFERENCES_CREATE);
-
         insertInitialPreferences(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (DATABASE_VERSION != newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS Preferences");
+        if (oldVersion < 2) { // Upgrade db from version 1 to version 2.
+            db.execSQL("ALTER TABLE Preferences ADD Column Email");
 
-            DATABASE_VERSION = newVersion;
-            onCreate(db);
+            // Insert initially empty email address.
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("_id", 1);
+            contentValues.put("Email", "");
+            db.update("Preferences", contentValues, null, null);
         }
     }
 
@@ -56,6 +59,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put("_id", 1);
         contentValues.put("LastFolder", "Default");
+        contentValues.put("Email", "");
         long result = db.insert("Preferences", null, contentValues);
         if (result == -1) {
             Log.e("Behave", "Failed to insert initial standings!");
@@ -86,6 +90,18 @@ public class DBHelper extends SQLiteOpenHelper {
         return template;
     }
 
+    public String getEmail() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("Preferences", new String[] {"Email"}, null, null, null, null, null);
+        String email = null;
+        if (cursor.moveToFirst()) {
+            email = cursor.getString(0);
+        }
+
+        cursor.close();
+        return email == null ? "" : email;
+    }
+
     public void setFolderTemplate(String folder, String template) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -113,6 +129,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
         contentValues.put("_id", 1);
         contentValues.put("LastTemplate", template);
+
+        db.update("Preferences", contentValues, null, null);
+    }
+
+    public void setEmail(String email) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put("_id", 1);
+        contentValues.put("Email", email);
 
         db.update("Preferences", contentValues, null, null);
     }

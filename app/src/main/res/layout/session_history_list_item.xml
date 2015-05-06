@@ -31,6 +31,6 @@
         android:textAllCaps="false"
         android:background="@drawable/button_style"
         android:textColor="@color/black"
-        android:text="Continue" />
+        android:text="Email" />
 
 </LinearLayout>

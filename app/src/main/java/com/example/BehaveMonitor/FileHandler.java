@@ -99,10 +99,11 @@ public class FileHandler {
         }
     }
 
-    public static List<File> getSessions() {
+    public static List<File> getSessions(String folderName) {
         List<File> sessions = new ArrayList<>();
-        File sessionsDirectory = getSessionsDirectory();
-        return findSessions(sessions, sessionsDirectory);
+        File folder = "".equals(folderName) ? getSessionsDirectory() : new File(getSessionsDirectory(), folderName);
+//        File sessionsDirectory = getSessionsDirectory();
+        return findSessions(sessions, folder);
     }
 
     public static List<File> findSessions(List<File> sessions, File file) {

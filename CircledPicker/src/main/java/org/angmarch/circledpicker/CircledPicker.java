@@ -19,7 +19,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -87,8 +86,6 @@ public class CircledPicker extends View {
 
     public float getAngle(Point target, Point origin) {
         float angle = (float) Math.toDegrees(Math.atan2(target.x - origin.x, target.y - origin.y)) + 180;
-        Log.e("Behave", "" + angle);
-
         if (angle > (360 - minValue)) {
              return minValue;
         }
@@ -116,7 +113,7 @@ public class CircledPicker extends View {
         drawCenteredText(canvas);
     }
 
-    private void updateCirle(float angle) {
+    private void updateCircle(float angle) {
 
         mCurrentSweep = angle;
 
@@ -161,7 +158,7 @@ public class CircledPicker extends View {
                     if(Math.abs(mDownX - event.getX()) > mTouchSlop &&
                             (mAngleAnimator != null && !mAngleAnimator.isRunning())) {
                         if (!isAPI10) {
-                            updateCirle(angle);
+                            updateCircle(angle);
                             postInvalidate();
                         }
                     }

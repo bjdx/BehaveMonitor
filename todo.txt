@@ -1,6 +1,10 @@
 Chicken App todo:
 
-- Hide keyboard to fix issues with circle picker
-- Modify circle picker to set minimum of 1
 - Move calculation of statistics to somewhere nicer (possibly create a Statistics object)
 - Session history page
+  - Zip and send folder button.
+  - Replace continue button with actions button.
+    - View/Add notes.
+    - View session.
+    - Send file.
+

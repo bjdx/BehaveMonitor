@@ -34,6 +34,11 @@ public class SessionHistoryListAdapter extends BaseAdapter {
         this.sessions = sessions;
     }
 
+    public void updateSessions(List<File> sessions) {
+        this.sessions = sessions;
+        notifyDataSetChanged();
+    }
+
     private class ViewHolder {
         TextView sessionName;
         ImageButton deleteButton;

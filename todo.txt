@@ -1,5 +1,6 @@
 Chicken App todo:
 
-- Move calculation of statistics to somewhere nicer (possibly create a Statistics object).
-- On session setup screen, change to use listview for behaviours.
+- Hide keyboard to fix issues with circle picker
+- Modify circle picker to set minimum of 1
+- Move calculation of statistics to somewhere nicer (possibly create a Statistics object)
 - Session history page

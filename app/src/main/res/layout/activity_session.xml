@@ -12,78 +12,98 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/info_layout">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Session Information:"/>
+            android:text="@string/activity_session_setup_heading"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Name:"
-            android:paddingTop="6dp"
+            android:layout_marginTop="6dp"
             android:id="@+id/sNameText"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Location:"
-            android:paddingTop="20dp"
+            android:layout_marginTop="20dp"
             android:id="@+id/sLocText"/>
+
+        <TextView
+            android:id="@+id/setup_observations_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Template:"
-            android:paddingTop="20dp"
+            android:layout_marginTop="20dp"
             android:id="@+id/sTmpText"/>
 
-        <LinearLayout
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:layout_marginTop="20dp">-->
+
+            <!---->
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical"-->
+                <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
+                <!--android:id="@+id/behaveLayout">-->
+
+            <!--</LinearLayout>-->
+
+        <!--</LinearLayout>-->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/activity_session_behaviours"
+            android:id="@+id/bText" />
+
+        <ListView
+            android:id="@+id/session_behaviour_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
+            android:dividerHeight="0dp"
+            android:divider="@null"/>
+
+        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="20dp">
+            android:layout_marginTop="5dp"
+            android:text="@string/activity_session_setup_button"
+            android:background="@drawable/button_style"
+            android:textColor="@color/black"
+            android:id="@+id/setup_session" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Behaviours:"
-                android:id="@+id/bText" />
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="center"-->
+            <!--android:paddingTop="20dp">-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:id="@+id/behaveLayout">
+            <!---->
 
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingTop="20dp">
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Setup Session"
-                android:background="@drawable/button_style"
-                android:textColor="@color/black"
-                android:id="@+id/setup_session" />
-
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
     </LinearLayout>
 
@@ -94,7 +114,7 @@
         android:layout_marginBottom="10dp"
         android:background="@drawable/button_style"
         android:textColor="@color/black"
-        android:text="Start Observation" />
+        android:text="@string/activity_session_start_button" />
 
     <Button
         android:id="@+id/end_session_btn"
@@ -103,7 +123,7 @@
         android:layout_marginBottom="10dp"
         android:background="@drawable/button_style"
         android:textColor="@color/black"
-        android:text="End Observation"
+        android:text="@string/activity_session_end_button"
         android:onClick="endSession"
         android:visibility="gone" />
 
@@ -121,14 +141,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:text="Observation:  "/>
+                android:text="@string/activity_session_observation"/>
 
             <TextView
                 android:id="@+id/session_observation_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:text="1"/>
+                android:textColor="@color/white" />
 
         </LinearLayout>
 
@@ -138,14 +157,14 @@
             android:layout_weight="0.5"
             android:textColor="@color/white"
             android:gravity="end"
-            android:text="Observation time:  "/>
+            android:text="@string/activity_session_observation_time"/>
 
         <TextView
             android:id="@+id/session_time"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:text="Not Started" />
+            android:text="@string/activity_session_default_time" />
 
     </LinearLayout>
 
@@ -171,7 +190,7 @@
         android:layout_marginTop="10dp"
         android:textColor="@color/white"
         android:textSize="16sp"
-        android:text="Observation History"/>
+        android:text="@string/activity_session_history"/>
 
     <ListView
         android:id="@+id/session_history_list"

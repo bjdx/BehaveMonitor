@@ -40,4 +40,15 @@
     <string name="session_create_location">Location:</string>
     <string name="session_create_button">Create Session</string>
 
+    <!-- Session activity screen items -->
+    <string name="activity_session_setup_heading">Session Information</string>
+    <string name="activity_session_behaviours">Behaviours:</string>
+    <string name="activity_session_setup_button">Setup Session</string>
+    <string name="activity_session_start_button">Start Observation</string>
+    <string name="activity_session_end_button">End Observation</string>
+    <string name="activity_session_observation">"Observation:  "</string>
+    <string name="activity_session_observation_time">"Observation time:  "</string>
+    <string name="activity_session_default_time">Not Started</string>
+    <string name="activity_session_history">Observation History</string>
+
 </resources>

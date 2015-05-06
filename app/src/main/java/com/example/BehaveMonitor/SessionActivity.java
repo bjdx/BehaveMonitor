@@ -13,10 +13,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,27 +66,33 @@ public class SessionActivity extends Activity {
     }
 
     private void loadSessionInfo() {
-        // Sets the text of the textview to correct Session details
-        TextView name = (TextView) findViewById(R.id.sNameText);
-        TextView location = (TextView) findViewById(R.id.sLocText);
-        TextView tmpText = (TextView) findViewById(R.id.sTmpText);
-        name.setText(name.getText().toString() + "  " + activeSession.getName());
-        location.setText(location.getText().toString() + "  " + activeSession.getLocation());
-        tmpText.setText(tmpText.getText().toString() + "  " + activeSession.getTemplate(observation).name);
+        // Populates text views with session details
+        ((TextView) findViewById(R.id.sNameText)).setText("Name:  " + activeSession.getName());
+        ((TextView) findViewById(R.id.sLocText)).setText("Location:  " + activeSession.getLocation());
+        ((TextView) findViewById(R.id.setup_observations_text)).setText("Observations:  " + activeSession.getObservationsCount());
+        ((TextView) findViewById(R.id.sTmpText)).setText("Template:  " + activeSession.getTemplate(observation).name);
 
-        // TODO: Replace this.
         // Creates list of behaviours
-        LinearLayout ll = (LinearLayout) findViewById(R.id.behaveLayout);
-        TextView[] bTV = new TextView[activeSession.getTemplate(observation).behaviours.size()];
-        int i = 0;
-        for (Behaviour b : activeSession.getTemplate(observation).behaviours){
-            bTV[i] = new TextView(this);
-            bTV[i].setText(b.bName);
-            ll.addView(bTV[i]);
-            i++;
+        List<Behaviour> behaviours = activeSession.getBehaviours(1);
+        List<String> behaviourNames = new ArrayList<>(behaviours.size());
+
+        for (Behaviour behaviour : behaviours) {
+            behaviourNames.add(behaviour.getName());
         }
 
-//        filename = FileHandler.getVersionName(activeFolder, activeSession.getName() + "_" + activeSession.getLocation());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.session_behaviour_list_item, behaviourNames);
+        ListView list = (ListView) findViewById(R.id.session_behaviour_list);
+        list.setAdapter(adapter);
+
+//        LinearLayout ll = (LinearLayout) findViewById(R.id.behaveLayout);
+//        TextView[] bTV = new TextView[activeSession.getTemplate(observation).behaviours.size()];
+//        int i = 0;
+//        for (Behaviour b : activeSession.getTemplate(observation).behaviours){
+//            bTV[i] = new TextView(this);
+//            bTV[i].setText(b.bName);
+//            ll.addView(bTV[i]);
+//            i++;
+//        }
     }
 
     public void setSetupButton() {

@@ -84,6 +84,11 @@ public class CircledPicker extends View {
         animateChange((value * 360) / mMaxValue);
     }
 
+    public void setMaxValue(int maxValue) {
+        this.mMaxValue = maxValue;
+        minValue = 360f / (mMaxValue / mStep);
+    }
+
     public float getAngle(Point target, Point origin) {
         float angle = (float) Math.toDegrees(Math.atan2(target.x - origin.x, target.y - origin.y)) + 180;
         if (angle > (360 - minValue)) {

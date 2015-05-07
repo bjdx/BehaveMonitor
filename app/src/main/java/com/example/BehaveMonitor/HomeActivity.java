@@ -15,6 +15,7 @@ import com.example.BehaveMonitor.fragments.FolderFragment;
 import com.example.BehaveMonitor.fragments.NavigationDrawerFragment;
 import com.example.BehaveMonitor.fragments.SessionFragment;
 import com.example.BehaveMonitor.fragments.SessionHistoryFragment;
+import com.example.BehaveMonitor.fragments.SettingsFragment;
 import com.example.BehaveMonitor.fragments.TemplateFragment;
 
 import java.io.File;
@@ -29,18 +30,12 @@ public class HomeActivity extends ActionBarActivity
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
     /**
-     * Used to store the last screen title. For use in {link #restoreActionBar()}.
-     */
-//    private CharSequence mTitle;
-
-    /**
      * Used to store the fragment currently being displayed. Defaults to -1 to show the initial fragment.
      */
     private int fragmentDisplayed = -1;
 
     private File activeFolder = null;
     private Template activeTemplate = null;
-//    private Session activeSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +45,7 @@ public class HomeActivity extends ActionBarActivity
         FileHandler.setRootDirectory(this);
         DBHelper db = DBHelper.getInstance(this);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-//        mTitle = getTitle();
+        mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -136,6 +129,10 @@ public class HomeActivity extends ActionBarActivity
                 break;
             case 3:
                 fragment = new SessionHistoryFragment();
+                break;
+            case 4:
+                fragment = new SettingsFragment();
+                break;
             default:
                 break;
         }

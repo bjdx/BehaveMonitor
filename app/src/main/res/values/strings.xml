@@ -25,6 +25,7 @@
         <item>Manage Folders</item>
         <item>Manage Templates</item>
         <item>Session History</item>
+        <item>Settings</item>
     </string-array>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

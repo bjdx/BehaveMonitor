@@ -10,33 +10,37 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.BehaveMonitor.R;
+import com.example.BehaveMonitor.Setting;
+import com.example.BehaveMonitor.SettingsItem;
 
 import java.util.List;
 
-public class TemplateListAdapter extends BaseAdapter {
+public class SettingsListAdapter extends BaseAdapter {
 
-    private Context context;
     private LayoutInflater inflater;
-    private List<String> templates;
+    private List<SettingsItem> items;
 
-    public TemplateListAdapter(Context context, List<String> templates) {
-        this.context = context;
+    public SettingsListAdapter(Context context, List<SettingsItem> items) {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.templates = templates;
+        this.items = items;
+    }
+
+    public Setting getSetting(int position) {
+        return items.get(position).getSetting();
     }
 
     private class ViewHolder {
-        TextView templateName;
+        TextView heading, subheading;
     }
 
     @Override
     public int getCount() {
-        return templates.size();
+        return items.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return templates.get(position);
+        return items.get(position);
     }
 
     @Override
@@ -45,26 +49,24 @@ public class TemplateListAdapter extends BaseAdapter {
     }
 
     @Override
-    public boolean isEnabled(int position) {
-        return false;
-    }
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
 
         if (convertView == null) {
             viewHolder = new ViewHolder();
+            convertView = inflater.inflate(R.layout.settings_list_item, parent, false);
 
-            convertView = inflater.inflate(R.layout.template_list_item, parent, false);
-            viewHolder.templateName = (TextView) convertView.findViewById(R.id.list_template_name);
+            viewHolder.heading = (TextView) convertView.findViewById(R.id.settings_header);
+            viewHolder.subheading = (TextView) convertView.findViewById(R.id.settings_subheader);
+
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        String template = templates.get(position);
-        viewHolder.templateName.setText(template);
+        SettingsItem item = (SettingsItem) getItem(position);
+        viewHolder.heading.setText(item.getHeading());
+        viewHolder.subheading.setText(item.getSubheading());
 
         return convertView;
     }

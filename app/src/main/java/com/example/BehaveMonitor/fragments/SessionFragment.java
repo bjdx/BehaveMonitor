@@ -61,14 +61,16 @@ public class SessionFragment extends Fragment {
 	public SessionFragment() { }
 
 	@Override
-	public View onCreateView(final LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_session_create, container, false);
         final EditText nObsView = (EditText) rootView.findViewById(R.id.observations_amount);
-        nObsView.clearFocus();
 
         db = DBHelper.getInstance(getActivity());
+        nObservations = db.getDefaultObservationsAmount();
+
+        nObsView.setText("" + nObservations);
+        nObsView.clearFocus();
 
         HomeActivity homeActivity = (HomeActivity) getActivity();
         activeFolderName = homeActivity.getFolderName();
@@ -77,10 +79,9 @@ public class SessionFragment extends Fragment {
         nObsView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-//                int inType = nObsView.getInputType();
                 nObsView.setInputType(InputType.TYPE_NULL);
                 nObsView.onTouchEvent(event);
-//                nObsView.setInputType(inType);
+
                 return true;
             }
         });
@@ -99,6 +100,7 @@ public class SessionFragment extends Fragment {
                     dialog.setView(dialogView);
 
                     final CircledPicker picker = ((CircledPicker) dialogView.findViewById(R.id.circled_picker));
+                    picker.setMaxValue(db.getMaxObservationsAmount());
                     picker.setValue(nObservations);
 
                     final TextView nameLabel = (TextView) rootView.findViewById(R.id.name_label);
@@ -157,17 +159,17 @@ public class SessionFragment extends Fragment {
         try {
             nObservations = Integer.parseInt(((EditText) rootView.findViewById(R.id.observations_amount)).getText().toString());
             if (nObservations < 1) {
-                nObservations = 0;
                 makeSomeToast("Minimum number of observations is 1");
             } else {
-                if (nObservations > 10) {
-                    nObservations = 0;
-                    makeSomeToast("Maximum number of observations is 10");
+                int max = db.getMaxObservationsAmount();
+                if (nObservations > max) {
+                    makeSomeToast("Maximum number of observations is " + max);
                 }
             }
         } catch (NumberFormatException e) {
-            nObservations = 0;
-            makeSomeToast("Must enter a number of observations (1 - 10)");
+            int max = db.getMaxObservationsAmount();
+            nObservations = db.getDefaultObservationsAmount();
+            makeSomeToast("Must enter a number of observations (1 - " + max + ")");
         }
     }
 
@@ -309,7 +311,7 @@ public class SessionFragment extends Fragment {
                 }
 
                 readTemplatesNumber();
-                if (nObservations <= 0 || nObservations > 10) {
+                if (nObservations <= 0 || nObservations > db.getMaxObservationsAmount()) {
                     return;
                 }
 
@@ -390,7 +392,6 @@ public class SessionFragment extends Fragment {
 
         Session newSession = new Session(sessionName, sessionLocation, activeFolder.getAbsolutePath());
         newSession.setObservations(observations);
-//        newSession.setTemplate(activeTemplate);
 
         Intent intent = new Intent(getActivity(), SessionActivity.class);
         intent.putExtra("activeFolderString", activeFolderName);
@@ -410,35 +411,4 @@ public class SessionFragment extends Fragment {
         final Toast toast = Toast.makeText(context, message, duration);
         toast.show();
     }
-
-//    /**
-//     * Takes a path to a file and checks if the file is a template.
-//     * @param filePath the path to the file to check
-//     * @return true if the filePath has the extension .template
-//     */
-//    public boolean checkTemplateExtension(String filePath) {
-//        String[] parts = filePath.split("\\.");
-//        if (parts.length == 0) return false;
-//        return parts[parts.length - 1].equals(".template");
-//    }
-
-//	public void setActiveFolderButton(final View rootView) {
-//		Button button = (Button) rootView.findViewById(R.id.select_folder);
-//		button.setOnClickListener(new View.OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_spinner);
-//
-//				String folderName = spinner.getSelectedItem().toString();
-//				File activeFolder = new File(FileHandler.getSessionsDirectory(), folderName);
-//				((HomeActivity) getActivity()).setActiveFolder(activeFolder);
-//
-//				// Change colour and move to next fragment
-//				((HomeActivity) getActivity()).displayFragment(1);
-//			}
-//
-//		});
-//	}
-
 }

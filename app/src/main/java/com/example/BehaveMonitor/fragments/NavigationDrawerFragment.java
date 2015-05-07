@@ -114,7 +114,8 @@ public class NavigationDrawerFragment extends Fragment {
                 new ObjectDrawerItem(R.drawable.ic_action_session, mNavigationDrawerItemTitles[0]),
                 new ObjectDrawerItem(R.drawable.ic_action_collection, mNavigationDrawerItemTitles[1]),
                 new ObjectDrawerItem(R.drawable.ic_action_template, mNavigationDrawerItemTitles[2]),
-                new ObjectDrawerItem(R.drawable.ic_action_history, mNavigationDrawerItemTitles[3])
+                new ObjectDrawerItem(R.drawable.ic_action_history, mNavigationDrawerItemTitles[3]),
+                new ObjectDrawerItem(R.drawable.ic_action_settings, mNavigationDrawerItemTitles[4])
         };
 
         DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(getActivity(),  R.layout.nav_drawer_item, objectDrawerItems);

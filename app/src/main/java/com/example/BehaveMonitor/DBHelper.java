@@ -15,14 +15,16 @@ public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper sInstance = null;
 
     private static final String DATABASE_NAME = "chickens.db";
-    private static int DATABASE_VERSION = 2;
+    private static int DATABASE_VERSION = 3; // Increase this value to trigger an onUpgrade function call.
 
     private static final String PREFERENCES_CREATE =
             "CREATE Table Preferences (" +
                     "_id integer primary key," +
                     "LastFolder text not null," +
                     "LastTemplate text null," +
-                    "Email text null);";
+                    "Email text null," +
+                    "DefaultObservationsAmount integer not null," +
+                    "MaxObservationsAmount integer not null);";
 
     public static DBHelper getInstance(Context context) {
         if (sInstance == null) {
@@ -53,6 +55,18 @@ public class DBHelper extends SQLiteOpenHelper {
             contentValues.put("Email", "");
             db.update("Preferences", contentValues, null, null);
         }
+
+        if (oldVersion < 3) { // Upgrade db from version 2 to version 3.
+            db.execSQL("ALTER TABLE Preferences ADD Column DefaultObservationsAmount");
+            db.execSQL("ALTER TABLE Preferences ADD Column MaxObservationsAmount");
+
+            // Insert default values for new columns.
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("_id", 1);
+            contentValues.put("DefaultObservationsAmount", 1);
+            contentValues.put("MaxObservationsAmount", 10);
+            db.update("Preferences", contentValues, null, null);
+        }
     }
 
     private void insertInitialPreferences(SQLiteDatabase db) {
@@ -60,6 +74,9 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("_id", 1);
         contentValues.put("LastFolder", "Default");
         contentValues.put("Email", "");
+        contentValues.put("DefaultObservationsAmount", 1);
+        contentValues.put("MaxObservationsAmount", 10);
+
         long result = db.insert("Preferences", null, contentValues);
         if (result == -1) {
             Log.e("Behave", "Failed to insert initial standings!");
@@ -102,6 +119,30 @@ public class DBHelper extends SQLiteOpenHelper {
         return email == null ? "" : email;
     }
 
+    public int getDefaultObservationsAmount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("Preferences", new String[] {"DefaultObservationsAmount"}, null, null, null, null, null);
+        int amount = 1;
+        if (cursor.moveToFirst()) {
+            amount = cursor.getInt(0);
+        }
+
+        cursor.close();
+        return amount;
+    }
+
+    public int getMaxObservationsAmount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("Preferences", new String[] {"MaxObservationsAmount"}, null, null, null, null, null);
+        int amount = 10;
+        if (cursor.moveToFirst()) {
+            amount = cursor.getInt(0);
+        }
+
+        cursor.close();
+        return amount;
+    }
+
     public void setFolderTemplate(String folder, String template) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -139,6 +180,26 @@ public class DBHelper extends SQLiteOpenHelper {
 
         contentValues.put("_id", 1);
         contentValues.put("Email", email);
+
+        db.update("Preferences", contentValues, null, null);
+    }
+
+    public void setDefaultObservationsAmount(int amount) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put("_id", 1);
+        contentValues.put("DefaultObservationsAmount", amount);
+
+        db.update("Preferences", contentValues, null, null);
+    }
+
+    public void setMaxObservationsAmount(int amount) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put("_id", 1);
+        contentValues.put("MaxObservationsAmount", amount);
 
         db.update("Preferences", contentValues, null, null);
     }

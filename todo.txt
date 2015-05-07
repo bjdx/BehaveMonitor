@@ -2,9 +2,6 @@ Chicken App todo:
 
 - Move calculation of statistics to somewhere nicer (possibly create a Statistics object)
 - Session history page
-  - Zip and send folder button.
-  - Replace continue button with actions button.
-    - View/Add notes.
-    - View session.
-    - Send file.
+  - Select all/none buttons.
+  - View/Add notes button within actions menu.
 

@@ -143,11 +143,10 @@ public class SessionHistoryListAdapter extends BaseAdapter {
 
     private void showEmailDialog(final int position) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-        dialog.setTitle("Set email address");
-        dialog.setMessage("Set the default recipient, leave blank to set later. This can be changed in the settings.");
 
-        final EditText input = new EditText(context);
-        dialog.setView(input);
+        View view = View.inflate(context, R.layout.dialog_history_email, null);
+        final EditText input = (EditText) view.findViewById(R.id.dialog_history_email_address);
+        dialog.setView(view);
 
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override

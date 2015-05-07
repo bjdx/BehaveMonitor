@@ -7,23 +7,22 @@ package com.example.BehaveMonitor.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.BehaveMonitor.DBHelper;
 import com.example.BehaveMonitor.FileHandler;
 import com.example.BehaveMonitor.R;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SessionHistoryListAdapter extends BaseAdapter {
@@ -31,11 +30,17 @@ public class SessionHistoryListAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater inflater;
     private List<File> sessions;
+    private List<Boolean> checks;
 
     public SessionHistoryListAdapter(Context context, List<File> sessions) {
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.sessions = sessions;
+
+        this.checks = new ArrayList<>();
+        for (int i = 0 ; i < sessions.size(); i++) {
+            checks.add(false);
+        }
     }
 
     public void updateSessions(List<File> sessions) {
@@ -43,10 +48,22 @@ public class SessionHistoryListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public List<File> getCheckedFiles() {
+        List<File> files = new ArrayList<>();
+
+        for (int i = 0; i < sessions.size(); i++){
+            if (checks.get(i)) {
+                files.add(sessions.get(i));
+            }
+        }
+
+        return files;
+    }
+
     private class ViewHolder {
+        CheckBox checkBox;
         TextView sessionName;
-        ImageButton deleteButton;
-        Button continueButton;
+        Button actionsButton;
     }
 
     @Override
@@ -79,8 +96,8 @@ public class SessionHistoryListAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.session_history_list_item, parent, false);
 
             viewHolder.sessionName = (TextView) convertView.findViewById(R.id.list_session_name);
-            viewHolder.continueButton = (Button) convertView.findViewById(R.id.list_sessions_continue_btn);
-            viewHolder.deleteButton = (ImageButton) convertView.findViewById(R.id.list_sessions_delete_btn);
+            viewHolder.actionsButton = (Button) convertView.findViewById(R.id.list_sessions_actions_btn);
+            viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.list_session_check);
 
             convertView.setTag(viewHolder);
         } else {
@@ -89,23 +106,19 @@ public class SessionHistoryListAdapter extends BaseAdapter {
 
         File session = sessions.get(position);
         viewHolder.sessionName.setText(getName(session));
-        viewHolder.continueButton.setOnClickListener(new View.OnClickListener() {
+        viewHolder.checkBox.setChecked(checks.get(position));
+
+        viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DBHelper dbHelper = DBHelper.getInstance(context);
-                String email = dbHelper.getEmail();
-                if ("".equals(email)) {
-                    showEmailDialog(position);
-                } else {
-                    continueSession(position, email);
-                }
+                checks.set(position, !checks.get(position));
             }
         });
 
-        viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
+        viewHolder.actionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteSession(position);
+                showActionsDialog(position);
             }
         });
 
@@ -114,6 +127,43 @@ public class SessionHistoryListAdapter extends BaseAdapter {
 
     private String getName(File file) {
         return file.getName().split("\\.(?=[^\\.]+$)")[0];
+    }
+
+    private void showActionsDialog(final int position) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+
+        dialog.setTitle("Choose action");
+        dialog.setItems(R.array.actions_array, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        // View notes
+                        makeSomeToast("Not yet implemented.");
+                        break;
+                    case 1:
+                        // Send file
+                        DBHelper dbHelper = DBHelper.getInstance(context);
+                        String email = dbHelper.getEmail();
+                        if ("".equals(email)) {
+                            showEmailDialog(position);
+                        } else {
+                            FileHandler.sendEmail(context, email, sessions.get(position));
+                        }
+
+                        break;
+                    case 2:
+                        // Delete file
+                        deleteSession(position);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        dialog.setNegativeButton("Cancel", null);
+        dialog.show();
     }
 
     private void deleteSession(final int position) {
@@ -158,7 +208,7 @@ public class SessionHistoryListAdapter extends BaseAdapter {
                     db.setEmail(email);
                 }
 
-                continueSession(position, email);
+                FileHandler.sendEmail(context, email, sessions.get(position));
             }
         });
 
@@ -166,18 +216,9 @@ public class SessionHistoryListAdapter extends BaseAdapter {
         dialog.show();
     }
 
-    private void continueSession(int position, String email) {
-        Log.e("Behave", "Continuing session");
-        File session = sessions.get(position);
-
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        String[] recipients = new String[] {email};
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, recipients);
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, session.getName());
-        emailIntent.putExtra(Intent.EXTRA_TEXT, "");
-        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(session));
-        emailIntent.setType("message/rfc822");
-
-        context.startActivity(Intent.createChooser(emailIntent, "Send email..."));
+    private void makeSomeToast(final String message) {
+        final int duration = Toast.LENGTH_SHORT;
+        final Toast toast = Toast.makeText(context, message, duration);
+        toast.show();
     }
 }

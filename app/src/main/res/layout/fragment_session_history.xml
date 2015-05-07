@@ -33,24 +33,31 @@
 
     </LinearLayout>
 
-    <View
+    <Button
+        android:id="@+id/zip_button"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/folder_layout"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginEnd="10dp"
-        android:background="@color/white" />
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/button_style"
+        android:textColor="@color/black"
+        android:text="@string/compress_send"/>
 
     <ListView
         android:id="@+id/session_history_fragment_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/folder_layout"
+        android:layout_above="@id/zip_button"
         android:padding="10dp"
         android:divider="@null"
         android:dividerHeight="10dp"
+        android:scrollbars="none"
         android:overScrollMode="never" />
 
 </RelativeLayout>

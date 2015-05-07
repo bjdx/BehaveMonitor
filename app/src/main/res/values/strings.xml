@@ -28,6 +28,12 @@
         <item>Settings</item>
     </string-array>
 
+    <string-array name="actions_array">
+        <item>View notes</item>
+        <item>Send file</item>
+        <item>Delete file</item>
+    </string-array>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -52,4 +58,6 @@
     <string name="activity_session_default_time">Not Started</string>
     <string name="activity_session_history">Observation History</string>
 
+    <string name="compress_send">Compress and send</string>
+    <string name="actions">Actions</string>
 </resources>

@@ -5,6 +5,8 @@
 package com.example.BehaveMonitor;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
@@ -30,6 +32,15 @@ public class FileHandler {
     public static void setRootDirectory(Context c) {
         rootDir = new File(Environment.getExternalStorageDirectory(), "Chicken Scratch").getAbsolutePath();
         context = c;
+    }
+
+    /**
+     * Gets the path to a specific session folder
+     * @param folder the folder to get the path to.
+     * @return a string.
+     */
+    public static String getPath(String folder) {
+        return new File(getSessionsDirectory(), folder).getAbsolutePath();
     }
 
     public static File getSessionsDirectory() {
@@ -399,5 +410,17 @@ public class FileHandler {
                 db.removeTemplate(template);
             }
         }
+    }
+
+    public static void sendEmail(Context context, String email, File file) {
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        String[] recipients = new String[] {email};
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, recipients);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, file.getName());
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+        emailIntent.setType("message/rfc822");
+
+        context.startActivity(Intent.createChooser(emailIntent, "Send email..."));
     }
 }

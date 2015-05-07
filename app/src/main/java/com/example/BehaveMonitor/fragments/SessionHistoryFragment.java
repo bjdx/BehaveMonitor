@@ -4,24 +4,39 @@
 
 package com.example.BehaveMonitor.fragments;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.BehaveMonitor.DBHelper;
 import com.example.BehaveMonitor.FileHandler;
 import com.example.BehaveMonitor.R;
 import com.example.BehaveMonitor.adapters.SessionHistoryListAdapter;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class SessionHistoryFragment extends Fragment {
 
@@ -37,6 +52,7 @@ public class SessionHistoryFragment extends Fragment {
 
         initSpinner();
         initList();
+        initZipButton();
 
 		return rootView;
 	}
@@ -61,7 +77,6 @@ public class SessionHistoryFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 List<File> folders = FileHandler.getSessions(((TextView) view).getText().toString());
-//                Log.e("Behave", "" + folders.size());
                 if (sessionAdapter != null) {
                     sessionAdapter.updateSessions(folders);
                 }
@@ -98,5 +113,106 @@ public class SessionHistoryFragment extends Fragment {
         sessionAdapter = new SessionHistoryListAdapter(getActivity(), sessions);
 
         list.setAdapter(sessionAdapter);
+    }
+
+    private void initZipButton() {
+        Button button = (Button) rootView.findViewById(R.id.zip_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<File> files = sessionAdapter.getCheckedFiles();
+                if (files.size() > 0) {
+                    // Turn list of files into array of file paths.
+                    String[] paths = new String[files.size()];
+                    for (int i = 0; i < paths.length; i++) {
+                        File file = files.get(i);
+                        paths[i] = file.getAbsolutePath();
+                    }
+
+                    DBHelper db = DBHelper.getInstance(getActivity());
+                    String email = db.getEmail();
+                    if ("".equals(email)) {
+                        showEmailDialog(paths);
+                    } else {
+                        compressAndEmail(paths, email);
+                    }
+                } else {
+                    makeSomeToast("You must choose some files.");
+                }
+            }
+        });
+    }
+
+    private void showEmailDialog(final String[] paths) {
+        final Context context = getActivity();
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+
+        View view = View.inflate(context, R.layout.dialog_history_email, null);
+        final EditText input = (EditText) view.findViewById(R.id.dialog_history_email_address);
+        dialog.setView(view);
+
+        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String email = input.getText().toString();
+
+                if (!"".equals(email)) {
+                    DBHelper db = DBHelper.getInstance(context);
+                    db.setEmail(email);
+                }
+
+                compressAndEmail(paths, email);
+            }
+        });
+
+        dialog.setNegativeButton("Cancel", null);
+        dialog.show();
+    }
+
+    private void compressAndEmail(String[] paths, String email) {
+        String zipPath = FileHandler.getPath(activeFolder) + File.separator + activeFolder + "_files.zip";
+
+        try {
+            BufferedInputStream input;
+            FileOutputStream dest = new FileOutputStream(zipPath);
+            ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
+
+            byte[] data = new byte[2048];
+
+            for (String path : paths) {
+                Log.e("Behave", "Compressing file: " + path);
+                FileInputStream fi = new FileInputStream(path);
+                input = new BufferedInputStream(fi, 2048);
+
+                ZipEntry entry = new ZipEntry(path.substring(path.lastIndexOf("/") + 1));
+                out.putNextEntry(entry);
+
+                int count;
+                while ((count = input.read(data, 0, 2048)) != -1) {
+                    out.write(data, 0, count);
+                }
+
+                input.close();
+            }
+
+            out.close();
+
+            File zipFile = new File(zipPath);
+            FileHandler.sendEmail(getActivity(), email, zipFile);
+
+        } catch (FileNotFoundException e) {
+            Log.e("Behave", "FNF exception");
+        } catch (IOException e) {
+            Log.e("Behave", "IO exception");
+        }
+
+    }
+
+    private void makeSomeToast(final String message) {
+        final Context context = getActivity();
+        final int duration = Toast.LENGTH_SHORT;
+
+        final Toast toast = Toast.makeText(context, message, duration);
+        toast.show();
     }
 }

@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -110,7 +111,7 @@ public class SessionHistoryFragment extends Fragment {
         List<File> sessions = FileHandler.getSessions(activeFolder);
 
         ListView list = (ListView) rootView.findViewById(R.id.session_history_fragment_list);
-        sessionAdapter = new SessionHistoryListAdapter(getActivity(), sessions);
+        sessionAdapter = new SessionHistoryListAdapter(getActivity(), sessions, (CheckBox) rootView.findViewById(R.id.select_all_check));
 
         list.setAdapter(sessionAdapter);
     }

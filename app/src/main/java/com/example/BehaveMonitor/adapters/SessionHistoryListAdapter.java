@@ -11,9 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,10 +32,28 @@ public class SessionHistoryListAdapter extends BaseAdapter {
     private List<File> sessions;
     private List<Boolean> checks;
 
-    public SessionHistoryListAdapter(Context context, List<File> sessions) {
+    private CheckBox selectAllNone;
+    private boolean checked = false;
+    private int checkCount = 0;
+
+    public SessionHistoryListAdapter(Context context, List<File> sessions, final CheckBox selectAllNone) {
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.sessions = sessions;
+
+        this.selectAllNone = selectAllNone;
+        this.selectAllNone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checked = !checked;
+
+                if (checked) {
+                    selectAll();
+                } else {
+                    clearAll();
+                }
+            }
+        });
 
         this.checks = new ArrayList<>();
         for (int i = 0 ; i < sessions.size(); i++) {
@@ -45,6 +63,14 @@ public class SessionHistoryListAdapter extends BaseAdapter {
 
     public void updateSessions(List<File> sessions) {
         this.sessions = sessions;
+
+        checked = false;
+
+        if (selectAllNone.isChecked()) {
+            selectAllNone.setChecked(false);
+        }
+
+        clearAll();
         notifyDataSetChanged();
     }
 
@@ -60,10 +86,29 @@ public class SessionHistoryListAdapter extends BaseAdapter {
         return files;
     }
 
+    public void selectAll() {
+        for (int i = 0; i < checks.size(); i++) {
+            checks.set(i, true);
+        }
+
+        checkCount = sessions.size();
+        notifyDataSetChanged();
+    }
+
+    public void clearAll() {
+        for (int i = 0; i < checks.size(); i++) {
+            checks.set(i, false);
+        }
+
+        checkCount = 0;
+        notifyDataSetChanged();
+    }
+
     private class ViewHolder {
         CheckBox checkBox;
         TextView sessionName;
-        Button actionsButton;
+        ImageButton emailButton, deleteButton;
+//        Button actionsButton;
     }
 
     @Override
@@ -96,7 +141,9 @@ public class SessionHistoryListAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.session_history_list_item, parent, false);
 
             viewHolder.sessionName = (TextView) convertView.findViewById(R.id.list_session_name);
-            viewHolder.actionsButton = (Button) convertView.findViewById(R.id.list_sessions_actions_btn);
+            viewHolder.emailButton = (ImageButton) convertView.findViewById(R.id.list_sessions_email_btn);
+            viewHolder.deleteButton = (ImageButton) convertView.findViewById(R.id.list_sessions_delete_btn);
+//            viewHolder.actionsButton = (Button) convertView.findViewById(R.id.list_sessions_actions_btn);
             viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.list_session_check);
 
             convertView.setTag(viewHolder);
@@ -112,15 +159,48 @@ public class SessionHistoryListAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 checks.set(position, !checks.get(position));
+                if (checks.get(position)) {
+                    checkCount++;
+                    if (checkCount == sessions.size()) {
+                        selectAllNone.setChecked(true);
+                        checked = true;
+                    }
+                } else {
+                    checkCount--;
+                    if (checkCount == 0) {
+                        selectAllNone.setChecked(false);
+                        checked = false;
+                    }
+                }
             }
         });
 
-        viewHolder.actionsButton.setOnClickListener(new View.OnClickListener() {
+        viewHolder.emailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showActionsDialog(position);
+                DBHelper dbHelper = DBHelper.getInstance(context);
+                String email = dbHelper.getEmail();
+                if ("".equals(email)) {
+                    showEmailDialog(position);
+                } else {
+                    FileHandler.sendEmail(context, email, sessions.get(position));
+                }
             }
         });
+
+        viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteSession(position);
+            }
+        });
+
+//        viewHolder.actionsButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showActionsDialog(position);
+//            }
+//        });
 
         return convertView;
     }

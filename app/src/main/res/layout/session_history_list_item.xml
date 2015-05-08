@@ -22,13 +22,31 @@
         android:gravity="center_vertical"
         android:textSize="20sp" />
 
-    <Button
-        android:id="@+id/list_sessions_actions_btn"
-        android:layout_width="70dp"
-        android:layout_height="match_parent"
-        android:textAllCaps="false"
+    <ImageButton
+        android:id="@+id/list_sessions_email_btn"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/button_style"
-        android:textColor="@color/black"
-        android:text="@string/actions" />
+        android:src="@drawable/ic_action_email"/>
+
+    <ImageButton
+        android:id="@+id/list_sessions_delete_btn"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/button_style"
+        android:src="@drawable/ic_action_discard"/>
+
+    <!--<Button-->
+        <!--android:id="@+id/list_sessions_actions_btn"-->
+        <!--android:layout_width="70dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:textAllCaps="false"-->
+        <!--android:background="@drawable/button_style"-->
+        <!--android:textColor="@color/black"-->
+        <!--android:text="@string/actions" />-->
 
 </LinearLayout>

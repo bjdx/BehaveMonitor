@@ -28,11 +28,18 @@
         <item>Settings</item>
     </string-array>
 
-    <string-array name="actions_array">
-        <item>View notes</item>
-        <item>Send file</item>
-        <item>Delete file</item>
-    </string-array>
+    <!-- Use with autoLink="web|email" -->
+    <string name="licensing">
+        &#169; Barney Dennis &amp; Gareth Lewis 2015\n
+        \nChicken Scratch makes use of several icons from  Icons8. The icons used can be found at the below links:\n
+        \nhttps://icons8.com/web-app/2848/message
+        \nhttps://icons8.com/web-app/8318/template
+        \nhttps://icons8.com/web-app/3522/overtime
+        \nhttps://icons8.com/web-app/6764/inspection
+        \nhttps://icons8.com/web-app/5590/settings
+        \nhttps://icons8.com/web-app/4299/pencil
+        \nhttps://icons8.com/web-app/6376/copyright
+    </string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

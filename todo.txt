@@ -1,4 +1,5 @@
 Chicken App todo:
 
 - Move calculation of statistics to somewhere nicer (possibly create a Statistics object)
-
+- Licensing information (Icons8 and circledpicker mostly).
+- Change package name.

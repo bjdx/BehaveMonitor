@@ -15,7 +15,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.BehaveMonitor.DBHelper;
 import com.example.BehaveMonitor.FileHandler;
@@ -143,7 +142,6 @@ public class SessionHistoryListAdapter extends BaseAdapter {
             viewHolder.sessionName = (TextView) convertView.findViewById(R.id.list_session_name);
             viewHolder.emailButton = (ImageButton) convertView.findViewById(R.id.list_sessions_email_btn);
             viewHolder.deleteButton = (ImageButton) convertView.findViewById(R.id.list_sessions_delete_btn);
-//            viewHolder.actionsButton = (Button) convertView.findViewById(R.id.list_sessions_actions_btn);
             viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.list_session_check);
 
             convertView.setTag(viewHolder);
@@ -195,55 +193,11 @@ public class SessionHistoryListAdapter extends BaseAdapter {
             }
         });
 
-//        viewHolder.actionsButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showActionsDialog(position);
-//            }
-//        });
-
         return convertView;
     }
 
     private String getName(File file) {
         return file.getName().split("\\.(?=[^\\.]+$)")[0];
-    }
-
-    private void showActionsDialog(final int position) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-
-        dialog.setTitle("Choose action");
-        dialog.setItems(R.array.actions_array, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0:
-                        // View notes
-                        makeSomeToast("Not yet implemented.");
-                        break;
-                    case 1:
-                        // Send file
-                        DBHelper dbHelper = DBHelper.getInstance(context);
-                        String email = dbHelper.getEmail();
-                        if ("".equals(email)) {
-                            showEmailDialog(position);
-                        } else {
-                            FileHandler.sendEmail(context, email, sessions.get(position));
-                        }
-
-                        break;
-                    case 2:
-                        // Delete file
-                        deleteSession(position);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
-
-        dialog.setNegativeButton("Cancel", null);
-        dialog.show();
     }
 
     private void deleteSession(final int position) {
@@ -294,11 +248,5 @@ public class SessionHistoryListAdapter extends BaseAdapter {
 
         dialog.setNegativeButton("Cancel", null);
         dialog.show();
-    }
-
-    private void makeSomeToast(final String message) {
-        final int duration = Toast.LENGTH_SHORT;
-        final Toast toast = Toast.makeText(context, message, duration);
-        toast.show();
     }
 }

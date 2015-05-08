@@ -198,6 +198,7 @@ public class SessionActivity extends Activity {
         setupListView();
         setupGridView();
 
+        ((TextView) findViewById(R.id.session_observation_name)).setText(name + "_" + activeSession.getLocation());
         ((TextView) findViewById(R.id.session_observation_number)).setText("" + observation);
     }
 

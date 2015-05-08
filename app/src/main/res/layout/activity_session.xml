@@ -49,25 +49,6 @@
             android:layout_marginTop="20dp"
             android:id="@+id/sTmpText"/>
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal"-->
-            <!--android:layout_marginTop="20dp">-->
-
-            <!---->
-
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="vertical"-->
-                <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
-                <!--android:id="@+id/behaveLayout">-->
-
-            <!--</LinearLayout>-->
-
-        <!--</LinearLayout>-->
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -95,16 +76,6 @@
             android:textColor="@color/black"
             android:id="@+id/setup_session" />
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:gravity="center"-->
-            <!--android:paddingTop="20dp">-->
-
-            <!---->
-
-        <!--</LinearLayout>-->
-
     </LinearLayout>
 
     <Button
@@ -126,6 +97,11 @@
         android:text="@string/activity_session_end_button"
         android:onClick="endSession"
         android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/session_observation_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"

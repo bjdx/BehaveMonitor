@@ -3,5 +3,5 @@
 package com.example.BehaveMonitor;
 
 public enum Setting {
-    EMAIL, DEFAULT_OBSERVATIONS, MAX_OBSERVATIONS
+    EMAIL, DEFAULT_OBSERVATIONS, MAX_OBSERVATIONS, SHOW_RENAME_DIALOG
 }

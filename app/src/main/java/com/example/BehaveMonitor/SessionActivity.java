@@ -269,7 +269,7 @@ public class SessionActivity extends Activity {
                 if (markedEvents.size() > 0) {
                     showNotesQuestionDialog(behaviours, markedEvents);
                 } else {
-                    saveSession();
+                    showSaveDialog();
                 }
             }
         });
@@ -283,7 +283,7 @@ public class SessionActivity extends Activity {
         dialog.setNeutralButton("Save Now", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                saveSession();
+                showSaveDialog();
             }
         });
 
@@ -342,7 +342,7 @@ public class SessionActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         event.setNote(noteText.getText().toString());
-                        saveSession();
+                        showSaveDialog();
                     }
                 });
             }
@@ -361,7 +361,7 @@ public class SessionActivity extends Activity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     event.setNote(noteText.getText().toString());
-                    saveSession();
+                    showSaveDialog();
                 }
             });
         }
@@ -406,7 +406,7 @@ public class SessionActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         event.setNote(noteText.getText().toString());
-                        saveSession();
+                        showSaveDialog();
                     }
                 });
             }
@@ -425,12 +425,119 @@ public class SessionActivity extends Activity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     event.setNote(noteText.getText().toString());
-                    saveSession();
+                    showSaveDialog();
                 }
             });
         }
 
         dialog.show();
+    }
+
+    private void showSaveDialog() {
+        DBHelper db = DBHelper.getInstance(this);
+        if (db.getShowRenameDialog()) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+            View view = View.inflate(this, R.layout.dialog_rename_observation_question, null);
+            dialog.setView(view);
+
+            ((TextView) view.findViewById(R.id.dialog_rename_question_name)).setText(filename + ".csv");
+
+            dialog.setNegativeButton("Save", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    saveSession();
+                }
+            });
+
+            dialog.setPositiveButton("Rename", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    showRenameDialog();
+                }
+            });
+
+            dialog.show();
+        } else {
+            saveSession();
+        }
+    }
+
+    private void showRenameDialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        View view = View.inflate(this, R.layout.dialog_rename_observation, null);
+        alert.setView(view);
+
+        final EditText nameView = (EditText) view.findViewById(R.id.dialog_observation_name);
+        final EditText locationView = (EditText) view.findViewById(R.id.dialog_observation_location);
+
+        String[] nameParts = filename.split("_");
+        nameView.setText(nameParts[0]);
+        locationView.setText(nameParts[1]);
+
+        alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Deliberately left blank - replaced below.
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showSaveDialog();
+            }
+        });
+
+        final AlertDialog dialog = alert.create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = nameView.getText().toString().trim();
+                if ("".equals(name)) {
+                    makeSomeToast("Must enter a name");
+                    return;
+                }
+
+                String location = locationView.getText().toString().trim();
+                if ("".equals(location)) {
+                    makeSomeToast("Must enter a location");
+                    return;
+                }
+
+                final String newName = name + "_" + location;
+                if (FileHandler.observationExists(activeFolder, newName)) {
+                    dialog.dismiss();
+
+                    AlertDialog.Builder alert = new AlertDialog.Builder(SessionActivity.this);
+                    alert.setTitle("Overwrite Observation");
+                    alert.setMessage("An observation with this name already exists, do you want to overwrite it?");
+
+                    alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            filename = newName;
+                            saveSession();
+                        }
+                    });
+
+                    alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // Canceled.
+                            showSaveDialog();
+                        }
+                    });
+
+                    alert.show();
+                } else {
+                    dialog.dismiss();
+                    filename = newName;
+                    saveSession();
+                }
+            }
+        });
     }
 
     private void saveSession() {

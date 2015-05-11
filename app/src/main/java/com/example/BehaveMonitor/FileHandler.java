@@ -307,6 +307,11 @@ public class FileHandler {
         return false;
     }
 
+    public static boolean observationExists(String folder, String observation) {
+        final File file = new File(getSessionsDirectory(), folder + File.separator + observation + ".csv");
+        return file.exists();
+    }
+
     public static String[] getTemplateNames() {
         File projDir = getTemplatesDirectory();
         String[] files = projDir.list();

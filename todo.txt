@@ -1,5 +1,10 @@
 Chicken App todo:
 
+Higher priority:
+- When renaming observation before saving, change session itself? At least change statistics name.
+- Add dialog confirming abandon session between observations, calculate statistics in this case.
+- Allow multiple active state behaviours by storing the active state on each behaviour along with a timer.
+
+Lower priority:
 - Move calculation of statistics to somewhere nicer (possibly create a Statistics object)
-- Licensing information (Icons8 and circledpicker mostly).
 - Change package name.

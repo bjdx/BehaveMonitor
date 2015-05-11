@@ -405,8 +405,8 @@ public class SessionFragment extends Fragment {
     }
 
     private boolean validate() {
-        sessionName = ((EditText) rootView.findViewById(R.id.session_name)).getText().toString();
-        sessionLocation = ((EditText) rootView.findViewById(R.id.session_location)).getText().toString();
+        sessionName = ((EditText) rootView.findViewById(R.id.session_name)).getText().toString().trim();
+        sessionLocation = ((EditText) rootView.findViewById(R.id.session_location)).getText().toString().trim();
 
         Spinner spinner = (Spinner) rootView.findViewById(R.id.template_spinner);
         activeTemplateName = spinner.getSelectedItem().toString();
@@ -421,8 +421,18 @@ public class SessionFragment extends Fragment {
             return false;
         }
 
+        if (sessionName.contains("_")) {
+            makeSomeToast("Name cannot contain an underscore");
+            return false;
+        }
+
         if ("".equals(sessionLocation)) {
             makeSomeToast("Must enter a location");
+            return false;
+        }
+
+        if (sessionLocation.contains("_")) {
+            makeSomeToast("Location cannot contain an underscore");
             return false;
         }
 

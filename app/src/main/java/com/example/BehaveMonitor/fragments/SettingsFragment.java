@@ -66,6 +66,9 @@ public class SettingsFragment extends Fragment {
             case MAX_OBSERVATIONS:
                 showMaxObservationsDialog();
                 break;
+            case SHOW_RENAME_DIALOG:
+                showRenameDialog();
+                break;
             default:
                 break;
         }
@@ -178,6 +181,32 @@ public class SettingsFragment extends Fragment {
         dialog.show();
     }
 
+    private void showRenameDialog() {
+        final Context context = getActivity();
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        View view = View.inflate(context, R.layout.dialog_settings_rename_dialog, null);
+        dialog.setView(view);
+
+        dialog.setNegativeButton("Hide", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                DBHelper db = DBHelper.getInstance(context);
+                db.setShowRenameDialog(false);
+            }
+        });
+
+        dialog.setPositiveButton("Show", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                DBHelper db = DBHelper.getInstance(context);
+                db.setShowRenameDialog(true);
+            }
+        });
+
+        dialog.show();
+    }
+
     private void createSettingsItems(List<SettingsItem> items) {
         SettingsItem email = new SettingsItem();
         email.setSetting(Setting.EMAIL);
@@ -196,6 +225,12 @@ public class SettingsFragment extends Fragment {
         maxObservations.setHeading("Maximum observations");
         maxObservations.setSubheading("Change the maximum number of observations in a session");
         items.add(maxObservations);
+
+        SettingsItem renameDialog = new SettingsItem();
+        renameDialog.setSetting(Setting.SHOW_RENAME_DIALOG);
+        renameDialog.setHeading("Show rename dialog");
+        renameDialog.setSubheading("Show/Hide option to rename observation before saving");
+        items.add(renameDialog);
     }
 
     private void makeSomeToast(final String message) {

@@ -54,6 +54,7 @@ public class SessionFragment extends Fragment {
     private String activeFolderName;
 
     private int nObservations = 1;
+    private int startingObservation = 1;
     private Observation observations;
     private Template activeTemplate;
     private String activeTemplateName;
@@ -65,12 +66,19 @@ public class SessionFragment extends Fragment {
 
         rootView = inflater.inflate(R.layout.fragment_session_create, container, false);
         final EditText nObsView = (EditText) rootView.findViewById(R.id.observations_amount);
+        final EditText startingObsView = (EditText) rootView.findViewById(R.id.starting_observation);
 
         db = DBHelper.getInstance(getActivity());
         nObservations = db.getDefaultObservationsAmount();
 
         nObsView.setText("" + nObservations);
         nObsView.clearFocus();
+
+        if (nObservations > 1) {
+            rootView.findViewById(R.id.start_observation_label).setVisibility(View.VISIBLE);
+            startingObsView.setVisibility(View.VISIBLE);
+            ((TextView) rootView.findViewById(R.id.name_label)).setText(R.string.session_create_name_prefix);
+        }
 
         HomeActivity homeActivity = (HomeActivity) getActivity();
         activeFolderName = homeActivity.getFolderName();
@@ -81,6 +89,16 @@ public class SessionFragment extends Fragment {
             public boolean onTouch(View v, MotionEvent event) {
                 nObsView.setInputType(InputType.TYPE_NULL);
                 nObsView.onTouchEvent(event);
+
+                return true;
+            }
+        });
+
+        startingObsView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                startingObsView.setInputType(InputType.TYPE_NULL);
+                startingObsView.onTouchEvent(event);
 
                 return true;
             }
@@ -104,19 +122,23 @@ public class SessionFragment extends Fragment {
                     picker.setValue(nObservations);
 
                     final TextView nameLabel = (TextView) rootView.findViewById(R.id.name_label);
+                    final View startNumberLabel = rootView.findViewById(R.id.start_observation_label);
 
                     dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            int n = (int) picker.getValue();
-                            nObservations = n;
+                            nObservations = (int) picker.getValue();
                             nObsView.setText("" + nObservations);
                             nObsView.clearFocus();
 
                             if (nObservations == 1) {
                                 nameLabel.setText(R.string.session_create_name);
+                                startNumberLabel.setVisibility(View.GONE);
+                                startingObsView.setVisibility(View.GONE);
                             } else {
                                 nameLabel.setText(R.string.session_create_name_prefix);
+                                startNumberLabel.setVisibility(View.VISIBLE);
+                                startingObsView.setVisibility(View.VISIBLE);
                             }
                         }
                     });
@@ -134,6 +156,56 @@ public class SessionFragment extends Fragment {
                             if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
                                 dialog.dismiss();
                                 nObsView.clearFocus();
+                            }
+
+                            return false;
+                        }
+                    });
+
+                    dialog.setCancelable(false);
+                    dialog.show();
+                }
+            }
+        });
+
+        startingObsView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+                            Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(startingObsView.getWindowToken(), 0);
+
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                    final View dialogView = inflater.inflate(R.layout.dialog_number_picker, null);
+                    dialog.setView(dialogView);
+
+                    final CircledPicker picker = ((CircledPicker) dialogView.findViewById(R.id.circled_picker));
+                    picker.setMaxValue(db.getMaxObservationsAmount());
+                    picker.setValue(startingObservation);
+
+                    dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startingObservation = (int) picker.getValue();
+                            startingObsView.setText("" + startingObservation);
+                            startingObsView.clearFocus();
+                        }
+                    });
+
+                    dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startingObsView.clearFocus();
+                        }
+                    });
+
+                    dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                        @Override
+                        public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                                dialog.dismiss();
+                                startingObsView.clearFocus();
                             }
 
                             return false;
@@ -170,6 +242,14 @@ public class SessionFragment extends Fragment {
             int max = db.getMaxObservationsAmount();
             nObservations = db.getDefaultObservationsAmount();
             makeSomeToast("Must enter a number of observations (1 - " + max + ")");
+        }
+    }
+
+    private void readStartingObservation() {
+        try {
+            startingObservation = Integer.parseInt(((EditText) rootView.findViewById(R.id.starting_observation)).getText().toString());
+        } catch (NumberFormatException e) {
+            makeSomeToast("Must enter an observation number to start from");
         }
     }
 
@@ -315,6 +395,8 @@ public class SessionFragment extends Fragment {
                     return;
                 }
 
+                readStartingObservation();
+
                 if (loadSelectedTemplate()) {
                     createSession();
                 }
@@ -392,6 +474,7 @@ public class SessionFragment extends Fragment {
 
         Session newSession = new Session(sessionName, sessionLocation, activeFolder.getAbsolutePath());
         newSession.setObservations(observations);
+        newSession.setStartingObservation(startingObservation);
 
         Intent intent = new Intent(getActivity(), SessionActivity.class);
         intent.putExtra("activeFolderString", activeFolderName);

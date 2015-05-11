@@ -69,6 +69,7 @@ public class Session implements Parcelable {
     private String path;
 
     private Observation observations;
+    private int startingObservation;
 
     /**
      * Constructor initialising the name, location and path
@@ -99,6 +100,7 @@ public class Session implements Parcelable {
         // readParcelable need class loader
 //        this.template = in.readParcelable(Template.class.getClassLoader());
         this.observations = in.readParcelable(Observation.class.getClassLoader());
+        this.startingObservation = in.readInt();
         this.path = in.readString();
     }
 
@@ -150,6 +152,14 @@ public class Session implements Parcelable {
 
     public int getObservationsCount() {
         return this.observations.getCount();
+    }
+
+    public int getStartingObservation() {
+        return startingObservation;
+    }
+
+    public void setStartingObservation(int observation) {
+        this.startingObservation = observation;
     }
 
     /**
@@ -304,6 +314,7 @@ public class Session implements Parcelable {
         dest.writeString(location);
 //        dest.writeParcelable(template, flags);
         dest.writeParcelable(observations, flags);
+        dest.writeInt(startingObservation);
         dest.writeString(path);
     }
 

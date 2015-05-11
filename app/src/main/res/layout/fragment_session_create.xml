@@ -68,10 +68,31 @@
             android:text="@string/session_create_default_observation_amount" />
 
         <TextView
-            android:id="@+id/template_label"
+            android:id="@+id/start_observation_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/observations_amount"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            android:visibility="gone"
+            android:text="Starting observation number" />
+
+        <EditText
+            android:id="@+id/starting_observation"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/start_observation_label"
+            android:inputType="number"
+            android:maxLength="3"
+            android:visibility="gone"
+            android:text="@string/session_create_default_observation_amount" />
+
+        <TextView
+            android:id="@+id/template_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/starting_observation"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"

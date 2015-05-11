@@ -185,7 +185,7 @@ public class SessionActivity extends Activity {
 
         String name = namePrefix;
         if (activeSession.getObservationsCount() > 1) {
-            name += observation;
+            name += (activeSession.getStartingObservation() + observation - 1);
             activeSession.setName(name);
         }
 
@@ -199,7 +199,7 @@ public class SessionActivity extends Activity {
         setupGridView();
 
         ((TextView) findViewById(R.id.session_observation_name)).setText(name + "_" + activeSession.getLocation());
-        ((TextView) findViewById(R.id.session_observation_number)).setText("" + observation);
+        ((TextView) findViewById(R.id.session_observation_number)).setText("" + (activeSession.getStartingObservation() + observation - 1));
     }
 
     private void resetSession() {

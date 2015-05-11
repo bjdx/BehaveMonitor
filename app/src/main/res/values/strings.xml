@@ -26,6 +26,7 @@
         <item>Manage Templates</item>
         <item>Session History</item>
         <item>Settings</item>
+        <item>Licensing</item>
     </string-array>
 
     <!-- Use with autoLink="web|email" -->
@@ -38,7 +39,7 @@
         \nhttps://icons8.com/web-app/6764/inspection
         \nhttps://icons8.com/web-app/5590/settings
         \nhttps://icons8.com/web-app/4299/pencil
-        \nhttps://icons8.com/web-app/6376/copyright
+        \nhttps://icons8.com/web-app/6376/copyright\n\n
     </string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

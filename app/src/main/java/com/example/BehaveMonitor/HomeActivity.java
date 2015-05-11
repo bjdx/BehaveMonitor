@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 import com.example.BehaveMonitor.fragments.FolderFragment;
+import com.example.BehaveMonitor.fragments.LicensingFragment;
 import com.example.BehaveMonitor.fragments.NavigationDrawerFragment;
 import com.example.BehaveMonitor.fragments.SessionFragment;
 import com.example.BehaveMonitor.fragments.SessionHistoryFragment;
@@ -132,6 +133,9 @@ public class HomeActivity extends ActionBarActivity
                 break;
             case 4:
                 fragment = new SettingsFragment();
+                break;
+            case 5:
+                fragment = new LicensingFragment();
                 break;
             default:
                 break;

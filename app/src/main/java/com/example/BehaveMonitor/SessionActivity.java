@@ -277,6 +277,24 @@ public class SessionActivity extends Activity {
         dialog.show();
     }
 
+    private void showAbandonDialog() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Abandon session?");
+        dialog.setMessage("Are you sure you want to end this session?\n\nYou still have some observations to perform");
+
+        dialog.setNegativeButton("Cancel", null);
+        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                calculateStatistics();
+                makeSomeToast("Statistics calculated");
+                backToHome();
+            }
+        });
+
+        dialog.show();
+    }
+
     private void showNotesQuestionDialog(final List<Behaviour> behaviours, final List<Integer[]> events) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Add notes or save now?");
@@ -545,6 +563,7 @@ public class SessionActivity extends Activity {
         if (saved) {
             makeSomeToast("File saved.");
             if (observation == activeSession.getObservationsCount()) {
+                observation++; // Used to know if the session has ended properly or been abandoned.
                 calculateStatistics();
                 backToHome();
             } else {
@@ -559,11 +578,12 @@ public class SessionActivity extends Activity {
     private void calculateStatistics() {
         // TODO: This isn't the nicest of places to do this. Should also be an option to generate these from session history screen.
 
-        int nObservations = activeSession.getObservationsCount();
+        int totalObservations = activeSession.getObservationsCount();
+        int nObservations = observation > totalObservations ? totalObservations : (observation - 1);
         float[][] durationStatistics = new float[nObservations][activeSession.getTemplate(1).behaviours.size()];
         int[][] frequencyStatistics = new int[nObservations][durationStatistics[0].length];
         boolean[][] marked = new boolean[nObservations][durationStatistics[0].length];
-        String name = nObservations > 1 ? namePrefix : activeSession.getName();
+        String name = totalObservations > 1 ? namePrefix : activeSession.getName();
 
         for (int observation = 0; observation < nObservations; observation++) {
             Template template = activeSession.getTemplate(observation + 1); // getTemplate is 1-indexed
@@ -618,7 +638,11 @@ public class SessionActivity extends Activity {
         if (sessionStarted) {
             endSession(null);
         } else {
-            backToHome();
+            if (observation > 1) {
+                showAbandonDialog();
+            } else {
+                backToHome();
+            }
         }
     }
 

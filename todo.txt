@@ -2,7 +2,6 @@ Chicken App todo:
 
 Higher priority:
 - When renaming observation before saving, change session itself? At least change statistics name.
-- Append version number to end of statistics if conflicting name with existing file.
 - Allow multiple active state behaviours by storing the active state on each behaviour along with a timer.
 
 Lower priority:

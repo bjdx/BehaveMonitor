@@ -208,8 +208,26 @@ public class FileHandler {
         }
     }
 
+    public static File getStatisticsFile(String folder, String location) {
+        File file = new File(getSessionsDirectory(), folder + File.separator + location + "_Statistics.csv");
+        if (!file.exists()) {
+            return file;
+        }
+
+        int i = 1;
+        while (true) {
+            String number = i < 10 ? "0" + i : "" + i;
+            file = new File(getSessionsDirectory(), folder + File.separator + location + "_Statistics (v" + number + ").csv");
+            if (file.exists()) {
+                i++;
+            } else {
+                return file;
+            }
+        }
+    }
+
     public static void saveSingleStatistics(Session session, String folder, int[] frequencyStatistics, float[] durationStatistics) {
-        File file = new File(getSessionsDirectory(), folder + File.separator + session.getLocation() + "_Statistics.csv");
+        File file = getStatisticsFile(folder, session.getLocation());
         Template template = session.getTemplate(1);
         Behaviour[] behaviours = template.behaviours.toArray(new Behaviour[template.behaviours.size()]);
 
@@ -236,7 +254,7 @@ public class FileHandler {
     }
 
     public static void saveMultipleStatistics(Session session, String folder, String name, int[][] frequencyStatistics, float[][] durationStatistics, boolean[][] marks) {
-        File file = new File(getSessionsDirectory(), folder + File.separator + session.getLocation() + "_Statistics.csv");
+        File file = getStatisticsFile(folder, session.getLocation());
         Template[] templates = session.getTemplates();
         int nObservations = frequencyStatistics.length;
         Behaviour[] behaviours = templates[0].behaviours.toArray(new Behaviour[templates[0].behaviours.size()]);

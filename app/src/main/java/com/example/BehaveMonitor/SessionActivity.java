@@ -514,13 +514,13 @@ public class SessionActivity extends Activity {
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = nameView.getText().toString().trim();
+                final String name = nameView.getText().toString().trim();
                 if ("".equals(name)) {
                     makeSomeToast("Must enter a name");
                     return;
                 }
 
-                String location = locationView.getText().toString().trim();
+                final String location = locationView.getText().toString().trim();
                 if ("".equals(location)) {
                     makeSomeToast("Must enter a location");
                     return;
@@ -537,6 +537,8 @@ public class SessionActivity extends Activity {
                     alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             filename = newName;
+                            activeSession.setName(name);
+                            activeSession.setLocation(location);
                             saveSession();
                         }
                     });
@@ -552,6 +554,8 @@ public class SessionActivity extends Activity {
                 } else {
                     dialog.dismiss();
                     filename = newName;
+                    activeSession.setName(name);
+                    activeSession.setLocation(location);
                     saveSession();
                 }
             }

@@ -128,6 +128,10 @@ public class Session implements Parcelable {
         return location;
     }
 
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
 //    public Template getTemplate() {
 //        return template;
 //    }

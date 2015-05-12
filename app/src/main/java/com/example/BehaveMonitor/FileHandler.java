@@ -253,7 +253,7 @@ public class FileHandler {
         }
     }
 
-    public static void saveMultipleStatistics(Session session, String folder, String name, int[][] frequencyStatistics, float[][] durationStatistics, boolean[][] marks) {
+    public static void saveMultipleStatistics(Session session, String folder, String name, String[] names, int[][] frequencyStatistics, float[][] durationStatistics, boolean[][] marks) {
         File file = getStatisticsFile(folder, session.getLocation());
         Template[] templates = session.getTemplates();
         int nObservations = frequencyStatistics.length;
@@ -269,7 +269,7 @@ public class FileHandler {
                 stats += name;
             } else {
                 for (int i = 0; i < nObservations; i++) {
-                    stats += name + (i + 1) + ",";
+                    stats += names[i] + ",";
                 }
             }
 
@@ -289,7 +289,7 @@ public class FileHandler {
                 stats += name;
             } else {
                 for (int i = 0; i < nObservations; i++) {
-                    stats += name + (i + 1) + ",";
+                    stats += names[i] + ",";
                 }
             }
 

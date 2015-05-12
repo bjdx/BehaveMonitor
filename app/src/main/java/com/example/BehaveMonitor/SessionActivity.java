@@ -46,6 +46,7 @@ public class SessionActivity extends Activity {
     private ButtonAdapter adapter;
     private HistoryAdapter historyAdapter;
 
+    private String[] names;
     private String namePrefix = "";
     private String filename = "";
     private boolean sessionStarted = false;
@@ -59,6 +60,7 @@ public class SessionActivity extends Activity {
         activeSession = b.getParcelable("Session");
         activeFolder = b.getString("activeFolderString");
         namePrefix = activeSession.getName().trim();
+        names = new String[activeSession.getObservationsCount()];
 
         loadSessionInfo();
         setSetupButton();
@@ -459,7 +461,7 @@ public class SessionActivity extends Activity {
             View view = View.inflate(this, R.layout.dialog_rename_observation_question, null);
             dialog.setView(view);
 
-            ((TextView) view.findViewById(R.id.dialog_rename_question_name)).setText(filename + ".csv");
+            ((TextView) view.findViewById(R.id.dialog_rename_question_name)).setText(filename.endsWith(".csv") ? filename : filename + ".csv");
 
             dialog.setNegativeButton("Save", new DialogInterface.OnClickListener() {
                 @Override
@@ -475,6 +477,7 @@ public class SessionActivity extends Activity {
                 }
             });
 
+            dialog.setCancelable(false);
             dialog.show();
         } else {
             saveSession();
@@ -490,9 +493,10 @@ public class SessionActivity extends Activity {
         final EditText nameView = (EditText) view.findViewById(R.id.dialog_observation_name);
         final EditText locationView = (EditText) view.findViewById(R.id.dialog_observation_location);
 
-        String[] nameParts = filename.split("_");
-        nameView.setText(nameParts[0]);
-        locationView.setText(nameParts[1]);
+        String name = activeSession.getName();
+        String location = activeSession.getLocation();
+        nameView.setText(name);
+        locationView.setText(location);
 
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
@@ -507,6 +511,8 @@ public class SessionActivity extends Activity {
                 showSaveDialog();
             }
         });
+
+        alert.setCancelable(false);
 
         final AlertDialog dialog = alert.create();
         dialog.show();
@@ -526,7 +532,7 @@ public class SessionActivity extends Activity {
                     return;
                 }
 
-                final String newName = name + "_" + location;
+                final String newName = FileHandler.getVersionName(activeFolder, name + "_" + location);
                 if (FileHandler.observationExists(activeFolder, newName)) {
                     dialog.dismiss();
 
@@ -566,12 +572,13 @@ public class SessionActivity extends Activity {
         boolean saved = FileHandler.saveSession(activeFolder, activeSession, filename, observation);
         if (saved) {
             makeSomeToast("File saved.");
-            if (observation == activeSession.getObservationsCount()) {
-                observation++; // Used to know if the session has ended properly or been abandoned.
+            names[observation - 1] = activeSession.getName();
+            observation++;
+            if (observation > activeSession.getObservationsCount()) {
+//                observation++; // Used to know if the session has ended properly or been abandoned.
                 calculateStatistics();
                 backToHome();
             } else {
-                observation++;
                 setupSession();
             }
         } else {
@@ -619,7 +626,7 @@ public class SessionActivity extends Activity {
         }
 
         if (nObservations > 1) {
-            FileHandler.saveMultipleStatistics(activeSession, activeFolder, name, frequencyStatistics, durationStatistics, marked);
+            FileHandler.saveMultipleStatistics(activeSession, activeFolder, name, names, frequencyStatistics, durationStatistics, marked);
         } else {
             FileHandler.saveSingleStatistics(activeSession, activeFolder, frequencyStatistics[0], durationStatistics[0]);
         }

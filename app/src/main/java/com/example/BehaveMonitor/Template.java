@@ -41,8 +41,15 @@ public class Template implements Parcelable {
 		    		String[] bParts = b.split(",");
 		    		if (bParts.length > 1) {
 			    		Behaviour be = new Behaviour();
-			    		be.bName = bParts[0];
-			    		be.type = Integer.parseInt(bParts[1]);
+			    		be.setName(bParts[0]);
+
+                        int type = Integer.parseInt(bParts[1]);
+                        if (type != BehaviourType.EVENT && type != BehaviourType.STATE) {
+                            Log.e("Behave", "Behaviour type invalid, assuming state");
+                            type = BehaviourType.STATE;
+                        }
+
+			    		be.setType(type);
 			    		this.behaviours.add(be);
 		    		} else {
 		    			Log.e("Template missing data:", "Behaviour name or type.");
@@ -60,20 +67,20 @@ public class Template implements Parcelable {
     public String toString() {
     	String out = name + ";";
     	for(Behaviour b : behaviours) {
-    		out += b.bName + ",";
-    		out += b.type + ":";
+    		out += b.getName() + ",";
+    		out += b.getType() + ":";
     	}
     	
 		return out;
     }
 
-    /**
-     * Determines if the template has any behaviours added
-     * @return true if the template has no behaviours, false otherwise
-     */
-    public boolean isEmpty() {
-    	return behaviours.isEmpty();
-    }
+//    /**
+//     * Determines if the template has any behaviours added
+//     * @return true if the template has no behaviours, false otherwise
+//     */
+//    public boolean isEmpty() {
+//    	return behaviours.isEmpty();
+//    }
 
     // Stuff to make it parcelable.
 
@@ -98,5 +105,4 @@ public class Template implements Parcelable {
             return new Template[size];
         }
     };
-
 }

@@ -250,7 +250,7 @@ public class SessionActivity extends Activity {
                 List<Integer[]> markedEvents = new ArrayList<>();
                 List<Behaviour> behaviours = activeSession.getBehaviours(observation);
                 for (int i = 0; i < behaviours.size(); i++) {
-                    List<Event> eventHistory = behaviours.get(i).eventHistory;
+                    List<Event> eventHistory = behaviours.get(i).getEventHistory();
                     for (int j = 0; j < eventHistory.size(); j++) {
                         if (eventHistory.get(j).getMark()) {
                             markedEvents.add(new Integer[] {i, j});
@@ -310,11 +310,11 @@ public class SessionActivity extends Activity {
     private void showNotesDialog(List<Behaviour> behaviours, List<Integer[]> events, int position) {
         Integer[] indices = events.get(position);
         Behaviour behaviour = behaviours.get(indices[0]);
-        Event event = behaviour.eventHistory.get(indices[1]);
+        Event event = behaviour.getEventHistory().get(indices[1]);
         if (behaviour.getType() == BehaviourType.EVENT) {
-            showEventDialog(behaviours, events, behaviour.bName, event, position);
+            showEventDialog(behaviours, events, behaviour.getName(), event, position);
         } else {
-            showStateDialog(behaviours, events, behaviour.bName, event, position);
+            showStateDialog(behaviours, events, behaviour.getName(), event, position);
         }
     }
 
@@ -594,10 +594,11 @@ public class SessionActivity extends Activity {
                 Behaviour behaviour = behaviours[i];
                 marked[observation][i] = behaviour.isMarked();
 
+                List<Event> eventHistory = behaviour.getEventHistory();
                 if (behaviour.getType() == BehaviourType.STATE) {
                     float avgDuration = 0.0f;
-                    int count = behaviour.eventHistory.size();
-                    for (Event event : behaviour.eventHistory) {
+                    int count = eventHistory.size();
+                    for (Event event : eventHistory) {
                         float duration = Float.parseFloat(event.duration);
                         avgDuration += duration;
                     }
@@ -609,7 +610,7 @@ public class SessionActivity extends Activity {
                     frequencyStatistics[observation][i] = count;
                     durationStatistics[observation][i] = avgDuration;
                 } else {
-                    frequencyStatistics[observation][i] = behaviour.eventHistory.size();
+                    frequencyStatistics[observation][i] = eventHistory.size();
                     durationStatistics[observation][i] = -1f;
                 }
             }

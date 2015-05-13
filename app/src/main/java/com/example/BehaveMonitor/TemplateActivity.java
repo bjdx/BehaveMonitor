@@ -321,8 +321,8 @@ public class TemplateActivity extends Activity {
                 String name = bName.getText().toString().trim();
                 if (!name.contains(",") && !name.contains(";") && !name.contains(":")) {
                     Behaviour b = new Behaviour();
-                    b.bName = name;
-                    b.type = spinner.getSelectedItemPosition();
+                    b.setName(name);
+                    b.setType(spinner.getSelectedItemPosition());
                     newTemp.behaviours.add(b);
 //                    updateBehaviours();
 //                    adapter.addBehaviour(b);
@@ -352,8 +352,8 @@ public class TemplateActivity extends Activity {
 
         // get the current behaviour
         Behaviour currentBehaviour = newTemp.behaviours.get(index);
-		bName.setText(currentBehaviour.bName);
-        spinner.setSelection(currentBehaviour.type);
+		bName.setText(currentBehaviour.getName());
+        spinner.setSelection(currentBehaviour.getType());
 
 		alert.setView(dialogView);
 		
@@ -379,8 +379,8 @@ public class TemplateActivity extends Activity {
             public void onClick(View v) {
                 String name = bName.getText().toString().trim();
                 if (!name.contains(",") && !name.contains(";") && !name.contains(":")) {
-                    newTemp.behaviours.get(index).bName = name;
-                    newTemp.behaviours.get(index).type = spinner.getSelectedItemPosition();
+                    newTemp.behaviours.get(index).setName(name);
+                    newTemp.behaviours.get(index).setType(spinner.getSelectedItemPosition());
 
 //                    adapter.replace()
                     adapter.refresh();

@@ -191,38 +191,33 @@ public class Session implements Parcelable {
     public String toString(int observation) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss", Locale.UK);
         String out = "Session Name," + this.name + "\n";
-        out += "Start Date,";
-        out += sdf.format(startTime.get(observation - 1).getTime()) + ",";
-
-//        String endString = "\nEnd Date,";
-//        endString += endTime.size() <= observation - 1 ? "Autosave at " + sdf.format(new Date()) + "," : sdf.format(endTime.get(observation - 1).getTime()) + ",";
-
-        out += "\nEnd Date," + (endTime.size() <= observation - 1 ? "Autosave at " + sdf.format(new Date()) + "," : sdf.format(endTime.get(observation - 1).getTime())) + ",";
-        out += "\nSession Location," + this.location + "\n";
+        out += "Start Date," + sdf.format(startTime.get(observation - 1).getTime()) + "\n";
+        out += "End Date," + (endTime.size() <= observation - 1 ? "Autosave at " + sdf.format(new Date()) + "\n" : sdf.format(endTime.get(observation - 1).getTime())) + "\n";
+        out += "Session Location," + this.location + "\n";
         out += "Template Name," + this.observations.get(observation).name + "\n";
 
         // Split behaviour types.
-        ArrayList<Behaviour> eBe = new ArrayList<>();
-        ArrayList<Behaviour> sBe = new ArrayList<>();
-        for (Behaviour b : this.observations.get(observation).behaviours) {
-            if (b.type == BehaviourType.EVENT) {
-                eBe.add(b);
+        ArrayList<Behaviour> eventBehaviours = new ArrayList<>();
+        ArrayList<Behaviour> stateBehaviours = new ArrayList<>();
+        for (Behaviour behaviour : this.observations.get(observation).behaviours) {
+            if (behaviour.getType() == BehaviourType.EVENT) {
+                eventBehaviours.add(behaviour);
             } else {
-                sBe.add(b);
+                stateBehaviours.add(behaviour);
             }
         }
 
-        if (eBe.size() > 0) {
+        if (eventBehaviours.size() > 0) {
             out += "\nEvent Behaviours\n\n";
 
-            for (Behaviour b : eBe) {
-                out += b.bName + "\n";
+            for (Behaviour behaviour : eventBehaviours) {
+                out += behaviour.getName() + "\n";
                 String starts = "Start Times,";
                 String notes = "Notes,";
-                for (Event e : b.eventHistory) {
-                    String mark = e.getMark() ? "m" : "";
-                    starts += timeDiff(startTime.get(observation - 1), e.startTime) + mark + ",";
-                    notes += e.getNote() + ",";
+                for (Event event : behaviour.getEventHistory()) {
+                    String mark = event.getMark() ? "m" : "";
+                    starts += timeDiff(startTime.get(observation - 1), event.startTime) + mark + ",";
+                    notes += event.getNote() + ",";
                 }
 
                 out += starts + "\n";
@@ -232,19 +227,19 @@ public class Session implements Parcelable {
             out += "\n";
         }
 
-        if (sBe.size() > 0) {
+        if (stateBehaviours.size() > 0) {
             out += "State Behaviours\n\n";
 
-            for (Behaviour b : sBe) {
-                out += b.bName + "\n";
+            for (Behaviour behaviour : stateBehaviours) {
+                out += behaviour.getName() + "\n";
                 String starts = "Start Times,";
                 String duration = "Durations,";
                 String notes = "Notes,";
-                for (Event e : b.eventHistory) {
-                    String mark = e.getMark() ? "m" : "";
-                    starts += timeDiff(startTime.get(observation - 1), e.startTime) + mark + ",";
-                    duration += e.duration + mark + ",";
-                    notes += e.getNote() + ",";
+                for (Event event : behaviour.getEventHistory()) {
+                    String mark = event.getMark() ? "m" : "";
+                    starts += timeDiff(startTime.get(observation - 1), event.startTime) + mark + ",";
+                    duration += event.duration + mark + ",";
+                    notes += event.getNote() + ",";
                 }
 
                 out += starts + "\n";

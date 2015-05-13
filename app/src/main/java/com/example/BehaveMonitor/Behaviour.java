@@ -8,29 +8,21 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class Behaviour implements Parcelable {
-	//Behaviour Name
-	String bName;
-	
-	//0 = Event
-	//1 = State
-	int type;
-	
-	//Holds the events for this behaviour.
-	ArrayList<Event> eventHistory = new ArrayList<>();
-	
-	//Holds the current state event before its ended and added to the history.
-	Event currentEvent = null;
+	private String name;
+	private int type; // Behaviour type
 
-    private boolean active = false;
+	private ArrayList<Event> eventHistory = new ArrayList<>(); // Holds the events for this behaviour.
+	private Event currentEvent = null; // Holds the active state event.
 
-    Behaviour(){}
+    private boolean active = false; // If this behaviour is currently active.
 
-    Behaviour(Parcel in) {
-        bName = in.readString();
+    public Behaviour(){}
+
+    public Behaviour(Parcel in) {
+        name = in.readString();
         type = in.readInt();
         eventHistory = new ArrayList<>();
         in.readTypedList(eventHistory,Event.CREATOR);
@@ -48,18 +40,60 @@ public class Behaviour implements Parcelable {
         }
     };
 
+    /**
+     * Gets the name of a behaviour
+     * @return a String
+     */
     public String getName() {
-        return bName;
+        return name;
     }
 
+    /**
+     * Sets the name of a behaviour
+     * @param name the string to change the behaviour's name to
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Gets the type of a behaviour.
+     * @return an integer.
+     * @see com.example.BehaveMonitor.BehaviourType
+     */
     public int getType() {
         return type;
     }
 
+    /**
+     * Sets the type of a behaviour
+     * @param type the integer representation of the type to change the behaviour to
+     * @see com.example.BehaveMonitor.BehaviourType
+     */
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    /**
+     * Gets the event history for a behaviour
+     * @return an {@code ArrayList<Event>}
+     */
+    public ArrayList<Event> getEventHistory() {
+        return eventHistory;
+    }
+
+    /**
+     * Gets the currently active event
+     * @return an Event or null if no event is active
+     */
     public Event getCurrentEvent() {
         return currentEvent;
     }
 
+    /**
+     * Gets if any of the events for this behaviour have a mark
+     * @return true if one or more events have a mark, false otherwise.
+     */
     public boolean isMarked() {
         for (Event e : eventHistory) {
             if (e.getMark()) {
@@ -70,10 +104,10 @@ public class Behaviour implements Parcelable {
         return false;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
+    /**
+     * Gets whether there is an active behaviour.
+     * @return true if there is an active behaviour, false otherwise.
+     */
     public boolean isActive() {
         return active;
     }
@@ -91,8 +125,11 @@ public class Behaviour implements Parcelable {
 			//ERROR
 		}
 	}
-	
-	//Ends the current event of this behaviour type, and adds it to the history reseting the currentEvent variable.
+
+    /**
+     * 1. Ends the current event of this behaviour type
+     * 2. Adds the event to the history
+     */
 	public void endCurrentEvent() {
 		if (currentEvent != null) {
 			currentEvent.end();
@@ -102,44 +139,47 @@ public class Behaviour implements Parcelable {
 		}
 	}
 
-    //returns the last event added to the event history.
+    /**
+     * Gets the last event added to the event history.
+     * @return an event.
+     */
     public Event getLastEvent() {
         if (!eventHistory.isEmpty()) return eventHistory.get(eventHistory.size() - 1);
         else return null;
     }
 
 	//Returns the behaviour and all its events for session Saving
-	public String toString() {
-		//Get name and type of behaviour
-		String out = this.bName + "/nType = " + this.type + ":\n\n";
-		SimpleDateFormat sdf = new SimpleDateFormat("H.m.s.S");
-		
-		//If type0 Event just the start time
-		String startTimes = "Start Times:";
-		if (this.type == BehaviourType.EVENT) {
-			for (Event e: this.eventHistory) {
-                String mark = e.getMark() ? "m" : "";
-				startTimes += "," + sdf.format(e.startTime) + mark;
-			}
-		
-		//else type1 state durations and start times.
-		} else if (this.type == BehaviourType.STATE) {
-			String durations = "Durations:";
-			for (Event e: this.eventHistory) {
-                String mark = e.getMark() ? "m" : "";
-				startTimes += "," + sdf.format(e.startTime) + mark;
-				durations += "," + e.duration + mark;
-			}
-			durations += "/n";
-			out += durations;
-		} else {
-			Log.e("Event type error", "the eType was not a 1 or a 0");
-			//ERROR
-		}
-		startTimes += "/n";
-		out += startTimes;
-		return out;
-	}
+//	public String toString() {
+//		//Get name and type of behaviour
+//		String out = this.name + "/nType = " + this.type + ":\n\n";
+//		SimpleDateFormat sdf = new SimpleDateFormat("H.m.s.S");
+//
+//		//If type0 Event just the start time
+//		String startTimes = "Start Times:";
+//		if (this.type == BehaviourType.EVENT) {
+//			for (Event e: this.eventHistory) {
+//                String mark = e.getMark() ? "m" : "";
+//				startTimes += "," + sdf.format(e.startTime) + mark;
+//			}
+//
+//		//else type1 state durations and start times.
+//		} else if (this.type == BehaviourType.STATE) {
+//			String durations = "Durations:";
+//			for (Event e: this.eventHistory) {
+//                String mark = e.getMark() ? "m" : "";
+//				startTimes += "," + sdf.format(e.startTime) + mark;
+//				durations += "," + e.duration + mark;
+//			}
+//			durations += "/n";
+//			out += durations;
+//		} else {
+//			Log.e("Event type error", "the eType was not a 1 or a 0");
+//			//ERROR
+//		}
+//		startTimes += "/n";
+//		out += startTimes;
+//		return out;
+//	}
 
 
 
@@ -153,7 +193,7 @@ public class Behaviour implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(bName);
+        dest.writeString(name);
         dest.writeInt(type);
         dest.writeTypedList(eventHistory);
         dest.writeParcelable(currentEvent, flags);

@@ -37,9 +37,6 @@ public class ButtonAdapter extends BaseAdapter {
     private Timer timer;
 
     private List<Integer> activeBehaviours;
-    private Button[] buttons;
-//    private Button activeButton;
-//    private Behaviour activeBehaviour;
 
     private GridView parent;
 
@@ -55,9 +52,7 @@ public class ButtonAdapter extends BaseAdapter {
         this.timer = timer;
         this.myHandler = handler;
 
-//        this.times = new String[behaviours.size()];
         this.activeBehaviours = new ArrayList<>(behaviours.size());
-
         this.parent = parent;
 
         timer.schedule(new TimerTask() {
@@ -69,7 +64,6 @@ public class ButtonAdapter extends BaseAdapter {
     }
 
     public void endSession() {
-//        if (activeBehaviour != null) deactivateBehaviour();
         for (int i = 0; i < behaviours.size(); i++) {
             Behaviour behaviour = behaviours.get(i);
             if (behaviour.isActive()) {
@@ -104,21 +98,15 @@ public class ButtonAdapter extends BaseAdapter {
             button = (Button) convertView;
             convertView.setTag(button);
         } else {
-//            Log.e("Behave", "Recycling view");
             button = (Button) convertView.getTag();
         }
 
         final Behaviour behaviour = behaviours.get(position);
 
-//        if (behaviour.isActive()) {
-//            button.setText(behaviour.getName() + "\n" + times[position]);
-//            button.setTextColor(Color.parseColor("#99CC00"));
-//        } else {
         if (!behaviour.isActive()) {
             button.setText(behaviour.getName());
             button.setTextColor(Color.parseColor("#ffffff"));
         }
-//        }
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,18 +126,6 @@ public class ButtonAdapter extends BaseAdapter {
                     } else {
                         deactivateBehaviour(behaviour, position);
                     }
-
-
-//                    if (activeButton == null) {
-//                        activateBehaviour(behaviour, button);
-//                    } else {
-//                        if (activeBehaviour.getName().equals(behaviour.getName())) {
-//                            deactivateBehaviour();
-//                        } else {
-//                            deactivateBehaviour();
-//                            activateBehaviour(behaviour, button);
-//                        }
-//                    }
                 }
             }
         });
@@ -160,24 +136,7 @@ public class ButtonAdapter extends BaseAdapter {
     private void activateBehaviour(Behaviour behaviour, int position) {
         behaviour.newEvent();
         activeBehaviours.add(position);
-
-//        Log.e("Behave", "First position: " + parent.getFirstVisiblePosition());
     }
-
-//    private void activateBehaviour(Behaviour b, Button button) {
-//        b.newEvent();
-//        activeBehaviour = b;
-//        button.setTextColor(Color.parseColor("#99CC00"));
-////        button.setTextColor(Color.parseColor("#2E7A33"));
-//        activeButton = button;
-//        //Add the update button task to the timer.
-//        timer.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                UpdateButtonTime();
-//            }
-//        }, 0, 100);
-//    }
 
     private void deactivateBehaviour(Behaviour behaviour, int position) {
         behaviour.endCurrentEvent();
@@ -186,20 +145,6 @@ public class ButtonAdapter extends BaseAdapter {
         activeBehaviours.remove(Integer.valueOf(position)); // This removes the first occurrence of position, rather than the element at index 'position'
         notifyDataSetChanged();
     }
-
-//    private void deactivateBehaviour() {
-//        //removes any button update tasks.
-////        timer.purge();
-//
-//        activeBehaviour.endCurrentEvent();
-//        addToHistory(activeBehaviour, true);
-//        //reset the button to its name
-//        activeButton.setText(activeBehaviour.getName());
-//        activeButton.setTextColor(Color.parseColor("#ffffff"));
-//
-//        activeButton = null;
-//        activeBehaviour = null;
-//    }
 
     private void addToHistory(Behaviour behaviour, boolean state) {
         Event event = behaviour.getLastEvent();
@@ -227,23 +172,10 @@ public class ButtonAdapter extends BaseAdapter {
                         button.setText(behaviour.getName() + "\n" + timeDiff(behaviour.getCurrentEvent().getStartTime(), new Date()));
                         button.setTextColor(Color.parseColor("#99CC00"));
                     }
-//                    buttons[position].setText(behaviour.getName() + "\n" + timeDiff(behaviour.getCurrentEvent().getStartTime(), new Date()));
                 }
-
-//                notifyDataSetChanged();
             }
         }
     };
-
-//    final Runnable updateButtonTime = new Runnable() {
-//        @Override
-//        public void run() {
-//            if (activeButton != null) {
-//                //Gets the time the behaviour started from the current event on that behaviour.
-//                activeButton.setText(activeBehaviour.getName() + "\n" + timeDiff(activeBehaviour.getCurrentEvent().getStartTime(), new Date()));
-//            }
-//        }
-//    };
 
     public String timeDiff(Date sT, Date eT) {
 
@@ -273,9 +205,4 @@ public class ButtonAdapter extends BaseAdapter {
 
         return out;
     }
-
-//    private void makeSomeToast(final String message) {
-//        final Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
-//        toast.show();
-//    }
 }

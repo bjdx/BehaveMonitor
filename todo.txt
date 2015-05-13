@@ -1,7 +1,6 @@
 Chicken App todo:
 
 Higher priority:
-- Allow multiple active state behaviours by storing the active state on each behaviour along with a timer.
 
 Lower priority:
 - Move calculation of statistics to somewhere nicer (possibly create a Statistics object)

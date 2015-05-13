@@ -131,7 +131,7 @@ public class TemplateActivity extends Activity {
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String template = input.getText().toString();
+                String template = input.getText().toString().trim();
                 if (template.contains(",")) {
                     makeSomeToast("Invalid template name");
                     return;
@@ -318,7 +318,7 @@ public class TemplateActivity extends Activity {
 		dialog.show();
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String name = bName.getText().toString();
+                String name = bName.getText().toString().trim();
                 if (!name.contains(",") && !name.contains(";") && !name.contains(":")) {
                     Behaviour b = new Behaviour();
                     b.bName = name;
@@ -377,7 +377,7 @@ public class TemplateActivity extends Activity {
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = bName.getText().toString();
+                String name = bName.getText().toString().trim();
                 if (!name.contains(",") && !name.contains(";") && !name.contains(":")) {
                     newTemp.behaviours.get(index).bName = name;
                     newTemp.behaviours.get(index).type = spinner.getSelectedItemPosition();

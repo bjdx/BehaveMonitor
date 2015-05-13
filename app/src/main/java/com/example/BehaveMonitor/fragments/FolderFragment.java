@@ -62,8 +62,7 @@ public class FolderFragment extends Fragment {
 
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
-                String folderName = input.getText().toString();
-                folderName = folderName.trim();
+                String folderName = input.getText().toString().trim();
                 if (validateFolderName(folderName)) {
                     FileHandler.createNewFolder(folderName);
                     adapter.addItem(folderName);

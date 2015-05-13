@@ -229,7 +229,7 @@ public class SessionFragment extends Fragment {
 
     private void readTemplatesNumber() {
         try {
-            nObservations = Integer.parseInt(((EditText) rootView.findViewById(R.id.observations_amount)).getText().toString());
+            nObservations = Integer.parseInt(((EditText) rootView.findViewById(R.id.observations_amount)).getText().toString().trim());
             if (nObservations < 1) {
                 makeSomeToast("Minimum number of observations is 1");
             } else {
@@ -247,7 +247,7 @@ public class SessionFragment extends Fragment {
 
     private void readStartingObservation() {
         try {
-            startingObservation = Integer.parseInt(((EditText) rootView.findViewById(R.id.starting_observation)).getText().toString());
+            startingObservation = Integer.parseInt(((EditText) rootView.findViewById(R.id.starting_observation)).getText().toString().trim());
         } catch (NumberFormatException e) {
             makeSomeToast("Must enter an observation number to start from");
         }
@@ -281,8 +281,7 @@ public class SessionFragment extends Fragment {
 
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
-				String folderName = input.getText().toString();
-                folderName = folderName.trim();
+				String folderName = input.getText().toString().trim();
                 if (validateFolderName(folderName)) {
                     FileHandler.createNewFolder(folderName);
                     activeFolderName = folderName;

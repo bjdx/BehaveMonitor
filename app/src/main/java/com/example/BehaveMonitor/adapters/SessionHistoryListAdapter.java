@@ -64,12 +64,17 @@ public class SessionHistoryListAdapter extends BaseAdapter {
         this.sessions = sessions;
 
         checked = false;
+        checkCount = 0;
 
         if (selectAllNone.isChecked()) {
             selectAllNone.setChecked(false);
         }
 
-        clearAll();
+        this.checks = new ArrayList<>();
+        for (int i = 0 ; i < sessions.size(); i++) {
+            checks.add(false);
+        }
+
         notifyDataSetChanged();
     }
 
@@ -235,7 +240,7 @@ public class SessionHistoryListAdapter extends BaseAdapter {
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String email = input.getText().toString();
+                String email = input.getText().toString().trim();
 
                 if (!"".equals(email)) {
                     DBHelper db = DBHelper.getInstance(context);

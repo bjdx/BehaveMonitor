@@ -155,7 +155,7 @@ public class SessionHistoryFragment extends Fragment {
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String email = input.getText().toString();
+                String email = input.getText().toString().trim();
 
                 if (!"".equals(email)) {
                     DBHelper db = DBHelper.getInstance(context);

@@ -352,7 +352,7 @@ public class SessionActivity extends Activity {
             dialog.setNegativeButton("Previous", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    event.setNote(noteText.getText().toString());
+                    event.setNote(noteText.getText().toString().trim());
                     showNotesDialog(behaviours, events, position - 1);
                 }
             });
@@ -361,7 +361,7 @@ public class SessionActivity extends Activity {
                 dialog.setNegativeButton("Finish", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        event.setNote(noteText.getText().toString());
+                        event.setNote(noteText.getText().toString().trim());
                         showSaveDialog();
                     }
                 });
@@ -372,7 +372,7 @@ public class SessionActivity extends Activity {
             dialog.setPositiveButton("Next", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    event.setNote(noteText.getText().toString());
+                    event.setNote(noteText.getText().toString().trim());
                     showNotesDialog(behaviours, events, position + 1);
                 }
             });
@@ -380,7 +380,7 @@ public class SessionActivity extends Activity {
             dialog.setPositiveButton("Finish", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    event.setNote(noteText.getText().toString());
+                    event.setNote(noteText.getText().toString().trim());
                     showSaveDialog();
                 }
             });
@@ -416,7 +416,7 @@ public class SessionActivity extends Activity {
             dialog.setNegativeButton("Previous", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    event.setNote(noteText.getText().toString());
+                    event.setNote(noteText.getText().toString().trim());
                     showNotesDialog(behaviours, events, position - 1);
                 }
             });
@@ -425,7 +425,7 @@ public class SessionActivity extends Activity {
                 dialog.setNegativeButton("Finish", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        event.setNote(noteText.getText().toString());
+                        event.setNote(noteText.getText().toString().trim());
                         showSaveDialog();
                     }
                 });
@@ -436,7 +436,7 @@ public class SessionActivity extends Activity {
             dialog.setPositiveButton("Next", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    event.setNote(noteText.getText().toString());
+                    event.setNote(noteText.getText().toString().trim());
                     showNotesDialog(behaviours, events, position + 1);
                 }
             });
@@ -444,7 +444,7 @@ public class SessionActivity extends Activity {
             dialog.setPositiveButton("Finish", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    event.setNote(noteText.getText().toString());
+                    event.setNote(noteText.getText().toString().trim());
                     showSaveDialog();
                 }
             });

@@ -7,6 +7,7 @@ package com.example.BehaveMonitor.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,10 @@ public class SessionHistoryListAdapter extends BaseAdapter {
         for (int i = 0 ; i < sessions.size(); i++) {
             checks.add(false);
         }
+
+        if (this.sessions.size() == 0) {
+            this.sessions.add(null);
+        }
     }
 
     public void updateSessions(List<File> sessions) {
@@ -73,6 +78,10 @@ public class SessionHistoryListAdapter extends BaseAdapter {
         this.checks = new ArrayList<>();
         for (int i = 0 ; i < sessions.size(); i++) {
             checks.add(false);
+        }
+
+        if (this.sessions.size() == 0) {
+            this.sessions.add(null);
         }
 
         notifyDataSetChanged();
@@ -136,22 +145,43 @@ public class SessionHistoryListAdapter extends BaseAdapter {
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return sessions.get(position) == null ? 0 : 1; // 0 for empty row, 1 otherwise.
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
+
+    @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
+        int type = getItemViewType(position);
+
+        Log.e("Behave", "Position: " + position);
 
         if (convertView == null) {
             viewHolder = new ViewHolder();
 
-            convertView = inflater.inflate(R.layout.session_history_list_item, parent, false);
+            if (type == 0) {
+                convertView = inflater.inflate(R.layout.session_history_empty_row, parent, false);
+            } else {
+                convertView = inflater.inflate(R.layout.session_history_list_item, parent, false);
 
-            viewHolder.sessionName = (TextView) convertView.findViewById(R.id.list_session_name);
-            viewHolder.emailButton = (ImageButton) convertView.findViewById(R.id.list_sessions_email_btn);
-            viewHolder.deleteButton = (ImageButton) convertView.findViewById(R.id.list_sessions_delete_btn);
-            viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.list_session_check);
+                viewHolder.sessionName = (TextView) convertView.findViewById(R.id.list_session_name);
+                viewHolder.emailButton = (ImageButton) convertView.findViewById(R.id.list_sessions_email_btn);
+                viewHolder.deleteButton = (ImageButton) convertView.findViewById(R.id.list_sessions_delete_btn);
+                viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.list_session_check);
+            }
 
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
+        }
+
+        if (type == 0) {
+            return convertView;
         }
 
         File session = sessions.get(position);

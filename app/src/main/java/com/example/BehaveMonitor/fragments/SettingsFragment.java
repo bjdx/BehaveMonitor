@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -188,19 +189,16 @@ public class SettingsFragment extends Fragment {
         View view = View.inflate(context, R.layout.dialog_settings_rename_dialog, null);
         dialog.setView(view);
 
-        dialog.setNegativeButton("Hide", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                DBHelper db = DBHelper.getInstance(context);
-                db.setShowRenameDialog(false);
-            }
-        });
+        final DBHelper db = DBHelper.getInstance(context);
+        final CheckBox checkBox = (CheckBox) view.findViewById(R.id.dialog_settings_rename_dialog_check);
+        checkBox.setChecked(db.getShowRenameDialog());
 
-        dialog.setPositiveButton("Show", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton("Cancel", null);
+
+        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                DBHelper db = DBHelper.getInstance(context);
-                db.setShowRenameDialog(true);
+                db.setShowRenameDialog(checkBox.isChecked());
             }
         });
 

@@ -14,12 +14,12 @@
         android:textSize="22sp"
         android:textColor="@android:color/holo_blue_dark" />
 
-    <TextView
-        android:id="@+id/dialog_settings_max_observations_amount"
+    <CheckBox
+        android:id="@+id/dialog_settings_rename_dialog_check"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="12dp"
         android:layout_marginEnd="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginStart="4dp"

@@ -1,4 +1,6 @@
-<!-- Copyright (c) 2015 Barney Dennis & Gareth Lewis. -->
+<!--
+  Copyright (c) 2015 Barney Dennis & Gareth Lewis.
+  -->
 
 <!-- A DrawerLayout is intended to be used as the top-level content view using match_parent for both width and height to consume the full space available. -->
 <android.support.v4.widget.DrawerLayout

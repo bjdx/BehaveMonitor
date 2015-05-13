@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2015 Barney Dennis & Gareth Lewis. -->
-<!--<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--android:id="@android:id/text1"-->
-    <!--style="?android:attr/spinnerDropDownItemStyle"-->
-    <!--android:singleLine="true"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="?android:attr/dropdownListPreferredItemHeight"-->
-    <!--android:textColor="@color/black"-->
-    <!--android:ellipsize="marquee"/>-->
+
+<!--
+  Copyright (c) 2015 Barney Dennis & Gareth Lewis.
+  -->
 <TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"

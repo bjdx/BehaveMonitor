@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="Chicken Scratch Xml" pattern="src[app]:drawable.*||src[app]:values.*||src[app]:layout.*" />
-</component>

@@ -85,16 +85,6 @@ public class SessionActivity extends Activity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.session_behaviour_list_item, behaviourNames);
         ListView list = (ListView) findViewById(R.id.session_behaviour_list);
         list.setAdapter(adapter);
-
-//        LinearLayout ll = (LinearLayout) findViewById(R.id.behaveLayout);
-//        TextView[] bTV = new TextView[activeSession.getTemplate(observation).behaviours.size()];
-//        int i = 0;
-//        for (Behaviour b : activeSession.getTemplate(observation).behaviours){
-//            bTV[i] = new TextView(this);
-//            bTV[i].setText(b.bName);
-//            ll.addView(bTV[i]);
-//            i++;
-//        }
     }
 
     public void setSetupButton() {
@@ -222,7 +212,7 @@ public class SessionActivity extends Activity {
 
     public void setupGridView() {
         GridView grid = (GridView) findViewById(R.id.session_behaviour_grid);
-        adapter = new ButtonAdapter(this, historyAdapter, activeSession.getTemplate(observation).behaviours, new Timer(), myHandler, this);
+        adapter = new ButtonAdapter(this, historyAdapter, activeSession.getTemplate(observation).behaviours, new Timer(), myHandler, this, grid);
         grid.setAdapter(adapter);
     }
 

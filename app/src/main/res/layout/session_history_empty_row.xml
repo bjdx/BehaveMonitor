@@ -14,6 +14,6 @@
         android:layout_marginStart="10dp"
         android:gravity="center_vertical"
         android:textSize="20sp"
-        android:text="No sessions in folder"/>
+        android:text="No sessions in folder" />
 
 </LinearLayout>

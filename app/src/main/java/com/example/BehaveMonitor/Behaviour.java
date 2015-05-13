@@ -11,9 +11,6 @@ import android.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-/**
- * Created by BJD on 06/12/2014.
- */
 public class Behaviour implements Parcelable {
 	//Behaviour Name
 	String bName;
@@ -27,6 +24,8 @@ public class Behaviour implements Parcelable {
 	
 	//Holds the current state event before its ended and added to the history.
 	Event currentEvent = null;
+
+    private boolean active = false;
 
     Behaviour(){}
 
@@ -71,6 +70,14 @@ public class Behaviour implements Parcelable {
         return false;
     }
 
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
     public void newEvent() {
 		if (this.type == BehaviourType.EVENT) {
 			Event event = new Event();
@@ -78,6 +85,7 @@ public class Behaviour implements Parcelable {
 			eventHistory.add(event);
 		} else if (this.type == BehaviourType.STATE) {
 			currentEvent = new Event();
+            active = true;
 		} else {
 			Log.e("Event type error", "the eType was not a 1 or a 0");
 			//ERROR
@@ -89,6 +97,7 @@ public class Behaviour implements Parcelable {
 		if (currentEvent != null) {
 			currentEvent.end();
 			eventHistory.add(currentEvent);
+            active = false;
 			currentEvent = null;
 		}
 	}

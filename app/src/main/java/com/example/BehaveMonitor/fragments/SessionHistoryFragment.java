@@ -185,7 +185,7 @@ public class SessionHistoryFragment extends Fragment {
                 FileInputStream fi = new FileInputStream(path);
                 input = new BufferedInputStream(fi, 2048);
 
-                ZipEntry entry = new ZipEntry(path.substring(path.lastIndexOf("/") + 1));
+                ZipEntry entry = new ZipEntry(path.substring(path.lastIndexOf(File.separator) + 1)); // Get the file name from the path.
                 out.putNextEntry(entry);
 
                 int count;
@@ -202,11 +202,12 @@ public class SessionHistoryFragment extends Fragment {
             FileHandler.sendEmail(getActivity(), email, zipFile);
 
         } catch (FileNotFoundException e) {
+            makeSomeToast("Couldn't find file");
             Log.e("Behave", "FNF exception");
         } catch (IOException e) {
+            makeSomeToast("Other error");
             Log.e("Behave", "IO exception");
         }
-
     }
 
     private void makeSomeToast(final String message) {

@@ -16,12 +16,12 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.example.BehaveMonitor.DBHelper;
 import com.example.BehaveMonitor.R;
 import com.example.BehaveMonitor.Setting;
-import com.example.BehaveMonitor.SettingsItem;
 import com.example.BehaveMonitor.adapters.SettingsListAdapter;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void initList() {
-        List<SettingsItem> items = new ArrayList<>();
+        List<Setting> items = new ArrayList<>();
         createSettingsItems(items);
 
         final SettingsListAdapter adapter = new SettingsListAdapter(getActivity(), items);
@@ -56,19 +56,22 @@ public class SettingsFragment extends Fragment {
         });
     }
 
-    private void openSetting(Setting setting) {
+    private void openSetting(int setting) {
         switch (setting) {
-            case EMAIL:
+            case Setting.EMAIL:
                 showEmailDialog();
                 break;
-            case DEFAULT_OBSERVATIONS:
+            case Setting.DEFAULT_OBSERVATIONS:
                 showDefaultObservationsDialog();
                 break;
-            case MAX_OBSERVATIONS:
+            case Setting.MAX_OBSERVATIONS:
                 showMaxObservationsDialog();
                 break;
-            case SHOW_RENAME_DIALOG:
+            case Setting.SHOW_RENAME_DIALOG:
                 showRenameDialog();
+                break;
+            case Setting.NAME_PREFIX:
+                showNamePrefixDialog();
                 break;
             default:
                 break;
@@ -205,30 +208,65 @@ public class SettingsFragment extends Fragment {
         dialog.show();
     }
 
-    private void createSettingsItems(List<SettingsItem> items) {
-        SettingsItem email = new SettingsItem();
+    private void showNamePrefixDialog() {
+        final Context context = getActivity();
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        View view = View.inflate(context, R.layout.dialog_settings_name_prefix, null);
+        dialog.setView(view);
+
+        final RadioButton prefixRadio = (RadioButton) view.findViewById(R.id.dialog_settings_name_prefix_option);
+        final RadioButton dialogRadio = (RadioButton) view.findViewById(R.id.dialog_settings_name_dialog_option);
+
+        final DBHelper db = DBHelper.getInstance(context);
+        boolean prefix = db.getNamePrefix();
+        if (prefix) {
+            prefixRadio.setChecked(true);
+        } else {
+            dialogRadio.setChecked(true);
+        }
+
+        dialog.setNegativeButton("Cancel", null);
+        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                db.setNamePrefix(prefixRadio.isChecked());
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void createSettingsItems(List<Setting> items) {
+        Setting email = new Setting();
         email.setSetting(Setting.EMAIL);
         email.setHeading("Default email");
         email.setSubheading("Change the default recipient email address");
         items.add(email);
 
-        SettingsItem defaultObservation = new SettingsItem();
+        Setting defaultObservation = new Setting();
         defaultObservation.setSetting(Setting.DEFAULT_OBSERVATIONS);
         defaultObservation.setHeading("Default observations amount");
         defaultObservation.setSubheading("Change the default number of observations in a session");
         items.add(defaultObservation);
 
-        SettingsItem maxObservations = new SettingsItem();
+        Setting maxObservations = new Setting();
         maxObservations.setSetting(Setting.MAX_OBSERVATIONS);
         maxObservations.setHeading("Maximum observations");
         maxObservations.setSubheading("Change the maximum number of observations in a session");
         items.add(maxObservations);
 
-        SettingsItem renameDialog = new SettingsItem();
+        Setting renameDialog = new Setting();
         renameDialog.setSetting(Setting.SHOW_RENAME_DIALOG);
         renameDialog.setHeading("Show rename dialog");
         renameDialog.setSubheading("Show/Hide option to rename observation before saving");
         items.add(renameDialog);
+
+        Setting namePrefix = new Setting();
+        namePrefix.setSetting(Setting.NAME_PREFIX);
+        namePrefix.setHeading("Use name prefixing");
+        namePrefix.setSubheading("Decide whether to use a name prefix scheme for multiple observations or ask for a name each time");
+        items.add(namePrefix);
     }
 
     private void makeSomeToast(final String message) {

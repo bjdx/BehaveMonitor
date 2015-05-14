@@ -69,8 +69,14 @@ public class SessionActivity extends Activity {
 
     private void loadSessionInfo() {
         // Populates text views with session details
-        ((TextView) findViewById(R.id.sNameText)).setText("Name:  " + activeSession.getName());
-        ((TextView) findViewById(R.id.sLocText)).setText("Location:  " + activeSession.getLocation());
+        if (!"".equals(activeSession.getName())) {
+            ((TextView) findViewById(R.id.sNameText)).setText("Name:  " + activeSession.getName());
+            ((TextView) findViewById(R.id.sLocText)).setText("Location:  " + activeSession.getLocation());
+        } else {
+            findViewById(R.id.sNameText).setVisibility(View.GONE);
+            findViewById(R.id.sLocText).setVisibility(View.GONE);
+        }
+
         ((TextView) findViewById(R.id.setup_observations_text)).setText("Observations:  " + activeSession.getObservationsCount());
         ((TextView) findViewById(R.id.sTmpText)).setText("Template:  " + activeSession.getTemplate(observation).name);
 
@@ -176,9 +182,16 @@ public class SessionActivity extends Activity {
         }
 
         String name = namePrefix;
-        if (activeSession.getObservationsCount() > 1) {
-            name += (activeSession.getStartingObservation() + observation - 1);
-            activeSession.setName(name);
+        DBHelper db = DBHelper.getInstance(this);
+        if (activeSession.getObservationsCount() > 1 ) {
+            if (!db.getNamePrefix()) {
+                activeSession.setName("");
+                activeSession.setLocation("");
+                showNamingDialog();
+            } else {
+                name += (activeSession.getStartingObservation() + observation - 1);
+                activeSession.setName(name);
+            }
         }
 
         filename = FileHandler.getVersionName(activeFolder, name + "_" + activeSession.getLocation());
@@ -190,7 +203,12 @@ public class SessionActivity extends Activity {
         setupListView();
         setupGridView();
 
-        ((TextView) findViewById(R.id.session_observation_name)).setText(name + "_" + activeSession.getLocation());
+        if (!"".equals(activeSession.getName())) { // Only set this if a name has been set already.
+            ((TextView) findViewById(R.id.session_observation_name)).setText(name + "_" + activeSession.getLocation());
+        } else {
+            ((TextView) findViewById(R.id.session_observation_name)).setText("");
+        }
+
         ((TextView) findViewById(R.id.session_observation_number)).setText("" + (activeSession.getStartingObservation() + observation - 1));
     }
 
@@ -474,6 +492,60 @@ public class SessionActivity extends Activity {
         }
     }
 
+    private void showNamingDialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        View view = View.inflate(this, R.layout.dialog_name_observation, null);
+        alert.setView(view);
+
+        String title = "Name observation  (" + observation + "/" + activeSession.getObservationsCount() + ")";
+        ((TextView) view.findViewById(R.id.dialog_name_observation_title)).setText(title);
+
+        final EditText nameView = (EditText) view.findViewById(R.id.dialog_new_observation_name);
+        final EditText locationView = (EditText) view.findViewById(R.id.dialog_new_observation_location);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Deliberately left blank - replaced below.
+            }
+        });
+
+        alert.setCancelable(false);
+
+        final AlertDialog dialog = alert.create();
+        dialog.show();
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String name = nameView.getText().toString().trim();
+                if ("".equals(name)) {
+                    makeSomeToast("Must enter a name");
+                    return;
+                }
+
+                final String location = locationView.getText().toString().trim();
+                if ("".equals(location)) {
+                    makeSomeToast("Must enter a location");
+                    return;
+                }
+
+                final String newName = FileHandler.getVersionName(activeFolder, name + "_" + location);
+                if (!newName.equals(name + "_" + location)) {
+                    makeSomeToast("Observation name already exists, will be saved with a version number");
+                }
+
+                filename = newName;
+                activeSession.setName(name);
+                activeSession.setLocation(location);
+                ((TextView) findViewById(R.id.session_observation_name)).setText(name + "_" + activeSession.getLocation());
+
+                dialog.dismiss();
+            }
+        });
+    }
+
     private void showRenameDialog() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
@@ -565,7 +637,6 @@ public class SessionActivity extends Activity {
             names[observation - 1] = activeSession.getName();
             observation++;
             if (observation > activeSession.getObservationsCount()) {
-//                observation++; // Used to know if the session has ended properly or been abandoned.
                 calculateStatistics();
                 backToHome();
             } else {

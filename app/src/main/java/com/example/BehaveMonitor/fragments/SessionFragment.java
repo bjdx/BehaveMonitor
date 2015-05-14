@@ -47,8 +47,8 @@ public class SessionFragment extends Fragment {
     private View rootView;
     private DBHelper db;
 
-    private String sessionName;
-    private String sessionLocation;
+    private String sessionName = "";
+    private String sessionLocation = "";
 
     private File activeFolder;
     private String activeFolderName;
@@ -75,9 +75,16 @@ public class SessionFragment extends Fragment {
         nObsView.clearFocus();
 
         if (nObservations > 1) {
-            rootView.findViewById(R.id.start_observation_label).setVisibility(View.VISIBLE);
-            startingObsView.setVisibility(View.VISIBLE);
-            ((TextView) rootView.findViewById(R.id.name_label)).setText(R.string.session_create_name_prefix);
+            if (db.getNamePrefix()) { // Show name prefix options
+                rootView.findViewById(R.id.start_observation_label).setVisibility(View.VISIBLE);
+                startingObsView.setVisibility(View.VISIBLE);
+                ((TextView) rootView.findViewById(R.id.name_label)).setText(R.string.session_create_name_prefix);
+            } else { // Hide name and location options
+                rootView.findViewById(R.id.name_label).setVisibility(View.GONE);
+                rootView.findViewById(R.id.session_name).setVisibility(View.GONE);
+                rootView.findViewById(R.id.location_label).setVisibility(View.GONE);
+                rootView.findViewById(R.id.session_location).setVisibility(View.GONE);
+            }
         }
 
         HomeActivity homeActivity = (HomeActivity) getActivity();
@@ -132,13 +139,29 @@ public class SessionFragment extends Fragment {
                             nObsView.clearFocus();
 
                             if (nObservations == 1) {
+                                if (!db.getNamePrefix()) {
+                                    nameLabel.setVisibility(View.VISIBLE);
+                                    rootView.findViewById(R.id.session_name).setVisibility(View.VISIBLE);
+                                    rootView.findViewById(R.id.location_label).setVisibility(View.VISIBLE);
+                                    rootView.findViewById(R.id.session_location).setVisibility(View.VISIBLE);
+                                } else {
+                                    startNumberLabel.setVisibility(View.GONE);
+                                    startingObsView.setVisibility(View.GONE);
+                                }
+
                                 nameLabel.setText(R.string.session_create_name);
-                                startNumberLabel.setVisibility(View.GONE);
-                                startingObsView.setVisibility(View.GONE);
                             } else {
-                                nameLabel.setText(R.string.session_create_name_prefix);
-                                startNumberLabel.setVisibility(View.VISIBLE);
-                                startingObsView.setVisibility(View.VISIBLE);
+                                if (db.getNamePrefix()) { // Show name prefix options
+                                    startNumberLabel.setVisibility(View.VISIBLE);
+                                    startingObsView.setVisibility(View.VISIBLE);
+                                    nameLabel.setText(R.string.session_create_name_prefix);
+                                } else { // Hide name and location options
+                                    rootView.findViewById(R.id.name_label).setVisibility(View.GONE);
+                                    rootView.findViewById(R.id.session_name).setVisibility(View.GONE);
+                                    rootView.findViewById(R.id.location_label).setVisibility(View.GONE);
+                                    rootView.findViewById(R.id.session_location).setVisibility(View.GONE);
+                                }
+
                             }
                         }
                     });
@@ -415,28 +438,20 @@ public class SessionFragment extends Fragment {
             return false;
         }
 
-        if ("".equals(sessionName)) {
-            makeSomeToast("Must enter a name");
-            return false;
-        }
+        if (nObservations == 1 || db.getNamePrefix()) {
+            if ("".equals(sessionName)) {
+                makeSomeToast("Must enter a name");
+                return false;
+            }
 
-        if (sessionName.contains("_")) {
-            makeSomeToast("Name cannot contain an underscore");
-            return false;
-        }
+            if ("".equals(sessionLocation)) {
+                makeSomeToast("Must enter a location");
+                return false;
+            }
 
-        if ("".equals(sessionLocation)) {
-            makeSomeToast("Must enter a location");
-            return false;
-        }
-
-        if (sessionLocation.contains("_")) {
-            makeSomeToast("Location cannot contain an underscore");
-            return false;
-        }
-
-        if (!FileHandler.checkSessionName(activeFolderName, sessionName, sessionLocation)) {
-            makeSomeToast("Session name already exists, will be saved with a version number");
+            if (!FileHandler.checkSessionName(activeFolderName, sessionName, sessionLocation)) {
+                makeSomeToast("Observation name already exists, will be saved with a version number");
+            }
         }
 
         return true;

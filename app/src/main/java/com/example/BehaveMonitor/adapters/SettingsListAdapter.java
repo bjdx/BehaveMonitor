@@ -13,21 +13,20 @@ import android.widget.TextView;
 
 import com.example.BehaveMonitor.R;
 import com.example.BehaveMonitor.Setting;
-import com.example.BehaveMonitor.SettingsItem;
 
 import java.util.List;
 
 public class SettingsListAdapter extends BaseAdapter {
 
     private LayoutInflater inflater;
-    private List<SettingsItem> items;
+    private List<Setting> items;
 
-    public SettingsListAdapter(Context context, List<SettingsItem> items) {
+    public SettingsListAdapter(Context context, List<Setting> items) {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.items = items;
     }
 
-    public Setting getSetting(int position) {
+    public int getSetting(int position) {
         return items.get(position).getSetting();
     }
 
@@ -66,7 +65,7 @@ public class SettingsListAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        SettingsItem item = (SettingsItem) getItem(position);
+        Setting item = (Setting) getItem(position);
         viewHolder.heading.setText(item.getHeading());
         viewHolder.subheading.setText(item.getSubheading());
 

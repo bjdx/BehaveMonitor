@@ -79,7 +79,6 @@ public class FileHandler {
             }
         }
 
-//        String[] folders = projDir.list();
         if (folders.size() == 0) {
             Log.e("Behave", "No folders found!");
         }
@@ -113,7 +112,6 @@ public class FileHandler {
     public static List<File> getSessions(String folderName) {
         List<File> sessions = new ArrayList<>();
         File folder = "".equals(folderName) ? getSessionsDirectory() : new File(getSessionsDirectory(), folderName);
-//        File sessionsDirectory = getSessionsDirectory();
         return findSessions(sessions, folder);
     }
 
@@ -311,7 +309,8 @@ public class FileHandler {
     }
 
     public static boolean saveSession(String folder, Session session, String name, int observation) {
-        File file = new File(getSessionsDirectory(), folder + File.separator + name + ".csv");
+        String filename = folder + File.separator + name;
+        File file = new File(getSessionsDirectory(), filename.endsWith(".csv") ? filename : filename + ".csv");
 
         try {
             PrintWriter printWriter = new PrintWriter(file);

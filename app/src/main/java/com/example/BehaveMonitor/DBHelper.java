@@ -15,7 +15,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper sInstance = null;
 
     private static final String DATABASE_NAME = "chickens.db";
-    private static int DATABASE_VERSION = 4; // Increase this value to trigger an onUpgrade function call.
+    private static int DATABASE_VERSION = 5; // Increase this value to trigger an onUpgrade function call.
 
     private static final String PREFERENCES_CREATE =
             "CREATE Table Preferences (" +
@@ -25,7 +25,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     "Email text null," +
                     "DefaultObservationsAmount integer not null," +
                     "MaxObservationsAmount integer not null," +
-                    "ShowRenameDialog integer not null);";
+                    "ShowRenameDialog integer not null," +
+                    "UseNamePrefix integer not null);";
 
     public static DBHelper getInstance(Context context) {
         if (sInstance == null) {
@@ -78,6 +79,16 @@ public class DBHelper extends SQLiteOpenHelper {
             contentValues.put("ShowRenameDialog", 1);
             db.update("Preferences", contentValues, null, null);
         }
+
+        if (oldVersion < 5) { // Upgrade db from version 4 to version 5.
+            db.execSQL("ALTER TABLE Preferences ADD Column UseNamePrefix");
+
+            // Insert default value.
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("_id", 1);
+            contentValues.put("UseNamePrefix", 1);
+            db.update("Preferences", contentValues, null, null);
+        }
     }
 
     private void insertInitialPreferences(SQLiteDatabase db) {
@@ -88,6 +99,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("DefaultObservationsAmount", 1);
         contentValues.put("MaxObservationsAmount", 10);
         contentValues.put("ShowRenameDialog", 1);
+        contentValues.put("UseNamePrefix", 1);
 
         long result = db.insert("Preferences", null, contentValues);
         if (result == -1) {
@@ -167,6 +179,18 @@ public class DBHelper extends SQLiteOpenHelper {
         return show;
     }
 
+    public boolean getNamePrefix() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("Preferences", new String[] {"UseNamePrefix"}, null, null, null, null, null);
+        boolean prefix = true;
+        if (cursor.moveToFirst()) {
+            prefix = cursor.getInt(0) != 0;
+        }
+
+        cursor.close();
+        return prefix;
+    }
+
     public void setFolderTemplate(String folder, String template) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -234,6 +258,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
         contentValues.put("_id", 1);
         contentValues.put("ShowRenameDialog", show ? 1 : 0);
+
+        db.update("Preferences", contentValues, null, null);
+    }
+
+    public void setNamePrefix(boolean prefix) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put("_id", 1);
+        contentValues.put("UseNamePrefix", prefix ? 1 : 0);
 
         db.update("Preferences", contentValues, null, null);
     }

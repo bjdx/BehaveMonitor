@@ -25,6 +25,7 @@
         <item>Manage Folders</item>
         <item>Manage Templates</item>
         <item>Session History</item>
+        <item>Help</item>
         <item>Settings</item>
         <item>Licensing</item>
     </string-array>
@@ -39,7 +40,41 @@
         \nhttps://icons8.com/web-app/6764/inspection
         \nhttps://icons8.com/web-app/5590/settings
         \nhttps://icons8.com/web-app/4299/pencil
-        \nhttps://icons8.com/web-app/6376/copyright\n\n
+        \nhttps://icons8.com/web-app/6376/copyright
+        \nhttps://icons8.com/web-app/646/help\n\n
+    </string>
+
+    <string name="help_folder_header">Creating &amp; deleting folders</string>
+    <string name="help_template_header">Creating, editing &amp; deleting templates</string>
+    <string name="help_create_session_header">Sessions and Observations</string>
+    <string name="help_email_header">Emailing files</string>
+
+    <string name="help_folder_text">
+        Creating folders can be done from the main Create Session screen by clicking the + button next to the folder dropdown. It can also be done from the Manage Folders screen.\n
+        \nDeleting folders can only be done from the Manage Folders screen, the Default folder cannot be deleted so the delete button instead deletes all files from within the Default folder.
+    </string>
+    <string name="help_template_text">
+        Templates allow you to define the behaviours you want to monitor. A behaviour can be either a State behaviour - one which occurs for an amount of time e.g. Eating, or an Event behaviour - one which happens once e.g. a Sneeze.\n
+        \nTemplates can be created from the main Create Session screen by clicking the + button next to the template dropdown or from the Manage Templates screen.\n
+        \nTemplates can be edited or deleted from the Manage Templates screen, in order to rename a template you will need to use a file manager.
+    </string>
+    <string name="help_create_session_text">
+        A session consists of one or more observations.\n
+        \nTo create a session you must choose (subject to your settings):\n
+          - a folder in which to store your observation files\n
+          - how many observations you want, you can abandon the session at any time without losing any files\n
+          - a template defining the behaviours you wish to monitor\n
+          - a name for the observation\n
+          - a location for the observation\n
+        \nWhen you click a behaviour button, it will populate the event history at the bottom of the Session screen. Here you can mark any events which have been activated in error for you to review later. State behaviours only get added when you end the behaviour.\n
+        \nTo end an observation and move to the next one, simply click the End Observation button. The observation file will be saved at this point so it is safe to exit the session if you wish.\n
+        \nA file containing the statistics from the session location will be produced on finishing the session.
+    </string>
+    <string name="help_email_text">
+        All of the files you create are stored on the external storage portion of your phone so they can be easily accessed if you plug the phone into a computer.\n
+        \nIf you wish to email the files instead, you can go to the Session History screen.
+        \nHere you can see all of the session files on your phone filtered by folder. You can either email files individually or select several and email them at the same time in the form of a ZIP file.\n
+        \nWhen you first email files, you will be asked to supply a default email address, this can be changed later by going to the Settings screen.
     </string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

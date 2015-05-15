@@ -266,6 +266,13 @@ public class NavigationDrawerFragment extends Fragment {
         }
     }
 
+    public void setBottomItemChecked(int position) {
+        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(bottomNavDrawerItemTitles[position]);
+        if (bottomListView != null) {
+            bottomListView.setItemChecked(position, true);
+        }
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

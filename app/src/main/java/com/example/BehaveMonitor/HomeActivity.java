@@ -140,8 +140,12 @@ public class HomeActivity extends ActionBarActivity
                 .commit();
 
         fragmentDisplayed = position;
-        if  (amountDrawerItems > position && mNavigationDrawerFragment != null) {
-            mNavigationDrawerFragment.setItemChecked(position);
+        if (mNavigationDrawerFragment != null) {
+            if (amountDrawerItems > position) {
+                mNavigationDrawerFragment.setItemChecked(position);
+            } else {
+                mNavigationDrawerFragment.setBottomItemChecked(position - amountDrawerItems);
+            }
         }
     }
 

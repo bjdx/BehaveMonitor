@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -229,6 +230,8 @@ public class FileHandler {
         Template template = session.getTemplate(1);
         Behaviour[] behaviours = template.behaviours.toArray(new Behaviour[template.behaviours.size()]);
 
+        DecimalFormat decimalFormat = new DecimalFormat("0.000");
+
         try {
             PrintWriter printWriter = new PrintWriter(file);
 
@@ -240,7 +243,9 @@ public class FileHandler {
             for (int i = 0; i < behaviours.length; i++) {
                 stats += behaviours[i].getName() + ",";
                 stats += frequencyStatistics[i] + ",";
-                stats += durationStatistics[i] < 0f ? "," : durationStatistics[i] + ",";
+                //TODO: Tidy up
+                stats += durationStatistics[i] < 0f ? "," :
+                        (durationStatistics[i] == 0 ? "0" : decimalFormat.format(durationStatistics[i])) + ",";
                 stats += behaviours[i].isMarked() ? "Marked\n" : "\n";
             }
 
@@ -256,6 +261,8 @@ public class FileHandler {
         Template[] templates = session.getTemplates();
         int nObservations = frequencyStatistics.length;
         Behaviour[] behaviours = templates[0].behaviours.toArray(new Behaviour[templates[0].behaviours.size()]);
+
+        DecimalFormat decimalFormat = new DecimalFormat("0.000");
 
         try {
             PrintWriter printWriter = new PrintWriter(file);
@@ -295,7 +302,9 @@ public class FileHandler {
             for (int i = 0; i < behaviours.length; i++) {
                 stats += behaviours[i].getName() + ",";
                 for (int observation = 0; observation < nObservations; observation++) {
-                    stats += durationStatistics[observation][i] < 0f ? "," : durationStatistics[observation][i] + (marks[observation][i] ? "m," : ",");
+                    //TODO: Tidy up
+                    stats += durationStatistics[observation][i] < 0f ? "," :
+                            (durationStatistics[observation][i] == 0 ? "0" : decimalFormat.format(durationStatistics[observation][i])) + (marks[observation][i] ? "m," : ",");
                 }
 
                 stats += "\n";

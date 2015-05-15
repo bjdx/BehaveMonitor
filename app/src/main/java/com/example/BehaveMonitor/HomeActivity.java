@@ -186,6 +186,7 @@ public class HomeActivity extends ActionBarActivity
         }
     }
 
+    // See comment above in OnCreate.
 //    @Override
 //    public void onDestroy() {
 //        super.onDestroy();

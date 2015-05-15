@@ -1,6 +1,7 @@
 Chicken App todo:
 
 Higher priority:
+- Add settings option for number of decimal places when calculating statistics. Tidy up TODOs
 
 Lower priority:
 - Move calculation of statistics to somewhere nicer (possibly create a Statistics object)

@@ -1,12 +1,33 @@
 <!-- Copyright (c) 2015 Barney Dennis & Gareth Lewis. -->
 
-<ListView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="240dp"
     android:layout_height="match_parent"
-    android:choiceMode="singleChoice"
-    android:divider="@android:color/transparent"
-    android:dividerHeight="0dp"
-    android:background="@color/black"
-    tools:context="com.example.BehaveMonitor.fragments.NavigationDrawerFragment" />
+    android:layout_gravity="start"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/nav_drawer_main_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:choiceMode="singleChoice"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:background="@color/black"
+        tools:context="com.example.BehaveMonitor.fragments.NavigationDrawerFragment" />
+
+    <!-- This list can use wrap_content for it's height since the above
+         list should never have enough items to scroll -->
+    <ListView
+        android:id="@+id/nav_drawer_bottom_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:background="@color/black"
+        tools:context="com.example.BehaveMonitor.fragments.NavigationDrawerFragment" />
+
+</LinearLayout>

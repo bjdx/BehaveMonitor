@@ -26,6 +26,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.BehaveMonitor.HomeActivity;
 import com.example.BehaveMonitor.ObjectDrawerItem;
 import com.example.BehaveMonitor.R;
 import com.example.BehaveMonitor.adapters.DrawerItemCustomAdapter;
@@ -60,13 +61,14 @@ public class NavigationDrawerFragment extends Fragment {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
+    private ListView bottomListView;
     private View mFragmentContainerView;
 
     private int mCurrentSelectedPosition = 0;
-//    private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
     private String[] mNavigationDrawerItemTitles;
+    private String[] bottomNavDrawerItemTitles;
 
     public NavigationDrawerFragment() {
     }
@@ -82,10 +84,12 @@ public class NavigationDrawerFragment extends Fragment {
 
         if (savedInstanceState != null) {
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
-//            mFromSavedInstanceState = true;
         }
 
-        mNavigationDrawerItemTitles = getResources().getStringArray(R.array.navigation_drawer_items_array);
+        if (mNavigationDrawerItemTitles == null || mNavigationDrawerItemTitles.length == 0) {
+            mNavigationDrawerItemTitles = getResources().getStringArray(R.array.navigation_drawer_items_array);
+            bottomNavDrawerItemTitles = getResources().getStringArray(R.array.nav_drawer_bottom_items);
+        }
 
         // Select either the default item (0) or the last selected item.
         selectItem(mCurrentSelectedPosition);
@@ -99,10 +103,10 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        mDrawerListView = (ListView) inflater.inflate(
-                R.layout.fragment_navigation_drawer, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+
+        mDrawerListView = (ListView) rootView.findViewById(R.id.nav_drawer_main_list);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -110,26 +114,36 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
+        bottomListView = (ListView) rootView.findViewById(R.id.nav_drawer_bottom_list);
+        bottomListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectBottomItem(position);
+            }
+        });
+
         ObjectDrawerItem[] objectDrawerItems = new ObjectDrawerItem[] {
-                new ObjectDrawerItem(R.drawable.ic_action_session, mNavigationDrawerItemTitles[0]),
-                new ObjectDrawerItem(R.drawable.ic_action_collection, mNavigationDrawerItemTitles[1]),
-                new ObjectDrawerItem(R.drawable.ic_action_template, mNavigationDrawerItemTitles[2]),
-                new ObjectDrawerItem(R.drawable.ic_action_history, mNavigationDrawerItemTitles[3]),
-                new ObjectDrawerItem(R.drawable.ic_action_help, mNavigationDrawerItemTitles[4]),
-                new ObjectDrawerItem(R.drawable.ic_action_settings, mNavigationDrawerItemTitles[5]),
-                new ObjectDrawerItem(R.drawable.ic_action_copyright, mNavigationDrawerItemTitles[6])
+            new ObjectDrawerItem(R.drawable.ic_action_session, mNavigationDrawerItemTitles[0]),
+            new ObjectDrawerItem(R.drawable.ic_action_collection, mNavigationDrawerItemTitles[1]),
+            new ObjectDrawerItem(R.drawable.ic_action_template, mNavigationDrawerItemTitles[2]),
+            new ObjectDrawerItem(R.drawable.ic_action_history, mNavigationDrawerItemTitles[3])
         };
 
         DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(getActivity(),  R.layout.nav_drawer_item, objectDrawerItems);
         mDrawerListView.setAdapter(adapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 
-        return mDrawerListView;
-    }
+        ObjectDrawerItem[] bottomDrawerItems = new ObjectDrawerItem[] {
+            new ObjectDrawerItem(R.drawable.ic_action_settings, bottomNavDrawerItemTitles[0]),
+            new ObjectDrawerItem(R.drawable.ic_action_help, bottomNavDrawerItemTitles[1]),
+            new ObjectDrawerItem(R.drawable.ic_action_copyright, bottomNavDrawerItemTitles[2])
+        };
 
-//    public boolean isDrawerOpen() {
-//        return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
-//    }
+        DrawerItemCustomAdapter bottomAdapter = new DrawerItemCustomAdapter(getActivity(), R.layout.nav_drawer_item, bottomDrawerItems);
+        bottomListView.setAdapter(bottomAdapter);
+
+        return rootView;
+    }
 
     /**
      * Users of this fragment must call this method to set up the navigation drawer interactions.
@@ -206,7 +220,33 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
+    private void selectBottomItem(int position) {
+        if (position != -1) {
+            // Clear selection from main list
+            if (mDrawerListView != null) {
+                mDrawerListView.setItemChecked(-1, true);
+            }
+        }
+
+        if (bottomListView != null) {
+            bottomListView.setItemChecked(position, true);
+        }
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawer(mFragmentContainerView);
+        }
+        if (mCallbacks != null) {
+            mCallbacks.onNavigationDrawerItemSelected(position + mNavigationDrawerItemTitles.length);
+        }
+    }
+
     private void selectItem(int position) {
+        if (position != -1) {
+            // Clear selection from bottom list
+            if (bottomListView != null) {
+                bottomListView.setItemChecked(-1, true);
+            }
+        }
+
         mCurrentSelectedPosition = position;
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
@@ -230,7 +270,11 @@ public class NavigationDrawerFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
+            mNavigationDrawerItemTitles = getResources().getStringArray(R.array.navigation_drawer_items_array);
+            bottomNavDrawerItemTitles = getResources().getStringArray(R.array.nav_drawer_bottom_items);
+
             mCallbacks = (NavigationDrawerCallbacks) activity;
+            ((HomeActivity) activity).setAmountDrawerItems(mNavigationDrawerItemTitles.length);
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }

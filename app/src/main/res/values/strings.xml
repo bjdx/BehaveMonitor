@@ -25,8 +25,11 @@
         <item>Manage Folders</item>
         <item>Manage Templates</item>
         <item>Session History</item>
-        <item>Help</item>
+    </string-array>
+
+    <string-array name="nav_drawer_bottom_items">
         <item>Settings</item>
+        <item>Help</item>
         <item>Licensing</item>
     </string-array>
 

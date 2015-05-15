@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.example.BehaveMonitor.fragments.FolderFragment;
 import com.example.BehaveMonitor.fragments.HelpFragment;
+import com.example.BehaveMonitor.fragments.LicensingFragment;
 import com.example.BehaveMonitor.fragments.NavigationDrawerFragment;
 import com.example.BehaveMonitor.fragments.SessionFragment;
 import com.example.BehaveMonitor.fragments.SessionHistoryFragment;
@@ -35,6 +36,11 @@ public class HomeActivity extends ActionBarActivity
      */
     private int fragmentDisplayed = -1;
 
+    /**
+     * Used to store the amount of items in the top list of the navigation drawer.
+     */
+    private int amountDrawerItems;
+
     private File activeFolder = null;
     private Template activeTemplate = null;
 
@@ -46,12 +52,9 @@ public class HomeActivity extends ActionBarActivity
         FileHandler.setRootDirectory(this);
         DBHelper db = DBHelper.getInstance(this);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-
         // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+        mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
         FileHandler.checkFoldersExist(this);
 
@@ -109,6 +112,14 @@ public class HomeActivity extends ActionBarActivity
         return "null;".equals(template.toString()) ? "" : template.name;
     }
 
+    /**
+     * Sets the number of items in the nav drawer top list
+     * @param amountDrawerItems the number of items in the nav drawer top list
+     */
+    public void setAmountDrawerItems(int amountDrawerItems) {
+        this.amountDrawerItems = amountDrawerItems;
+    }
+
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         if (fragmentDisplayed != position) {
@@ -116,34 +127,8 @@ public class HomeActivity extends ActionBarActivity
         }
     }
 
-    public void displayFragment(int position) {
-        Fragment fragment = null;
-        switch(position) {
-            case 0:
-                fragment = new SessionFragment();
-                break;
-            case 1:
-                fragment = new FolderFragment();
-                break;
-            case 2:
-                fragment = new TemplateFragment();
-                break;
-            case 3:
-                fragment = new SessionHistoryFragment();
-                break;
-            case 4:
-                fragment = new HelpFragment();
-                break;
-            case 5:
-                fragment = new SettingsFragment();
-                break;
-            case 6:
-                fragment = new HelpFragment();
-                break;
-            default:
-                break;
-        }
-
+    private void displayFragment(int position) {
+        Fragment fragment = amountDrawerItems > position ? getMainFragment(position) : getBottomFragment(position - amountDrawerItems);
         if (fragment == null) {
             Log.e("Behave", "Error displaying fragment");
             return;
@@ -155,8 +140,36 @@ public class HomeActivity extends ActionBarActivity
                 .commit();
 
         fragmentDisplayed = position;
-        if  (mNavigationDrawerFragment != null) {
+        if  (amountDrawerItems > position && mNavigationDrawerFragment != null) {
             mNavigationDrawerFragment.setItemChecked(position);
+        }
+    }
+
+    private Fragment getMainFragment(int position) {
+        switch(position) {
+            case 0:
+                return new SessionFragment();
+            case 1:
+                return new FolderFragment();
+            case 2:
+                return new TemplateFragment();
+            case 3:
+                return new SessionHistoryFragment();
+            default:
+                return null;
+        }
+    }
+
+    private Fragment getBottomFragment(int position) {
+        switch(position) {
+            case 0:
+                return new SettingsFragment();
+            case 1:
+                return new HelpFragment();
+            case 2:
+                return new LicensingFragment();
+            default:
+                return null;
         }
     }
 

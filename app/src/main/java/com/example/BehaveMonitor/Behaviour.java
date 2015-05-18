@@ -18,6 +18,7 @@ public class Behaviour implements Parcelable {
 	private Event currentEvent = null; // Holds the active state event.
 
     private boolean active = false; // If this behaviour is currently active.
+    private boolean separate; // If this is true, this behaviour should not toggle other behaviours on/off
 
     public Behaviour(){}
 

@@ -15,7 +15,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper sInstance = null;
 
     private static final String DATABASE_NAME = "chickens.db";
-    private static int DATABASE_VERSION = 5; // Increase this value to trigger an onUpgrade function call.
+    private static int DATABASE_VERSION = 6; // Increase this value to trigger an onUpgrade function call.
 
     private static final String PREFERENCES_CREATE =
             "CREATE Table Preferences (" +
@@ -26,7 +26,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     "DefaultObservationsAmount integer not null," +
                     "MaxObservationsAmount integer not null," +
                     "ShowRenameDialog integer not null," +
-                    "UseNamePrefix integer not null);";
+                    "UseNamePrefix integer not null," +
+                    "DecimalPlaces integer not null);";
 
     public static DBHelper getInstance(Context context) {
         if (sInstance == null) {
@@ -87,6 +88,15 @@ public class DBHelper extends SQLiteOpenHelper {
             ContentValues contentValues = new ContentValues();
             contentValues.put("_id", 1);
             contentValues.put("UseNamePrefix", 1);
+            db.update("Preferences", contentValues, null, null);
+        }
+
+        if (oldVersion < 6) {
+            db.execSQL("ALTER TABLE Preferences ADD Column DecimalPlaces");
+
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("_id", 1);
+            contentValues.put("DecimalPlaces", 3);
             db.update("Preferences", contentValues, null, null);
         }
     }
@@ -191,6 +201,18 @@ public class DBHelper extends SQLiteOpenHelper {
         return prefix;
     }
 
+    public int getDecimalPlaces() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("Preferences", new String[] {"DecimalPlaces"}, null, null, null, null, null);
+        int decimals = 3;
+        if (cursor.moveToFirst()) {
+            decimals = cursor.getInt(0);
+        }
+
+        cursor.close();
+        return decimals;
+    }
+
     public void setFolderTemplate(String folder, String template) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -268,6 +290,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
         contentValues.put("_id", 1);
         contentValues.put("UseNamePrefix", prefix ? 1 : 0);
+
+        db.update("Preferences", contentValues, null, null);
+    }
+
+    public void setDecimalPlaces(int decimals) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put("_id", 1);
+        contentValues.put("DecimalPlaces", decimals);
 
         db.update("Preferences", contentValues, null, null);
     }

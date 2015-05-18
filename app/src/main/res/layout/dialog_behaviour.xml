@@ -34,7 +34,7 @@
         android:layout_marginRight="4dp"
         android:layout_marginStart="6dp"
         android:layout_marginLeft="6dp"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="6dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -53,6 +53,13 @@
 
     </LinearLayout>
 
-
+    <CheckBox
+        android:id="@+id/dialog_behaviour_separate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="8dp"
+        android:text="Can this behaviour be active at the same time as others?"/>
 
 </LinearLayout>

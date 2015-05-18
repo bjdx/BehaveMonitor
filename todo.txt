@@ -1,7 +1,8 @@
 Chicken App todo:
 
 Higher priority:
-- Add settings option for number of decimal places when calculating statistics. Tidy up TODOs
+- Remove titles from template activity and add into action bar instead. Make session activity extend actionbaractivity.
+  OR Find out how to change the dialogs to have the highlight colour properly.
 
 Lower priority:
 - Move calculation of statistics to somewhere nicer (possibly create a Statistics object)

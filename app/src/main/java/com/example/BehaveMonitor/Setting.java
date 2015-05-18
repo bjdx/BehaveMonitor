@@ -10,6 +10,7 @@ public class Setting {
     public static final int MAX_OBSERVATIONS = 2;
     public static final int SHOW_RENAME_DIALOG = 3;
     public static final int NAME_PREFIX = 4;
+    public static final int DECIMAL_PLACES = 5;
 
     private int setting;
 

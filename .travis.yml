@@ -14,7 +14,7 @@ deploy:
 	  all_branches: true
 android:
   components:
-  - build-tools-21.1.2
+  - build-tools-22.0.1
 before_install:
 - chmod +x gradlew
 script: ./gradlew assembleDebug

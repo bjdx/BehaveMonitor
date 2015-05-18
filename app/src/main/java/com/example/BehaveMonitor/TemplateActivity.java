@@ -4,12 +4,12 @@
 
 package com.example.BehaveMonitor;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,7 +29,7 @@ import com.example.BehaveMonitor.adapters.BehaviourListAdapter;
 
 
 
-public class TemplateActivity extends Activity {
+public class TemplateActivity extends ActionBarActivity {
 
     private BehaviourListAdapter adapter;
 
@@ -285,12 +285,14 @@ public class TemplateActivity extends Activity {
 		button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				newBehaviour(TemplateActivity.this);
+				newBehaviour();
 			}
 		});
 	}
 	
-	private void newBehaviour(final Context context) {
+	private void newBehaviour() {
+        Context context = this;
+
 		AlertDialog.Builder alert = new AlertDialog.Builder(context);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_behaviour, null);
 

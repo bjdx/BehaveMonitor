@@ -73,6 +73,9 @@ public class SettingsFragment extends Fragment {
             case Setting.NAME_PREFIX:
                 showNamePrefixDialog();
                 break;
+            case Setting.DECIMAL_PLACES:
+                showDecimalPlacesDialog();
+                break;
             default:
                 break;
         }
@@ -237,6 +240,34 @@ public class SettingsFragment extends Fragment {
         dialog.show();
     }
 
+    private void showDecimalPlacesDialog() {
+        final Context context = getActivity();
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        View view = View.inflate(context, R.layout.dialog_settings_decimal_places, null);
+        dialog.setView(view);
+
+        final EditText editText = (EditText) view.findViewById(R.id.dialog_settings_decimal_places_amount);
+        final DBHelper db = DBHelper.getInstance(context);
+        editText.setText("" + db.getDecimalPlaces());
+
+        dialog.setNegativeButton("Cancel", null);
+        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    int decimals = Integer.parseInt(editText.getText().toString());
+                    db.setDecimalPlaces(decimals);
+                    makeSomeToast("Decimal places updated");
+                } catch (NumberFormatException e) {
+                    makeSomeToast("Error: must enter a number");
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
     private void createSettingsItems(List<Setting> items) {
         Setting email = new Setting();
         email.setSetting(Setting.EMAIL);
@@ -267,6 +298,12 @@ public class SettingsFragment extends Fragment {
         namePrefix.setHeading("Use name prefixing");
         namePrefix.setSubheading("Decide whether to use a name prefix scheme for multiple observations or ask for a name each time");
         items.add(namePrefix);
+
+        Setting decimalPlaces = new Setting();
+        decimalPlaces.setSetting(Setting.DECIMAL_PLACES);
+        decimalPlaces.setHeading("Decimal places");
+        decimalPlaces.setSubheading("Set how many decimal places to keep when calculating statistics");
+        items.add(decimalPlaces);
     }
 
     private void makeSomeToast(final String message) {

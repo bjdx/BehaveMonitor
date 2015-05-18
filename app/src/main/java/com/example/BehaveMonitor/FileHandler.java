@@ -230,7 +230,7 @@ public class FileHandler {
         Template template = session.getTemplate(1);
         Behaviour[] behaviours = template.behaviours.toArray(new Behaviour[template.behaviours.size()]);
 
-        DecimalFormat decimalFormat = new DecimalFormat("0.000");
+        DecimalFormat decimalFormat = new DecimalFormat(getDecimalFormatString());
 
         try {
             PrintWriter printWriter = new PrintWriter(file);
@@ -243,9 +243,15 @@ public class FileHandler {
             for (int i = 0; i < behaviours.length; i++) {
                 stats += behaviours[i].getName() + ",";
                 stats += frequencyStatistics[i] + ",";
-                //TODO: Tidy up
-                stats += durationStatistics[i] < 0f ? "," :
-                        (durationStatistics[i] == 0 ? "0" : decimalFormat.format(durationStatistics[i])) + ",";
+
+                float duration = durationStatistics[i];
+                if (duration < 0f) {
+                    stats += ",";
+                } else {
+                    String formattedDuration = (duration == 0 ? "0" : decimalFormat.format(duration)) + ",";
+                    stats += formattedDuration;
+                }
+
                 stats += behaviours[i].isMarked() ? "Marked\n" : "\n";
             }
 
@@ -262,7 +268,7 @@ public class FileHandler {
         int nObservations = frequencyStatistics.length;
         Behaviour[] behaviours = templates[0].behaviours.toArray(new Behaviour[templates[0].behaviours.size()]);
 
-        DecimalFormat decimalFormat = new DecimalFormat("0.000");
+        DecimalFormat decimalFormat = new DecimalFormat(getDecimalFormatString());
 
         try {
             PrintWriter printWriter = new PrintWriter(file);
@@ -302,9 +308,13 @@ public class FileHandler {
             for (int i = 0; i < behaviours.length; i++) {
                 stats += behaviours[i].getName() + ",";
                 for (int observation = 0; observation < nObservations; observation++) {
-                    //TODO: Tidy up
-                    stats += durationStatistics[observation][i] < 0f ? "," :
-                            (durationStatistics[observation][i] == 0 ? "0" : decimalFormat.format(durationStatistics[observation][i])) + (marks[observation][i] ? "m," : ",");
+                    float duration = durationStatistics[observation][i];
+                    if (duration < 0f) {
+                        stats += ",";
+                    } else {
+                        String formattedDuration = (duration == 0 ? "0" : decimalFormat.format(duration));
+                        stats += formattedDuration + (marks[observation][i] ? "m," : ",");
+                    }
                 }
 
                 stats += "\n";
@@ -315,6 +325,18 @@ public class FileHandler {
         } catch (FileNotFoundException e) {
             Log.e("Behave", "Failed to save statistics, couldn't find file");
         }
+    }
+
+    private static String getDecimalFormatString() {
+        DBHelper db = DBHelper.getInstance(context);
+        int decimals = db.getDecimalPlaces();
+        String format = "0.";
+
+        for (int i = 0; i < decimals; i++) {
+            format += "0";
+        }
+
+        return format;
     }
 
     public static boolean saveSession(String folder, Session session, String name, int observation) {

@@ -124,6 +124,9 @@ public class SessionFragment extends Fragment {
                     final View dialogView = inflater.inflate(R.layout.dialog_number_picker, null);
                     dialog.setView(dialogView);
 
+                    ((TextView) dialogView.findViewById(R.id.circle_picker_heading)).setText("How many observations?");
+                    dialogView.findViewById(R.id.start_number_subheading).setVisibility(View.GONE);
+
                     final CircledPicker picker = ((CircledPicker) dialogView.findViewById(R.id.circled_picker));
                     picker.setMaxValue(db.getMaxObservationsAmount());
                     picker.setValue(nObservations);
@@ -202,6 +205,9 @@ public class SessionFragment extends Fragment {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
                     final View dialogView = inflater.inflate(R.layout.dialog_number_picker, null);
                     dialog.setView(dialogView);
+
+                    ((TextView) dialogView.findViewById(R.id.circle_picker_heading)).setText("Number to start from?");
+                    dialogView.findViewById(R.id.start_number_subheading).setVisibility(View.VISIBLE);
 
                     final CircledPicker picker = ((CircledPicker) dialogView.findViewById(R.id.circled_picker));
                     picker.setMaxValue(db.getMaxObservationsAmount());

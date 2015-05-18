@@ -90,9 +90,15 @@ public class SessionHistoryListAdapter extends BaseAdapter {
     public List<File> getCheckedFiles() {
         List<File> files = new ArrayList<>();
 
+        if (checks.size() != sessions.size()) {
+            Log.e("Behave", "Sessions and checks different sizes");
+        }
+
         for (int i = 0; i < sessions.size(); i++){
-            if (checks.get(i)) {
-                files.add(sessions.get(i));
+            if (checks.size() > i) {
+                if (checks.get(i)) {
+                    files.add(sessions.get(i));
+                }
             }
         }
 

@@ -13,14 +13,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -176,33 +174,52 @@ public class TemplateActivity extends ActionBarActivity {
     }
 
     private void showOverwriteDialog() {
-        final Context context = TemplateActivity.this;
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        new MaterialDialog.Builder(this)
+                .title("Overwrite?")
+                .positiveText("Yes")
+                .negativeText("Cancel")
+                .neutralText("Save as..")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        FileHandler.saveTemplate(TemplateActivity.this, newTemp);
+                        backToMain();
+                    }
 
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_overwrite_template, null);
-        alert.setView(dialogView);
+                    @Override
+                    public void onNeutral(MaterialDialog dialog) {
+                        showNamingDialog();
+                    }
+                })
+                .show();
 
-        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                FileHandler.saveTemplate(TemplateActivity.this, newTemp);
-                backToMain();
-            }
-        });
-
-        alert.setNeutralButton("Save as..", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showNamingDialog();
-            }
-        });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-
-        alert.show();
+//        final Context context = TemplateActivity.this;
+//        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+//
+//        View dialogView = getLayoutInflater().inflate(R.layout.dialog_overwrite_template, null);
+//        alert.setView(dialogView);
+//
+//        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int whichButton) {
+//                FileHandler.saveTemplate(TemplateActivity.this, newTemp);
+//                backToMain();
+//            }
+//        });
+//
+//        alert.setNeutralButton("Save as..", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                showNamingDialog();
+//            }
+//        });
+//
+//        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int whichButton) {
+//                // Canceled.
+//            }
+//        });
+//
+//        alert.show();
     }
 
 	private void backToMain() {
@@ -225,25 +242,23 @@ public class TemplateActivity extends ActionBarActivity {
             return;
         }
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("Save before exit?");
+        new MaterialDialog.Builder(this)
+                .title("Save before exit?")
+                .positiveText("Save")
+                .negativeText("Cancel")
+                .neutralText("Don't save")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        saveTemplate();
+                    }
 
-        alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                saveTemplate();
-            }
-        });
-
-        alert.setNeutralButton("Don't save", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                backToMain();
-            }
-        });
-
-        alert.setNegativeButton("Cancel", null);
-        alert.show();
+                    @Override
+                    public void onNeutral(MaterialDialog dialog) {
+                        backToMain();
+                    }
+                })
+                .show();
     }
 
     //re-add behaviours to layout
@@ -302,40 +317,40 @@ public class TemplateActivity extends ActionBarActivity {
         Context context = this;
 
         final MaterialDialog dialog = new MaterialDialog.Builder(context)
-            .title("New Behaviour")
-            .autoDismiss(false)
-            .customView(R.layout.dialog_behaviour, true)
-            .negativeText("Cancel")
-            .positiveText("Ok")
-            .callback(new MaterialDialog.ButtonCallback() {
-                @Override
-                public void onPositive(MaterialDialog dialog) {
-                    View view = dialog.getCustomView();
-                    if (view == null) {
-                        return;
+                .title("New Behaviour")
+                .autoDismiss(false)
+                .customView(R.layout.dialog_behaviour, true)
+                .negativeText("Cancel")
+                .positiveText("Ok")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        View view = dialog.getCustomView();
+                        if (view == null) {
+                            return;
+                        }
+
+                        EditText bName = (EditText) view.findViewById(R.id.dialog_behaviour_name);
+                        Spinner spinner = (Spinner) view.findViewById(R.id.behaviour_type_spinner);
+                        String name = bName.getText().toString().trim();
+                        if (!"".equals(name) && !name.contains(",") && !name.contains(";") && !name.contains(":")) {
+                            Behaviour b = new Behaviour();
+                            b.setName(name);
+                            b.setType(spinner.getSelectedItemPosition());
+                            newTemp.behaviours.add(b);
+
+                            dialog.dismiss();
+                        } else {
+                            makeSomeToast("Invalid behaviour name");
+                        }
                     }
 
-                    EditText bName = (EditText) view.findViewById(R.id.dialog_behaviour_name);
-                    Spinner spinner = (Spinner) view.findViewById(R.id.behaviour_type_spinner);
-                    String name = bName.getText().toString().trim();
-                    if (!"".equals(name) && !name.contains(",") && !name.contains(";") && !name.contains(":")) {
-                        Behaviour b = new Behaviour();
-                        b.setName(name);
-                        b.setType(spinner.getSelectedItemPosition());
-                        newTemp.behaviours.add(b);
-
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
                         dialog.dismiss();
-                    } else {
-                        makeSomeToast("Invalid behaviour name");
                     }
-                }
-
-                @Override
-                public void onNegative(MaterialDialog dialog) {
-                    dialog.dismiss();
-                }
-            })
-            .build();
+                })
+                .build();
 
         View view = dialog.getCustomView();
         if (view == null) {
@@ -352,17 +367,59 @@ public class TemplateActivity extends ActionBarActivity {
         dialog.show();
 	}
 	
-	//Brings up the dialog box with added remove button as well as info about behaviour.
+	// Brings up the dialog box with added remove button as well as info about behaviour.
 	public void editBehaviour(final Context context, final int index) {
-		AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_behaviour, null);
+        MaterialDialog dialog = new MaterialDialog.Builder(context)
+                .title("Edit Behaviour")
+                .autoDismiss(false)
+                .customView(R.layout.dialog_behaviour, true)
+                .negativeText("Cancel")
+                .neutralText("Remove")
+                .positiveText("Ok")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        View view = dialog.getCustomView();
+                        if (view == null) {
+                            return;
+                        }
 
-        TextView titleText = (TextView) dialogView.findViewById(R.id.dialog_behaviour_title);
-        titleText.setVisibility(View.VISIBLE);
-        titleText.setText("Edit Behaviour");
+                        final EditText bName = (EditText) view.findViewById(R.id.dialog_behaviour_name);
+                        final Spinner spinner = (Spinner) view.findViewById(R.id.behaviour_type_spinner);
 
-        final EditText bName = (EditText) dialogView.findViewById(R.id.dialog_behaviour_name);
-        final Spinner spinner = (Spinner) dialogView.findViewById(R.id.behaviour_type_spinner);
+                        String name = bName.getText().toString().trim();
+                        if (!"".equals(name) && !name.contains(",") && !name.contains(";") && !name.contains(":")) {
+                            newTemp.behaviours.get(index).setName(name);
+                            newTemp.behaviours.get(index).setType(spinner.getSelectedItemPosition());
+                            adapter.refresh();
+                            dialog.dismiss();
+                        } else {
+                            makeSomeToast("Invalid behaviour name");
+                        }
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onNeutral(MaterialDialog dialog) {
+                        newTemp.behaviours.remove(index);
+                        adapter.refresh();
+                        dialog.dismiss();
+                    }
+                })
+                .build();
+
+        View view = dialog.getCustomView();
+        if (view == null) {
+            return;
+        }
+
+        final EditText bName = (EditText) view.findViewById(R.id.dialog_behaviour_name);
+        final Spinner spinner = (Spinner) view.findViewById(R.id.behaviour_type_spinner);
+
         String[] spinnerArray = new String[]{"State","Event"};
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -373,41 +430,7 @@ public class TemplateActivity extends ActionBarActivity {
 		bName.setText(currentBehaviour.getName());
         spinner.setSelection(currentBehaviour.getType());
 
-		alert.setView(dialogView);
-		
-		alert.setNeutralButton("Remove", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-		    	newTemp.behaviours.remove(index);
-		    	adapter.refresh();
-			}
-        });
-
-		alert.setPositiveButton("Ok", null);
-	
-		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-		  public void onClick(DialogInterface dialog, int whichButton) {
-		    // Canceled.
-		  }
-		});
-
-        final AlertDialog dialog = alert.create();
-		dialog.show();
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = bName.getText().toString().trim();
-                if (!"".equals(name) && !name.contains(",") && !name.contains(";") && !name.contains(":")) {
-                    newTemp.behaviours.get(index).setName(name);
-                    newTemp.behaviours.get(index).setType(spinner.getSelectedItemPosition());
-
-//                    adapter.replace()
-                    adapter.refresh();
-                    dialog.dismiss();
-                } else {
-                    makeSomeToast("Invalid behaviour name");
-                }
-            }
-        });
+        dialog.show();
 	}
 
     private void makeSomeToast(final String message) {

@@ -4,13 +4,14 @@
 
 package com.example.BehaveMonitor;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -34,7 +35,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class SessionActivity extends Activity {
+public class SessionActivity extends ActionBarActivity {
 
     Session activeSession;
     TextView sessionTimeTV = null;
@@ -54,6 +55,12 @@ public class SessionActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+
         setContentView(R.layout.activity_session);
 
         Bundle b = getIntent().getExtras();

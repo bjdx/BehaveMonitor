@@ -4,12 +4,13 @@
 
 package com.example.BehaveMonitor;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,7 +31,7 @@ import com.example.BehaveMonitor.adapters.BehaviourListAdapter;
 
 
 
-public class TemplateActivity extends Activity {
+public class TemplateActivity extends ActionBarActivity {
 
     private BehaviourListAdapter adapter;
 
@@ -41,16 +42,20 @@ public class TemplateActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+
 		setContentView(R.layout.activity_template);
 
         Template template = getIntent().getParcelableExtra("template");
         if (template != null) {
             newTemp = template;
-//            updateBehaviours();
         }
 
-		initAddBehaviour();
         initList();
+		initAddBehaviour();
 		initSaveTemplate();
 
         fromFragment = getIntent().getBooleanExtra("fromFragment", false);
@@ -290,60 +295,61 @@ public class TemplateActivity extends Activity {
 			}
 		});
 	}
-	
+
+    // TODO: Copy this example when making dialogs into material style.
+    // TODO: Add in checkbox for specifying as a 'special' behaviour
 	private void newBehaviour() {
         Context context = this;
 
-        //TODO: Change to not use custom view.
-        MaterialDialog.Builder dialog = new MaterialDialog.Builder(context);
-        dialog.title("New Behaviour");
-        dialog.customView(R.layout.dialog_behaviour, true);
-        dialog.negativeText("Cancel");
-        dialog.positiveText("Ok");
-        dialog.show();
+        final MaterialDialog dialog = new MaterialDialog.Builder(context)
+            .title("New Behaviour")
+            .autoDismiss(false)
+            .customView(R.layout.dialog_behaviour, true)
+            .negativeText("Cancel")
+            .positiveText("Ok")
+            .callback(new MaterialDialog.ButtonCallback() {
+                @Override
+                public void onPositive(MaterialDialog dialog) {
+                    View view = dialog.getCustomView();
+                    if (view == null) {
+                        return;
+                    }
 
-//		AlertDialog.Builder alert = new AlertDialog.Builder(context);
-//        View dialogView = getLayoutInflater().inflate(R.layout.dialog_behaviour, null);
-//
-//        TextView titleText = (TextView) dialogView.findViewById(R.id.dialog_behaviour_title);
-//        titleText.setText("New Behaviour");
-//
-//        final EditText bName = (EditText) dialogView.findViewById(R.id.dialog_behaviour_name);
-//        final Spinner spinner = (Spinner) dialogView.findViewById(R.id.behaviour_type_spinner);
-//        String[] spinnerArray = new String[]{"State","Event"};
-//		ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
-//		spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//		spinner.setAdapter(spinnerArrayAdapter);
-//
-//        alert.setView(dialogView);
-//
-//		alert.setPositiveButton("Ok", null);
-//
-//		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//		  public void onClick(DialogInterface dialog, int whichButton) {
-//		    // Canceled.
-//		  }
-//		});
-//
-//        final AlertDialog dialog = alert.create();
-//		dialog.show();
-//        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                String name = bName.getText().toString().trim();
-//                if (!name.contains(",") && !name.contains(";") && !name.contains(":")) {
-//                    Behaviour b = new Behaviour();
-//                    b.setName(name);
-//                    b.setType(spinner.getSelectedItemPosition());
-//                    newTemp.behaviours.add(b);
-////                    updateBehaviours();
-////                    adapter.addBehaviour(b);
-//
-//                    dialog.dismiss();
-//                } else {
-//                    makeSomeToast("Invalid behaviour name");
-//                }
-//            }
-//        });
+                    EditText bName = (EditText) view.findViewById(R.id.dialog_behaviour_name);
+                    Spinner spinner = (Spinner) view.findViewById(R.id.behaviour_type_spinner);
+                    String name = bName.getText().toString().trim();
+                    if (!"".equals(name) && !name.contains(",") && !name.contains(";") && !name.contains(":")) {
+                        Behaviour b = new Behaviour();
+                        b.setName(name);
+                        b.setType(spinner.getSelectedItemPosition());
+                        newTemp.behaviours.add(b);
+
+                        dialog.dismiss();
+                    } else {
+                        makeSomeToast("Invalid behaviour name");
+                    }
+                }
+
+                @Override
+                public void onNegative(MaterialDialog dialog) {
+                    dialog.dismiss();
+                }
+            })
+            .build();
+
+        View view = dialog.getCustomView();
+        if (view == null) {
+            return;
+        }
+
+        final Spinner spinner = (Spinner) view.findViewById(R.id.behaviour_type_spinner);
+
+        String[] spinnerArray = new String[]{"State","Event"};
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+		spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinner.setAdapter(spinnerArrayAdapter);
+
+        dialog.show();
 	}
 	
 	//Brings up the dialog box with added remove button as well as info about behaviour.
@@ -352,6 +358,7 @@ public class TemplateActivity extends Activity {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_behaviour, null);
 
         TextView titleText = (TextView) dialogView.findViewById(R.id.dialog_behaviour_title);
+        titleText.setVisibility(View.VISIBLE);
         titleText.setText("Edit Behaviour");
 
         final EditText bName = (EditText) dialogView.findViewById(R.id.dialog_behaviour_name);
@@ -389,7 +396,7 @@ public class TemplateActivity extends Activity {
             @Override
             public void onClick(View v) {
                 String name = bName.getText().toString().trim();
-                if (!name.contains(",") && !name.contains(";") && !name.contains(":")) {
+                if (!"".equals(name) && !name.contains(",") && !name.contains(";") && !name.contains(":")) {
                     newTemp.behaviours.get(index).setName(name);
                     newTemp.behaviours.get(index).setType(spinner.getSelectedItemPosition());
 

@@ -13,28 +13,26 @@
         android:gravity="center"
         android:text="New Behaviour"
         android:textSize="22sp"
+        android:visibility="gone"
         android:textColor="@android:color/holo_blue_dark" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="Name" />
 
     <EditText
         android:id="@+id/dialog_behaviour_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:hint="Behaviour Name" />
+        android:textSize="18sp"
+        android:layout_marginTop="2dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="44dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginLeft="6dp"
-        android:layout_marginBottom="6dp">
+        android:layout_marginTop="14dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -42,7 +40,7 @@
             android:layout_marginRight="5dp"
             android:layout_marginEnd="5dp"
             android:gravity="center_vertical"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:text="Type:"/>
 
         <Spinner
@@ -57,9 +55,8 @@
         android:id="@+id/dialog_behaviour_separate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="6dp"
-        android:layout_marginEnd="6dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="18dp"
+        android:visibility="gone"
         android:text="Can this behaviour be active at the same time as others?"/>
 
 </LinearLayout>

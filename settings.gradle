@@ -1,1 +1,1 @@
-include ':app', ':CircledPicker'
+include ':app', ':CircledPicker', ':MaterialDialogs'

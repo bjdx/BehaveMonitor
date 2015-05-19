@@ -1,6 +1,7 @@
 Chicken App todo:
 
 Higher priority:
+- Play with MaterialDialog before refactoring all alertdialogs.
 - Remove titles from template activity and add into action bar instead. Make session activity extend actionbaractivity.
   OR Find out how to change the dialogs to have the highlight colour properly.
 

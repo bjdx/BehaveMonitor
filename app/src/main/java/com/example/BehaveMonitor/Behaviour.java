@@ -25,13 +25,13 @@ public class Behaviour implements Parcelable {
     public Behaviour(Parcel in) {
         name = in.readString();
         type = in.readInt();
+        separate = in.readInt() == 1;
         eventHistory = new ArrayList<>();
         in.readTypedList(eventHistory,Event.CREATOR);
         currentEvent = in.readParcelable(Event.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<Behaviour> CREATOR = new Parcelable.Creator<Behaviour>() {
-
         public Behaviour createFromParcel(Parcel in) {
             return new Behaviour(in);
         }
@@ -73,6 +73,14 @@ public class Behaviour implements Parcelable {
      */
     public void setType(int type) {
         this.type = type;
+    }
+
+    public boolean isSeparate() {
+        return separate;
+    }
+
+    public void setSeparate(boolean separate) {
+        this.separate = separate;
     }
 
     /**
@@ -196,8 +204,8 @@ public class Behaviour implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeInt(type);
+        dest.writeInt(separate ? 1 : 0);
         dest.writeTypedList(eventHistory);
         dest.writeParcelable(currentEvent, flags);
-
     }
 }

@@ -4,7 +4,6 @@
 
 package com.example.BehaveMonitor.fragments;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,6 +25,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.BehaveMonitor.DBHelper;
 import com.example.BehaveMonitor.FileHandler;
 import com.example.BehaveMonitor.HomeActivity;
@@ -120,61 +120,74 @@ public class SessionFragment extends Fragment {
                             Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(myEditText.getWindowToken(), 0);
 
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-                    final View dialogView = inflater.inflate(R.layout.dialog_number_picker, null);
-                    dialog.setView(dialogView);
+                    final MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                            .title("How many observations?")
+                            .autoDismiss(false)
+                            .cancelable(false)
+                            .customView(R.layout.dialog_number_picker, true)
+                            .negativeText("Cancel")
+                            .positiveText("Ok")
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    View view = dialog.getCustomView();
+                                    if (view == null) {
+                                        return;
+                                    }
 
-                    ((TextView) dialogView.findViewById(R.id.circle_picker_heading)).setText("How many observations?");
-                    dialogView.findViewById(R.id.start_number_subheading).setVisibility(View.GONE);
+                                    final CircledPicker picker = ((CircledPicker) view.findViewById(R.id.circled_picker));
+                                    final TextView nameLabel = (TextView) rootView.findViewById(R.id.name_label);
+                                    final View startNumberLabel = rootView.findViewById(R.id.start_observation_label);
 
-                    final CircledPicker picker = ((CircledPicker) dialogView.findViewById(R.id.circled_picker));
+                                    nObservations = (int) picker.getValue();
+                                    nObsView.setText("" + nObservations);
+                                    nObsView.clearFocus();
+
+                                    if (nObservations == 1) {
+                                        if (!db.getNamePrefix()) {
+                                            nameLabel.setVisibility(View.VISIBLE);
+                                            rootView.findViewById(R.id.session_name).setVisibility(View.VISIBLE);
+                                            rootView.findViewById(R.id.location_label).setVisibility(View.VISIBLE);
+                                            rootView.findViewById(R.id.session_location).setVisibility(View.VISIBLE);
+                                        } else {
+                                            startNumberLabel.setVisibility(View.GONE);
+                                            startingObsView.setVisibility(View.GONE);
+                                        }
+
+                                        nameLabel.setText(R.string.session_create_name);
+                                    } else {
+                                        if (db.getNamePrefix()) { // Show name prefix options
+                                            startNumberLabel.setVisibility(View.VISIBLE);
+                                            startingObsView.setVisibility(View.VISIBLE);
+                                            nameLabel.setText(R.string.session_create_name_prefix);
+                                        } else { // Hide name and location options
+                                            rootView.findViewById(R.id.name_label).setVisibility(View.GONE);
+                                            rootView.findViewById(R.id.session_name).setVisibility(View.GONE);
+                                            rootView.findViewById(R.id.location_label).setVisibility(View.GONE);
+                                            rootView.findViewById(R.id.session_location).setVisibility(View.GONE);
+                                        }
+                                    }
+
+                                    dialog.dismiss();
+                                }
+
+                                @Override
+                                public void onNegative(MaterialDialog dialog) {
+                                    nObsView.clearFocus();
+                                    dialog.dismiss();
+                                }
+                            })
+                            .build();
+
+                    View view = dialog.getCustomView();
+                    if (view == null) {
+                        return;
+                    }
+
+                    view.findViewById(R.id.start_number_subheading).setVisibility(View.GONE);
+                    final CircledPicker picker = ((CircledPicker) view.findViewById(R.id.circled_picker));
                     picker.setMaxValue(db.getMaxObservationsAmount());
                     picker.setValue(nObservations);
-
-                    final TextView nameLabel = (TextView) rootView.findViewById(R.id.name_label);
-                    final View startNumberLabel = rootView.findViewById(R.id.start_observation_label);
-
-                    dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            nObservations = (int) picker.getValue();
-                            nObsView.setText("" + nObservations);
-                            nObsView.clearFocus();
-
-                            if (nObservations == 1) {
-                                if (!db.getNamePrefix()) {
-                                    nameLabel.setVisibility(View.VISIBLE);
-                                    rootView.findViewById(R.id.session_name).setVisibility(View.VISIBLE);
-                                    rootView.findViewById(R.id.location_label).setVisibility(View.VISIBLE);
-                                    rootView.findViewById(R.id.session_location).setVisibility(View.VISIBLE);
-                                } else {
-                                    startNumberLabel.setVisibility(View.GONE);
-                                    startingObsView.setVisibility(View.GONE);
-                                }
-
-                                nameLabel.setText(R.string.session_create_name);
-                            } else {
-                                if (db.getNamePrefix()) { // Show name prefix options
-                                    startNumberLabel.setVisibility(View.VISIBLE);
-                                    startingObsView.setVisibility(View.VISIBLE);
-                                    nameLabel.setText(R.string.session_create_name_prefix);
-                                } else { // Hide name and location options
-                                    rootView.findViewById(R.id.name_label).setVisibility(View.GONE);
-                                    rootView.findViewById(R.id.session_name).setVisibility(View.GONE);
-                                    rootView.findViewById(R.id.location_label).setVisibility(View.GONE);
-                                    rootView.findViewById(R.id.session_location).setVisibility(View.GONE);
-                                }
-
-                            }
-                        }
-                    });
-
-                    dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            nObsView.clearFocus();
-                        }
-                    });
 
                     dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
                         @Override
@@ -188,7 +201,6 @@ public class SessionFragment extends Fragment {
                         }
                     });
 
-                    dialog.setCancelable(false);
                     dialog.show();
                 }
             }
@@ -202,32 +214,46 @@ public class SessionFragment extends Fragment {
                             Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(startingObsView.getWindowToken(), 0);
 
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-                    final View dialogView = inflater.inflate(R.layout.dialog_number_picker, null);
-                    dialog.setView(dialogView);
+                    final MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                            .title("Number to start from?")
+                            .autoDismiss(false)
+                            .cancelable(false)
+                            .customView(R.layout.dialog_number_picker, true)
+                            .negativeText("Cancel")
+                            .positiveText("Ok")
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    View view = dialog.getCustomView();
+                                    if (view == null) {
+                                        return;
+                                    }
 
-                    ((TextView) dialogView.findViewById(R.id.circle_picker_heading)).setText("Number to start from?");
-                    dialogView.findViewById(R.id.start_number_subheading).setVisibility(View.VISIBLE);
+                                    final CircledPicker picker = ((CircledPicker) view.findViewById(R.id.circled_picker));
+                                    startingObservation = (int) picker.getValue();
+                                    startingObsView.setText("" + startingObservation);
+                                    startingObsView.clearFocus();
 
-                    final CircledPicker picker = ((CircledPicker) dialogView.findViewById(R.id.circled_picker));
+                                    dialog.dismiss();
+                                }
+
+                                @Override
+                                public void onNegative(MaterialDialog dialog) {
+                                    startingObsView.clearFocus();
+                                    dialog.dismiss();
+                                }
+                            })
+                            .build();
+
+                    View view = dialog.getCustomView();
+                    if (view == null) {
+                        return;
+                    }
+
+                    view.findViewById(R.id.start_number_subheading).setVisibility(View.VISIBLE);
+                    final CircledPicker picker = ((CircledPicker) view.findViewById(R.id.circled_picker));
                     picker.setMaxValue(db.getMaxObservationsAmount());
                     picker.setValue(startingObservation);
-
-                    dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            startingObservation = (int) picker.getValue();
-                            startingObsView.setText("" + startingObservation);
-                            startingObsView.clearFocus();
-                        }
-                    });
-
-                    dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            startingObsView.clearFocus();
-                        }
-                    });
 
                     dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
                         @Override
@@ -241,7 +267,6 @@ public class SessionFragment extends Fragment {
                         }
                     });
 
-                    dialog.setCancelable(false);
                     dialog.show();
                 }
             }
@@ -302,29 +327,54 @@ public class SessionFragment extends Fragment {
 	}
 
 	private void newFolder(final Context context) {
-		AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        new MaterialDialog.Builder(context)
+                .title("Create New Folder")
+                .customView(R.layout.dialog_new_folder, true)
+                .negativeText("Cancel")
+                .positiveText("Ok")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        View view = dialog.getCustomView();
+                        if (view == null) {
+                            return;
+                        }
 
-        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_new_folder, null);
-        alert.setView(dialogView);
-        final EditText input = (EditText) dialogView.findViewById(R.id.dialog_folder_name);
+                        EditText input = (EditText) view.findViewById(R.id.dialog_folder_name);
+                        String folderName = input.getText().toString().trim();
+                        if (validateFolderName(folderName)) {
+                            FileHandler.createNewFolder(folderName);
+                            activeFolderName = folderName;
+                            db.setFolder(folderName);
+                            setFolderSpinner();
+                        }
+                    }
+                })
+                .show();
 
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				String folderName = input.getText().toString().trim();
-                if (validateFolderName(folderName)) {
-                    FileHandler.createNewFolder(folderName);
-                    activeFolderName = folderName;
-                    setFolderSpinner();
-                }
-			}
-		});
-
-		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-		alert.show();
+//		AlertDialog.Builder alert = new AlertDialog.Builder(context);
+//
+//        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_new_folder, null);
+//        alert.setView(dialogView);
+//        final EditText input = (EditText) dialogView.findViewById(R.id.dialog_folder_name);
+//
+//		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int whichButton) {
+//				String folderName = input.getText().toString().trim();
+//                if (validateFolderName(folderName)) {
+//                    FileHandler.createNewFolder(folderName);
+//                    activeFolderName = folderName;
+//                    setFolderSpinner();
+//                }
+//			}
+//		});
+//
+//		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int whichButton) {
+//                // Canceled.
+//            }
+//        });
+//		alert.show();
 	}
 
     /**

@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -192,34 +193,6 @@ public class TemplateActivity extends ActionBarActivity {
                     }
                 })
                 .show();
-
-//        final Context context = TemplateActivity.this;
-//        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-//
-//        View dialogView = getLayoutInflater().inflate(R.layout.dialog_overwrite_template, null);
-//        alert.setView(dialogView);
-//
-//        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int whichButton) {
-//                FileHandler.saveTemplate(TemplateActivity.this, newTemp);
-//                backToMain();
-//            }
-//        });
-//
-//        alert.setNeutralButton("Save as..", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                showNamingDialog();
-//            }
-//        });
-//
-//        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int whichButton) {
-//                // Canceled.
-//            }
-//        });
-//
-//        alert.show();
     }
 
 	private void backToMain() {
@@ -261,44 +234,6 @@ public class TemplateActivity extends ActionBarActivity {
                 .show();
     }
 
-    //re-add behaviours to layout
-	//cycles through the behaviours in newTemp and adds them to the layout
-//	private void updateBehaviours() {
-//		LinearLayout bLayout = (LinearLayout) findViewById(R.id.behaviour_layout);
-//		if (bLayout.getChildCount() > 0) bLayout.removeAllViews();
-//		ArrayList<Behaviour> behaviours = newTemp.behaviours;
-//		int numOfBs = newTemp.behaviours.size();
-//
-//		if (numOfBs > 0) {
-//			//go through behaviours adding them to the layout.
-//			for(int i = 0; i < numOfBs; i++) {
-//				TextView tv = new TextView(TemplateActivity.this);
-//				tv.setText(behaviours.get(i).bName);
-//				tv.setPadding(5, 2, 5, 2);
-//				tv.setTextSize(getResources().getDimension(R.dimen.textsize));
-////				if(i%2==0){
-////					int dark = Color.parseColor("#B3E5FC");
-////					tv.setBackgroundColor(dark);
-////				} else {
-////					int light = Color.parseColor("#E1F5FE");
-////					tv.setBackgroundColor(light);
-////				}
-//
-//				final int ii = i;
-//				OnClickListener ocl = new OnClickListener() {
-//				    @Override
-//				    public void onClick(View v) {
-//				    	editBehaviour(TemplateActivity.this, ii );
-//				    }
-//				};
-//
-//				tv.setOnClickListener(ocl);
-//				bLayout.addView(tv);
-//			}
-//		}
-//
-//	}
-
 	//Sets up the button for adding a behaviour
 	private void initAddBehaviour() {
 		ImageButton button = (ImageButton) findViewById(R.id.new_behaviour);
@@ -312,7 +247,6 @@ public class TemplateActivity extends ActionBarActivity {
 	}
 
     // TODO: Copy this example when making dialogs into material style.
-    // TODO: Add in checkbox for specifying as a 'special' behaviour
 	private void newBehaviour() {
         Context context = this;
 
@@ -332,11 +266,14 @@ public class TemplateActivity extends ActionBarActivity {
 
                         EditText bName = (EditText) view.findViewById(R.id.dialog_behaviour_name);
                         Spinner spinner = (Spinner) view.findViewById(R.id.behaviour_type_spinner);
+                        CheckBox checkBox = (CheckBox) view.findViewById(R.id.dialog_behaviour_separate);
+
                         String name = bName.getText().toString().trim();
                         if (!"".equals(name) && !name.contains(",") && !name.contains(";") && !name.contains(":")) {
                             Behaviour b = new Behaviour();
                             b.setName(name);
                             b.setType(spinner.getSelectedItemPosition());
+                            b.setSeparate(checkBox.isChecked());
                             newTemp.behaviours.add(b);
 
                             dialog.dismiss();
@@ -358,11 +295,27 @@ public class TemplateActivity extends ActionBarActivity {
         }
 
         final Spinner spinner = (Spinner) view.findViewById(R.id.behaviour_type_spinner);
+        final CheckBox checkBox = (CheckBox) view.findViewById(R.id.dialog_behaviour_separate);
 
         String[] spinnerArray = new String[]{"State","Event"};
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
 		spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(spinnerArrayAdapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == BehaviourType.STATE) {
+                    checkBox.setVisibility(View.VISIBLE);
+                } else {
+                    checkBox.setChecked(false);
+                    checkBox.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
 
         dialog.show();
 	}
@@ -386,11 +339,13 @@ public class TemplateActivity extends ActionBarActivity {
 
                         final EditText bName = (EditText) view.findViewById(R.id.dialog_behaviour_name);
                         final Spinner spinner = (Spinner) view.findViewById(R.id.behaviour_type_spinner);
+                        final CheckBox checkBox = (CheckBox) view.findViewById(R.id.dialog_behaviour_separate);
 
                         String name = bName.getText().toString().trim();
                         if (!"".equals(name) && !name.contains(",") && !name.contains(";") && !name.contains(":")) {
                             newTemp.behaviours.get(index).setName(name);
                             newTemp.behaviours.get(index).setType(spinner.getSelectedItemPosition());
+                            newTemp.behaviours.get(index).setSeparate(checkBox.isChecked());
                             adapter.refresh();
                             dialog.dismiss();
                         } else {
@@ -419,16 +374,39 @@ public class TemplateActivity extends ActionBarActivity {
 
         final EditText bName = (EditText) view.findViewById(R.id.dialog_behaviour_name);
         final Spinner spinner = (Spinner) view.findViewById(R.id.behaviour_type_spinner);
+        final CheckBox checkBox = (CheckBox) view.findViewById(R.id.dialog_behaviour_separate);
 
         String[] spinnerArray = new String[]{"State","Event"};
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
 
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == BehaviourType.STATE) {
+                    checkBox.setVisibility(View.VISIBLE);
+                } else {
+                    checkBox.setChecked(false);
+                    checkBox.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
+
         // get the current behaviour
         Behaviour currentBehaviour = newTemp.behaviours.get(index);
 		bName.setText(currentBehaviour.getName());
         spinner.setSelection(currentBehaviour.getType());
+
+        if (currentBehaviour.getType() == BehaviourType.EVENT) {
+            checkBox.setChecked(false);
+            checkBox.setVisibility(View.GONE);
+        } else {
+            checkBox.setChecked(currentBehaviour.isSeparate());
+        }
 
         dialog.show();
 	}

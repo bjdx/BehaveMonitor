@@ -110,6 +110,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("MaxObservationsAmount", 10);
         contentValues.put("ShowRenameDialog", 1);
         contentValues.put("UseNamePrefix", 1);
+        contentValues.put("DecimalPlaces", 3);
 
         long result = db.insert("Preferences", null, contentValues);
         if (result == -1) {
@@ -221,7 +222,9 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("LastFolder", folder);
         contentValues.put("LastTemplate", template);
 
-        db.update("Preferences", contentValues, null, null);
+//        db.update("Preferences", contentValues, null, null);
+        int affected = db.update("Preferences", contentValues, null, null);
+        Log.e("DB", "Affected: " + affected);
     }
 
     public void setFolder(String folder) {
@@ -241,7 +244,8 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("_id", 1);
         contentValues.put("LastTemplate", template);
 
-        db.update("Preferences", contentValues, null, null);
+        int affected = db.update("Preferences", contentValues, null, null);
+        Log.e("DB", "Affected: " + affected);
     }
 
     public void setEmail(String email) {

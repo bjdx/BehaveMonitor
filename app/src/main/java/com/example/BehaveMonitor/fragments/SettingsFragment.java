@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.BehaveMonitor.DBHelper;
 import com.example.BehaveMonitor.R;
 import com.example.BehaveMonitor.Setting;
@@ -84,29 +85,39 @@ public class SettingsFragment extends Fragment {
     private void showEmailDialog() {
         final Context context = getActivity();
 
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-        View view = View.inflate(context, R.layout.dialog_settings_email, null);
+        final MaterialDialog dialog = new MaterialDialog.Builder(context)
+                .title("Set Email Address")
+                .customView(R.layout.dialog_settings_email, true)
+                .negativeText("Cancel")
+                .positiveText("Ok")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        View view = dialog.getCustomView();
+                        if (view == null) {
+                            return;
+                        }
+
+                        EditText input = (EditText) view.findViewById(R.id.dialog_settings_email_address);
+                        String email = input.getText().toString().trim();
+                        DBHelper db = DBHelper.getInstance(context);
+                        db.setEmail(email);
+
+                        makeSomeToast("Email changed.");
+                    }
+                })
+                .build();
+
+        View view = dialog.getCustomView();
+        if (view == null) {
+            return;
+        }
 
         DBHelper db = DBHelper.getInstance(context);
         String email = db.getEmail();
-
-        final EditText input = (EditText) view.findViewById(R.id.dialog_settings_email_address);
+        EditText input = (EditText) view.findViewById(R.id.dialog_settings_email_address);
         input.setText(email);
-        dialog.setView(view);
 
-        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String email = input.getText().toString().trim();
-
-                DBHelper db = DBHelper.getInstance(context);
-                db.setEmail(email);
-
-                makeSomeToast("Email changed.");
-            }
-        });
-
-        dialog.setNegativeButton("Cancel", null);
         dialog.show();
     }
 

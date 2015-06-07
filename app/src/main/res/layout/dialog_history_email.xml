@@ -7,34 +7,23 @@
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:gravity="center"
-        android:text="Set email address"
-        android:textSize="22sp"
-        android:textColor="@android:color/holo_blue_dark" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set the default recipient. You can leave this blank to set it later or change it from the settings menu."/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Set the default recipient. You can leave this blank to set it later or change it from the settings menu."/>
+        android:layout_marginTop="14dp"
+        android:textSize="14sp"
+        android:text="Default email address" />
 
     <EditText
         android:id="@+id/dialog_history_email_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:inputType="textEmailAddress"
-        android:hint="Default recipient email address" />
+        android:layout_marginTop="2dp"
+        android:textSize="18sp"
+        android:inputType="textEmailAddress" />
 
 </LinearLayout>

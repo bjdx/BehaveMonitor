@@ -4,9 +4,7 @@
 
 package com.example.BehaveMonitor.adapters;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.BehaveMonitor.FileHandler;
 import com.example.BehaveMonitor.R;
 
@@ -98,37 +97,31 @@ public class FolderListAdapter extends BaseAdapter {
     }
 
     private void deleteFolder(final int position) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
         final String folderName = folders.get(position);
-        alert.setTitle("Delete " + folderName + "?");
-
-        if ("Default".equals(folderName)) {
-            alert.setMessage("The default folder cannot be deleted. Delete all sessions from this folder?");
-        } else {
-            alert.setMessage("Are you sure you want to delete this folder? (Data inside the folder will be lost!)");
+        String message = "The default folder cannot be deleted. Delete all sessions from this folder?";
+        if (!"Default".equals(folderName)) {
+            message = "Are you sure you want to delete this folder? (Data inside the folder will be lost!)";
         }
 
-        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                FileHandler.deleteFolder(folderName);
-                if (!"Default".equals(folderName)) {
-                    folders.remove(position);
-                    sessionCounts.remove(position);
-                } else {
-                    sessionCounts.set(position, 0);
-                }
+        new MaterialDialog.Builder(context)
+                .title("Delete " + folderName + "?")
+                .content(message)
+                .negativeText("Cancel")
+                .positiveText("Yes")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        FileHandler.deleteFolder(folderName);
+                        if (!"Default".equals(folderName)) {
+                            folders.remove(position);
+                            sessionCounts.remove(position);
+                        } else {
+                            sessionCounts.set(position, 0);
+                        }
 
-                notifyDataSetChanged();
-            }
-        });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-
-        alert.show();
+                        notifyDataSetChanged();
+                    }
+                })
+                .show();
     }
 }

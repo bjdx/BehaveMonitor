@@ -4,9 +4,7 @@
 
 package com.example.BehaveMonitor.adapters;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.BehaveMonitor.DBHelper;
 import com.example.BehaveMonitor.FileHandler;
 import com.example.BehaveMonitor.R;
@@ -242,52 +241,54 @@ public class SessionHistoryListAdapter extends BaseAdapter {
     }
 
     private void deleteSession(final int position) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
         final File session = sessions.get(position);
-        alert.setTitle("Delete " + getName(session) + "?");
-        alert.setMessage("Are you sure you want to delete this session?");
 
-        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                FileHandler.deleteSession(session);
-                sessions.remove(position);
+        new MaterialDialog.Builder(context)
+                .title("Delete " + getName(session) + "?")
+                .content("Are you sure you want to delete this session?")
+                .negativeText("Cancel")
+                .positiveText("Yes")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        FileHandler.deleteSession(session);
+                        sessions.remove(position);
 
-                notifyDataSetChanged();
-            }
-        });
+                        if (sessions.size() == 0) {
+                            sessions.add(null);
+                        }
 
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-
-        alert.show();
+                        notifyDataSetChanged();
+                    }
+                })
+                .show();
     }
 
     private void showEmailDialog(final int position) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        new MaterialDialog.Builder(context)
+                .title("Set Email Address")
+                .customView(R.layout.dialog_history_email, true)
+                .negativeText("Cancel")
+                .positiveText("Ok")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        View view = dialog.getCustomView();
+                        if (view == null) {
+                            return;
+                        }
 
-        View view = View.inflate(context, R.layout.dialog_history_email, null);
-        final EditText input = (EditText) view.findViewById(R.id.dialog_history_email_address);
-        dialog.setView(view);
+                        EditText input = (EditText) view.findViewById(R.id.dialog_history_email_address);
+                        String email = input.getText().toString().trim();
+                        if (!"".equals(email)) {
+                            DBHelper db = DBHelper.getInstance(context);
+                            db.setEmail(email);
+                        }
 
-        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String email = input.getText().toString().trim();
-
-                if (!"".equals(email)) {
-                    DBHelper db = DBHelper.getInstance(context);
-                    db.setEmail(email);
-                }
-
-                FileHandler.sendEmail(context, email, sessions.get(position));
-            }
-        });
-
-        dialog.setNegativeButton("Cancel", null);
-        dialog.show();
+                        FileHandler.sendEmail(context, email, sessions.get(position));
+//                        compressAndEmail(paths, email);
+                    }
+                })
+                .show();
     }
 }

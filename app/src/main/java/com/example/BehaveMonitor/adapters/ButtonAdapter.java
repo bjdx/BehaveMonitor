@@ -36,6 +36,9 @@ public class ButtonAdapter extends BaseAdapter {
     final Handler myHandler;
     private Timer timer;
 
+    private Behaviour activeStandardBehaviour;
+    private Button activeStandardButton;
+
     private List<Integer> activeBehaviours;
 
     private GridView parent;
@@ -122,7 +125,10 @@ public class ButtonAdapter extends BaseAdapter {
                     addToHistory(behaviour, false);
                 } else {
                     if (!behaviour.isActive()) {
-                        activateBehaviour(behaviour, position);
+                        // Turn off the active standard behaviour.
+                        deactivateStandardBehaviour();
+
+                        activateBehaviour(behaviour, position, button);
                     } else {
                         deactivateBehaviour(behaviour, position);
                     }
@@ -133,12 +139,34 @@ public class ButtonAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private void activateBehaviour(Behaviour behaviour, int position) {
+    private void deactivateStandardBehaviour() {
+        if (activeStandardBehaviour != null) {
+            activeStandardBehaviour.endCurrentEvent();
+            addToHistory(activeStandardBehaviour, activeStandardBehaviour.getType() == BehaviourType.STATE);
+
+            activeStandardBehaviour = null;
+            activeStandardButton = null;
+            notifyDataSetChanged();
+        }
+    }
+
+    private void activateBehaviour(Behaviour behaviour, int position, Button button) {
         behaviour.newEvent();
-        activeBehaviours.add(position);
+
+        if (behaviour.isSeparate()) {
+            activeBehaviours.add(position);
+        } else {
+            activeStandardBehaviour = behaviour;
+            activeStandardButton = button;
+        }
     }
 
     private void deactivateBehaviour(Behaviour behaviour, int position) {
+        if (!behaviour.isSeparate()) {
+            deactivateStandardBehaviour();
+            return;
+        }
+
         behaviour.endCurrentEvent();
         addToHistory(behaviour, true);
 
@@ -164,6 +192,13 @@ public class ButtonAdapter extends BaseAdapter {
     final Runnable updateButtonTime = new Runnable() {
         @Override
         public void run() {
+            if (activeStandardBehaviour != null) {
+                if (activeStandardButton != null) {
+                    activeStandardButton.setText(activeStandardBehaviour.getName() + "\n" + timeDiff(activeStandardBehaviour.getCurrentEvent().getStartTime(), new Date()));
+                    activeStandardButton.setTextColor(Color.parseColor("#99CC00"));
+                }
+            }
+
             if (activeBehaviours.size() > 0) {
                 for (int position : activeBehaviours) {
                     Behaviour behaviour = behaviours.get(position);

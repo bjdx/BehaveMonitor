@@ -4,9 +4,7 @@
 
 package com.example.BehaveMonitor.fragments;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,6 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.example.BehaveMonitor.DBHelper;
 import com.example.BehaveMonitor.FileHandler;
 import com.example.BehaveMonitor.R;
 import com.example.BehaveMonitor.adapters.FolderListAdapter;
@@ -54,28 +54,30 @@ public class FolderFragment extends Fragment {
 	}
 
 	private void newFolder(final Context context) {
-		AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        new MaterialDialog.Builder(context)
+                .title("Create New Folder")
+                .customView(R.layout.dialog_new_folder, true)
+                .negativeText("Cancel")
+                .positiveText("Ok")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        View view = dialog.getCustomView();
+                        if (view == null) {
+                            return;
+                        }
 
-        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_new_folder, null);
-        alert.setView(dialogView);
-        final EditText input = (EditText) dialogView.findViewById(R.id.dialog_folder_name);
-
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-                String folderName = input.getText().toString().trim();
-                if (validateFolderName(folderName)) {
-                    FileHandler.createNewFolder(folderName);
-                    adapter.addItem(folderName);
-                }
-			}
-		});
-
-		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-		alert.show();
+                        EditText input = (EditText) view.findViewById(R.id.dialog_folder_name);
+                        String folderName = input.getText().toString().trim();
+                        if (validateFolderName(folderName)) {
+                            FileHandler.createNewFolder(folderName);
+                            DBHelper db = DBHelper.getInstance(context);
+                            db.setFolder(folderName);
+                            adapter.addItem(folderName);
+                        }
+                    }
+                })
+                .show();
 	}
 
     //Returns true if the foldername is valid

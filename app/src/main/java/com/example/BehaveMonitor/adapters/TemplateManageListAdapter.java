@@ -4,9 +4,7 @@
 
 package com.example.BehaveMonitor.adapters;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.BehaveMonitor.FileHandler;
 import com.example.BehaveMonitor.R;
 import com.example.BehaveMonitor.Template;
@@ -104,33 +103,25 @@ public class TemplateManageListAdapter extends BaseAdapter {
         intent.putExtra("template", template);
         intent.putExtra("fromFragment", true);
 
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         context.startActivity(intent);
     }
 
     private void deleteTemplate(final int position) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
         final String templateName = templates.get(position);
-        alert.setTitle("Delete " + templateName + "?");
-        alert.setMessage("Are you sure you want to delete this template? (Template will be lost forever!)");
 
-        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                FileHandler.deleteTemplate(templateName);
-                templates.remove(position);
-                notifyDataSetChanged();
-            }
-        });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-
-        alert.show();
+        new MaterialDialog.Builder(context)
+                .title("Delete " + templateName + "?")
+                .content("Are you sure you want to delete this template? (Template will be lost forever!)")
+                .negativeText("Cancel")
+                .positiveText("Yes")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        FileHandler.deleteTemplate(templateName);
+                        templates.remove(position);
+                        notifyDataSetChanged();
+                    }
+                })
+                .show();
     }
 }

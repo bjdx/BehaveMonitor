@@ -4,9 +4,7 @@
 
 package com.example.BehaveMonitor.fragments;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -23,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.BehaveMonitor.DBHelper;
 import com.example.BehaveMonitor.FileHandler;
 import com.example.BehaveMonitor.R;
@@ -77,8 +76,10 @@ public class SessionHistoryFragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                List<File> folders = FileHandler.getSessions(((TextView) view).getText().toString());
+                String folderName = ((TextView) view).getText().toString();
+                List<File> folders = FileHandler.getSessions(folderName);
                 if (sessionAdapter != null) {
+                    activeFolder = folderName;
                     sessionAdapter.updateSessions(folders);
                 }
             }
@@ -146,28 +147,31 @@ public class SessionHistoryFragment extends Fragment {
 
     private void showEmailDialog(final String[] paths) {
         final Context context = getActivity();
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 
-        View view = View.inflate(context, R.layout.dialog_history_email, null);
-        final EditText input = (EditText) view.findViewById(R.id.dialog_history_email_address);
-        dialog.setView(view);
+        new MaterialDialog.Builder(context)
+                .title("Set Email Address")
+                .customView(R.layout.dialog_history_email, true)
+                .negativeText("Cancel")
+                .positiveText("Ok")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        View view = dialog.getCustomView();
+                        if (view == null) {
+                            return;
+                        }
 
-        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String email = input.getText().toString().trim();
+                        EditText input = (EditText) view.findViewById(R.id.dialog_history_email_address);
+                        String email = input.getText().toString().trim();
+                        if (!"".equals(email)) {
+                            DBHelper db = DBHelper.getInstance(context);
+                            db.setEmail(email);
+                        }
 
-                if (!"".equals(email)) {
-                    DBHelper db = DBHelper.getInstance(context);
-                    db.setEmail(email);
-                }
-
-                compressAndEmail(paths, email);
-            }
-        });
-
-        dialog.setNegativeButton("Cancel", null);
-        dialog.show();
+                        compressAndEmail(paths, email);
+                    }
+                })
+                .show();
     }
 
     private void compressAndEmail(String[] paths, String email) {

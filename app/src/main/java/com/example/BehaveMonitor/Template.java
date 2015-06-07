@@ -50,6 +50,14 @@ public class Template implements Parcelable {
                         }
 
 			    		be.setType(type);
+
+                        if (bParts.length > 2) {
+                            boolean separate = bParts[2].equals("1");
+                            be.setSeparate(separate);
+                        } else {
+                            be.setSeparate(false);
+                        }
+
 			    		this.behaviours.add(be);
 		    		} else {
 		    			Log.e("Template missing data:", "Behaviour name or type.");
@@ -68,7 +76,8 @@ public class Template implements Parcelable {
     	String out = name + ";";
     	for(Behaviour b : behaviours) {
     		out += b.getName() + ",";
-    		out += b.getType() + ":";
+    		out += b.getType() + ",";
+            out += (b.isSeparate() ? "1" : "0") + ":";
     	}
     	
 		return out;

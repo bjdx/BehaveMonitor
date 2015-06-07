@@ -4,9 +4,7 @@
 
 package com.example.BehaveMonitor;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -26,7 +24,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.BehaveMonitor.adapters.BehaviourListAdapter;
 
 //Templates are saved as .template files.
-//Templates are stored in the format "TemplateName;BehaviourName1,BehaviourType1:BehaviourName2,BehaviourType2... "
+//Templates are stored in the format "TemplateName;BehaviourName1,BehaviourType1,Behaviour1Special:BehaviourName2,BehaviourType2,Behaviour2Special... "
 
 
 
@@ -112,66 +110,61 @@ public class TemplateActivity extends ActionBarActivity {
 
     private void showNamingDialog() {
         final Context context = TemplateActivity.this;
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_save_template, null);
-        final EditText input = (EditText) dialogView.findViewById(R.id.dialog_template_name);
-        alert.setView(dialogView);
+        MaterialDialog dialog = new MaterialDialog.Builder(context)
+                .title("Save Template")
+                .autoDismiss(false)
+                .customView(R.layout.dialog_save_template, true)
+                .negativeText("Cancel")
+                .positiveText("Save")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        dialog.dismiss();
+                    }
 
-        alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Deliberately left blank as we override the button later.
-            }
-        });
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        View view = dialog.getCustomView();
+                        if (view == null) {
+                            return;
+                        }
 
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
+                        EditText input = (EditText) view.findViewById(R.id.dialog_template_name);
+                        String template = input.getText().toString().trim();
+                        if ("".equals(template) || template.contains(",")) {
+                            makeSomeToast("Invalid template name");
+                            return;
+                        }
 
-        final AlertDialog dialog = alert.create();
-        dialog.show();
+                        newTemp.name = template;
+                        if (FileHandler.templateExists(template)) {
+                            dialog.dismiss();
 
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String template = input.getText().toString().trim();
-                if (template.contains(",")) {
-                    makeSomeToast("Invalid template name");
-                    return;
-                }
-
-                newTemp.name = template;
-                if (FileHandler.templateExists(template)) {
-                    dialog.dismiss();
-
-                    AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                    alert.setTitle("Overwrite Template");
-                    alert.setMessage("A template with this name already exists, do you want to overwrite it?");
-
-                    alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            FileHandler.saveTemplate(TemplateActivity.this, newTemp);
+                            new MaterialDialog.Builder(context)
+                                    .title("Overwrite Template?")
+                                    .content("A template with this name already exists, do you want to overwrite it?")
+                                    .positiveText("Yes")
+                                    .negativeText("Cancel")
+                                    .callback(new MaterialDialog.ButtonCallback() {
+                                        @Override
+                                        public void onPositive(MaterialDialog dialog) {
+                                            FileHandler.saveTemplate(TemplateActivity.this, newTemp);
+                                            backToMain();
+                                        }
+                                    })
+                                    .show();
+                        } else {
+                            dialog.dismiss();
+                            newTemp.name = template;
+                            FileHandler.saveTemplate(context, newTemp);
                             backToMain();
                         }
-                    });
+                    }
+                })
+                .build();
 
-                    alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            // Canceled.
-                        }
-                    });
-
-                    alert.show();
-                } else {
-                    dialog.dismiss();
-                    newTemp.name = template;
-                    FileHandler.saveTemplate(context, newTemp);
-                    backToMain();
-                }
-            }
-        });
+        dialog.show();
     }
 
     private void showOverwriteDialog() {
@@ -275,6 +268,7 @@ public class TemplateActivity extends ActionBarActivity {
                             b.setType(spinner.getSelectedItemPosition());
                             b.setSeparate(checkBox.isChecked());
                             newTemp.behaviours.add(b);
+                            adapter.refresh();
 
                             dialog.dismiss();
                         } else {
@@ -347,6 +341,7 @@ public class TemplateActivity extends ActionBarActivity {
                             newTemp.behaviours.get(index).setType(spinner.getSelectedItemPosition());
                             newTemp.behaviours.get(index).setSeparate(checkBox.isChecked());
                             adapter.refresh();
+
                             dialog.dismiss();
                         } else {
                             makeSomeToast("Invalid behaviour name");

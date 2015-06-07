@@ -351,30 +351,6 @@ public class SessionFragment extends Fragment {
                     }
                 })
                 .show();
-
-//		AlertDialog.Builder alert = new AlertDialog.Builder(context);
-//
-//        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_new_folder, null);
-//        alert.setView(dialogView);
-//        final EditText input = (EditText) dialogView.findViewById(R.id.dialog_folder_name);
-//
-//		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//			public void onClick(DialogInterface dialog, int whichButton) {
-//				String folderName = input.getText().toString().trim();
-//                if (validateFolderName(folderName)) {
-//                    FileHandler.createNewFolder(folderName);
-//                    activeFolderName = folderName;
-//                    setFolderSpinner();
-//                }
-//			}
-//		});
-//
-//		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int whichButton) {
-//                // Canceled.
-//            }
-//        });
-//		alert.show();
 	}
 
     /**

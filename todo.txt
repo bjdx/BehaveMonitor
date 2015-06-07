@@ -1,4 +1,5 @@
 Chicken App todo:
 
 - Move calculation of statistics to somewhere nicer (possibly create a Statistics object)
+- Dialog for adding notes text doesn't wrap if too long.
 
